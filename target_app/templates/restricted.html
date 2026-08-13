@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<table><tr><td>
+<h2 id="ctl00_MainContent_hdrRestricted">Account Restricted</h2>
+<div class="notice" id="ctl00_MainContent_lblRestricted">
+  This member account has a Restricted status and cannot be viewed with your current permissions.
+  Contact the compliance desk for assistance.
+</div>
+<table class="databox">
+  <tr><th>Member ID</th><td>{{ member.id }}</td></tr>
+  <tr><th>Status</th><td>{{ member.status }}</td></tr>
+</table>
+<p><a href="{{ prefix }}/members">Back to search</a></p>
+</td></tr></table>
+{% endblock %}

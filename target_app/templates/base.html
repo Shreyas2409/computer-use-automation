@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ tenant.display_name }} - Servicing Console</title>
+<style>
+  body { font-family: Verdana, Arial, sans-serif; font-size: 12px; background: #eeeeee; margin: 0; padding: 0; }
+  table.pagelayout { width: 100%; border-collapse: collapse; }
+  table.pagelayout td.header { background: #003366; color: #ffffff; padding: 10px; }
+  table.pagelayout td.body { padding: 12px; background: #ffffff; }
+  table.pagelayout td.footer { background: #cccccc; padding: 6px; font-size: 10px; }
+  table.formgrid { border-collapse: collapse; margin-top: 8px; }
+  table.formgrid td { padding: 4px 6px; vertical-align: top; }
+  table.databox { border: 1px solid #999999; border-collapse: collapse; margin-top: 8px; }
+  table.databox th { background: #dddddd; padding: 4px 8px; text-align: left; border: 1px solid #999999; }
+  table.databox td { padding: 4px 8px; border: 1px solid #999999; }
+  .error { color: #cc0000; font-weight: bold; }
+  .notice { background: #ffffcc; border: 1px solid #cccc00; padding: 6px; }
+  .modal-backdrop {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); z-index: 100;
+  }
+  .modal-panel {
+    position: fixed; top: 30%; left: 30%; width: 40%;
+    background: #ffffff; border: 2px solid #003366; padding: 16px; z-index: 101;
+  }
+  input[type=text], input[type=password], select { font-family: inherit; font-size: 12px; padding: 2px; }
+</style>
+</head>
+<body>
+<table class="pagelayout">
+  <tr>
+    <td class="header">
+      <table width="100%"><tr>
+        <td><b>{{ tenant.display_name }}</b> &nbsp;|&nbsp; Servicing Console</td>
+        <td align="right">
+          {% if session.get('user') %}
+            Signed in as {{ session['user'] }} &nbsp;|&nbsp;
+            <a href="/logout" style="color:#ffffff">Sign out</a>
+          {% endif %}
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+  <tr>
+    <td class="body">
+      {% block content %}{% endblock %}
+    </td>
+  </tr>
+  <tr>
+    <td class="footer">
+      &copy; {{ tenant.display_name }} - Internal servicing tool. Do not disclose.
+    </td>
+  </tr>
+</table>
+{% if inject_mode == 'dialog' %}
+<div class="modal-backdrop"></div>
+<div class="modal-panel" id="ctl00_MainContent_pnlInterstitial">
+  <b>System Notice</b>
+  <p>Please confirm you have read the updated servicing terms before continuing.</p>
+  <form method="get">
+    <input type="submit" name="ctl00_MainContent_btnDismiss" value="Acknowledge" />
+  </form>
+</div>
+{% endif %}
+</body>
+</html>

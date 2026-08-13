@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<table><tr><td>
+<h2 id="ctl00_MainContent_hdrDenied">Access Denied</h2>
+<div class="notice" id="ctl00_MainContent_lblDenied">
+  You do not have permission to view this record.
+</div>
+<p><a href="{{ prefix }}/members">Back to search</a></p>
+</td></tr></table>
+{% endblock %}

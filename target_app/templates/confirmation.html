@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<table><tr><td>
+<h2 id="ctl00_MainContent_hdrConfirmation">Sub-Account Opened</h2>
+
+<div class="notice" id="ctl00_MainContent_lblSuccess">
+  Sub-account request submitted successfully.
+</div>
+
+<table class="databox" id="ctl00_MainContent_pnlReceipt">
+  <tr><th>Reference number</th>
+      <td id="ctl00_MainContent_lblReference"><b>{{ reference }}</b></td></tr>
+  <tr><th>Member</th>
+      <td>{{ member.display_name }} (Member {{ member.id }})</td></tr>
+  <tr><th>Account type</th><td>{{ form.account_type }}</td></tr>
+  <tr><th>Opening deposit</th><td>${{ form.opening_deposit }}</td></tr>
+  <tr><th>Nickname</th><td>{{ form.nickname or '(none)' }}</td></tr>
+  <tr><th>Funding source</th><td>{{ form.funding_source }}</td></tr>
+</table>
+
+<p>
+  <a href="{{ prefix }}/members/{{ member.id }}">Return to member profile</a>
+  &nbsp;|&nbsp;
+  <a href="{{ prefix }}/members">Back to search</a>
+</p>
+</td></tr></table>
+{% endblock %}

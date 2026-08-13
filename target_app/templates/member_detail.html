@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<table><tr><td>
+<h2 id="ctl00_MainContent_hdrProfile">{{ tenant.member_detail_heading }}</h2>
+
+<table class="databox" id="ctl00_MainContent_pnlMemberInfo">
+  <tr><th>Member ID</th><td>{{ member.id }}</td>
+      <th>Status</th><td>{{ member.status }}</td></tr>
+  <tr><th>Name</th><td>{{ member.display_name }}</td>
+      <th>Branch</th><td>{{ member.branch }}</td></tr>
+  <tr><th>Joined</th><td colspan="3">{{ member.joined }}</td></tr>
+</table>
+
+<h3>Accounts</h3>
+<table class="databox" id="ctl00_MainContent_grdAccounts">
+  <tr><th>Account Number</th><th>Type</th><th>Balance</th></tr>
+  {% for a in member.accounts %}
+  <tr>
+    <td>{{ a.number_masked }}</td>
+    <td>{{ a.kind }}</td>
+    <td align="right">{{ a.balance_display }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p>
+  <a id="ctl00_MainContent_lnkOpenSubaccount"
+     href="{{ prefix }}/members/{{ member.id }}/subaccount">
+    {{ tenant.open_subaccount_button }}
+  </a>
+  &nbsp;|&nbsp;
+  <a href="{{ prefix }}/members">Back to search</a>
+</p>
+</td></tr></table>
+{% endblock %}

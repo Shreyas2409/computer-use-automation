@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<table><tr><td>
+<h2 id="ctl00_MainContent_hdrTitle">{{ tenant.members_heading }}</h2>
+<form method="post" action="{{ prefix }}/members{% if inject_mode %}?inject={{ inject_mode }}{% endif %}">
+  <table class="formgrid">
+    <tr>
+      <td>
+        <label for="ctl00_MainContent_txtMemberId">Member ID</label>
+      </td>
+      <td>
+        <input type="text" id="ctl00_MainContent_txtMemberId"
+               name="ctl00_MainContent_txtMemberId" value="{{ query }}" />
+      </td>
+      <td>
+        <input type="submit" id="ctl00_MainContent_btnSearch"
+               name="ctl00_MainContent_btnSearch"
+               value="{{ tenant.search_button_label }}" />
+      </td>
+    </tr>
+  </table>
+</form>
+
+{% if no_match_message %}
+  <div class="notice" id="ctl00_MainContent_lblNoMatch">{{ no_match_message }}</div>
+{% endif %}
+
+{% if results %}
+<table class="databox" id="ctl00_MainContent_grdResults">
+  <tr>
+    <th>Member ID</th><th>Name</th><th>Status</th><th>Branch</th><th>Action</th>
+  </tr>
+  {% for m in results %}
+  <tr>
+    <td>{{ m.id }}</td>
+    <td>{{ m.display_name }}</td>
+    <td>{{ m.status }}</td>
+    <td>{{ m.branch }}</td>
+    <td><a href="{{ prefix }}/members/{{ m.id }}">View</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+</td></tr></table>
+{% endblock %}

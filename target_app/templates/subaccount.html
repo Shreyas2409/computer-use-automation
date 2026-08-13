@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<table><tr><td>
+<h2 id="ctl00_MainContent_hdrSubaccount">{{ tenant.subaccount_heading }}</h2>
+
+<p>Opening a new sub-account for
+   <b>{{ member.display_name }}</b> (Member {{ member.id }}).</p>
+
+<form method="post" action="{{ prefix }}/members/{{ member.id }}/subaccount">
+  <table class="formgrid">
+    <tr>
+      <td><label for="ctl00_MainContent_ddlAccountType">Account type</label></td>
+      <td>
+        <select id="ctl00_MainContent_ddlAccountType"
+                name="ctl00_MainContent_ddlAccountType">
+          <option value="">-- select --</option>
+          <option value="Checking" {% if form.account_type=='Checking' %}selected{% endif %}>Checking</option>
+          <option value="Savings" {% if form.account_type=='Savings' %}selected{% endif %}>Savings</option>
+          <option value="Money Market" {% if form.account_type=='Money Market' %}selected{% endif %}>Money Market</option>
+        </select>
+      </td>
+      <td>{% if errors.account_type %}<span class="error">{{ errors.account_type }}</span>{% endif %}</td>
+    </tr>
+    <tr>
+      <td><label for="ctl00_MainContent_txtOpeningDeposit">Opening deposit</label></td>
+      <td>
+        <input type="text" id="ctl00_MainContent_txtOpeningDeposit"
+               name="ctl00_MainContent_txtOpeningDeposit"
+               value="{{ form.opening_deposit }}" />
+        <span style="font-size:10px;color:#666666">Minimum $25.00</span>
+      </td>
+      <td>{% if errors.opening_deposit %}<span class="error">{{ errors.opening_deposit }}</span>{% endif %}</td>
+    </tr>
+    <tr>
+      <td><label for="ctl00_MainContent_txtNickname">Nickname (optional)</label></td>
+      <td>
+        <input type="text" id="ctl00_MainContent_txtNickname"
+               name="ctl00_MainContent_txtNickname"
+               value="{{ form.nickname }}" />
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><label for="ctl00_MainContent_ddlFundingSource">Funding source</label></td>
+      <td>
+        <select id="ctl00_MainContent_ddlFundingSource"
+                name="ctl00_MainContent_ddlFundingSource">
+          <option value="">-- select --</option>
+          {% for a in member.accounts %}
+          <option value="{{ a.number_masked }}"
+                  {% if form.funding_source==a.number_masked %}selected{% endif %}>
+            {{ a.kind }} {{ a.number_masked }}
+          </option>
+          {% endfor %}
+        </select>
+      </td>
+      <td>{% if errors.funding_source %}<span class="error">{{ errors.funding_source }}</span>{% endif %}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <input type="submit" id="ctl00_MainContent_btnSubmit"
+               name="ctl00_MainContent_btnSubmit" value="Submit" />
+        &nbsp;
+        <a href="{{ prefix }}/members/{{ member.id }}">Cancel</a>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</form>
+</td></tr></table>
+{% endblock %}

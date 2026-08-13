@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cua-take-home"
+version = "0.1.0"
+description = "Computer-use automation for legacy enterprise apps"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.0",
+    "playwright>=1.44",
+    "pydantic>=2.6",
+    "anthropic>=0.34",
+    "pytest>=8.0",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["cua*", "target_app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

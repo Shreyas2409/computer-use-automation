@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<table><tr><td>
+<h2 id="ctl00_MainContent_hdrNotFound">Member Not Found</h2>
+<div class="notice" id="ctl00_MainContent_lblNotFound">
+  No member exists with ID {{ member_id }}.
+</div>
+<p><a href="{{ prefix }}/members">Back to search</a></p>
+</td></tr></table>
+{% endblock %}
