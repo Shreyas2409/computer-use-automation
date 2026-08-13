@@ -181,6 +181,7 @@ class TargetSpec(_Strict):
     app_id: str = Field(min_length=1)
     base_url: str = Field(min_length=1)
     tenant_id: str = Field(min_length=1)
+    target_version: str = Field(min_length=1)
     surface_kind: SurfaceKind
 
 
@@ -237,7 +238,8 @@ class OutcomeSpec(_Strict):
 class Capability(_Strict):
     schema_version: Literal["1.0"]
     capability_id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
-    version: int = Field(ge=1)
+    version_major: int = Field(ge=1)
+    version_minor: int = Field(ge=0)
     title: str = Field(min_length=1)
     description: str = Field(min_length=1)
     target: TargetSpec
@@ -273,3 +275,85 @@ class Capability(_Strict):
             if len(names) != len(set(names)):
                 raise ValueError(f"duplicate name in {group}: {names}")
         return self
+
+
+
+# ---- Tenant overlay -------------------------------------------------------
+
+
+class OverlayPatch(_Strict):
+    """One tenant-scoped patch applied on top of a base capability.
+
+    `path` is a dotted/bracketed path into a Capability dict (e.g.
+    ``"target.base_url"`` or ``"steps[1].target.strategies[0].spec.name"``).
+    The registry composer resolves the path and substitutes `value` before
+    re-validating the composed capability through Pydantic.
+    """
+
+    path: str = Field(min_length=1)
+    value: Any
+
+
+class TenantOverlay(_Strict):
+    """Per-tenant thin patch set against a pinned base capability version.
+
+    Hundreds of tenants = hundreds of small overlay files against a handful
+    of base recordings, not hundreds of recordings. Compose/resolve lives in
+    `cua/registry.py`; this module only owns the file shape.
+    """
+
+    overlay_version: int = Field(ge=1)
+    base_capability: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    base_version: str = Field(pattern=r"^\d+\.\d+$")
+    tenant_id: str = Field(min_length=1)
+    patches: list[OverlayPatch] = Field(min_length=1)
+
+
+# ---- Version bump rules ---------------------------------------------------
+
+
+VersionBump = Literal["major", "minor", "none"]
+
+
+def _contract_signature(cap: Capability) -> dict[str, Any]:
+    """Fields that make up the caller-visible contract.
+
+    Callers depend on input names/types/required-ness, output names/types,
+    and the set of declared outcome names. Anything else (locator ladders,
+    step notes, recovery rules) is recording-level and safe to change under
+    a minor bump.
+    """
+
+    return {
+        "inputs": sorted(
+            (p.name, p.type, p.required) for p in cap.inputs
+        ),
+        "outputs": sorted((o.name, o.type) for o in cap.outputs),
+        "outcome_names": sorted(o.name for o in cap.outcomes),
+    }
+
+
+def classify_version_bump(before: Capability, after: Capability) -> VersionBump:
+    """Classify the bump required to go from `before` to `after`.
+
+    - ``"major"`` — caller-visible contract changed: inputs or outputs
+      reshaped (added, removed, renamed, or type/required flipped) or a
+      declared outcome removed.
+    - ``"minor"`` — recording changed but the contract is untouched (ladder
+      gained a rung, recovery rule added, new outcome added, etc.).
+    - ``"none"`` — the two capabilities are identical modulo their version
+      numbers.
+    """
+
+    b = _contract_signature(before)
+    a = _contract_signature(after)
+    if b["inputs"] != a["inputs"]:
+        return "major"
+    if b["outputs"] != a["outputs"]:
+        return "major"
+    if set(b["outcome_names"]) - set(a["outcome_names"]):
+        return "major"
+    ignore = {"version_major", "version_minor"}
+    if before.model_dump(exclude=ignore) == after.model_dump(exclude=ignore):
+        return "none"
+    return "minor"

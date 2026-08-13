@@ -16,17 +16,20 @@ from cua.schema import (
     LocatorStrategy,
     OutcomeSpec,
     OutputSpec,
+    OverlayPatch,
     ParamSpec,
     Step,
     TargetSpec,
+    TenantOverlay,
     TextMatchDetector,
     UrlPatternDetector,
     ValueRef,
+    classify_version_bump,
 )
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ARTIFACTS = REPO_ROOT / "artifacts"
-EXAMPLE = ARTIFACTS / "lookup_member_balance.capability.json"
+EXAMPLE = ARTIFACTS / "lookup_member_balance" / "v1.0.json"
 SCHEMA_JSON = ARTIFACTS / "schema.json"
 
 
@@ -39,6 +42,8 @@ def test_example_capability_validates():
     assert cap.capability_id == "lookup_member_balance"
     assert cap.target.tenant_id == "meridian"
     assert cap.schema_version == "1.0"
+    assert (cap.version_major, cap.version_minor) == (1, 0)
+    assert cap.target.target_version == "2024.03"
 
 
 def test_example_capability_roundtrips_unchanged():
@@ -163,13 +168,15 @@ def test_minimal_capability_from_python_roundtrips():
     cap = Capability(
         schema_version="1.0",
         capability_id="probe",
-        version=1,
+        version_major=1,
+        version_minor=0,
         title="Probe",
         description="Smallest possible capability for tests.",
         target=TargetSpec(
             app_id="probe_app",
             base_url="http://localhost:8080",
             tenant_id="meridian",
+            target_version="2024.03",
             surface_kind="web",
         ),
         inputs=[],
@@ -203,3 +210,98 @@ def test_minimal_capability_from_python_roundtrips():
     )
     dumped = cap.model_dump_json()
     assert Capability.model_validate_json(dumped) == cap
+
+
+def _load_example() -> Capability:
+    return Capability.model_validate_json(_example_json())
+
+
+def test_version_bump_minor_when_only_recording_changes():
+    """Adding a ladder rung and a recovery rule leaves the caller contract intact."""
+    before = _load_example()
+    after_data = json.loads(_example_json())
+    after_data["steps"][1]["target"]["strategies"].append(
+        {"kind": "text", "spec": {"text": "Username"}, "durability": 60}
+    )
+    after_data["steps"][3]["on_error"].append(
+        {
+            "on": {"kind": "text_match", "contains": "Please try again"},
+            "do": "retry_with_backoff",
+            "max_attempts": 2,
+        }
+    )
+    after = Capability.model_validate(after_data)
+    assert classify_version_bump(before, after) == "minor"
+
+
+def test_version_bump_major_when_output_removed():
+    """Dropping a declared output reshapes the caller contract."""
+    before = _load_example()
+    after_data = json.loads(_example_json())
+    after_data["outputs"] = [
+        o for o in after_data["outputs"] if o["name"] != "member_status"
+    ]
+    after = Capability.model_validate(after_data)
+    assert classify_version_bump(before, after) == "major"
+
+
+def test_version_bump_major_when_outcome_removed():
+    before = _load_example()
+    after_data = json.loads(_example_json())
+    after_data["outcomes"] = [
+        o for o in after_data["outcomes"] if o["name"] != "member_restricted"
+    ]
+    after = Capability.model_validate(after_data)
+    assert classify_version_bump(before, after) == "major"
+
+
+def test_version_bump_none_when_only_version_numbers_change():
+    before = _load_example()
+    after_data = json.loads(_example_json())
+    after_data["version_minor"] = 7
+    after = Capability.model_validate(after_data)
+    assert classify_version_bump(before, after) == "none"
+
+
+def test_tenant_overlay_validates():
+    overlay = TenantOverlay(
+        overlay_version=1,
+        base_capability="lookup_member_balance",
+        base_version="2.0",
+        tenant_id="summit",
+        patches=[
+            OverlayPatch(path="target.base_url", value="http://localhost:8080/servicing"),
+            OverlayPatch(
+                path="steps[1].target.strategies[0].spec.name",
+                value="Find Member",
+            ),
+        ],
+    )
+    dumped = overlay.model_dump_json()
+    assert TenantOverlay.model_validate_json(dumped) == overlay
+
+
+def test_tenant_overlay_rejects_bad_base_version():
+    from pydantic import ValidationError as _VE
+
+    with pytest.raises(_VE, match="base_version"):
+        TenantOverlay(
+            overlay_version=1,
+            base_capability="lookup_member_balance",
+            base_version="2",
+            tenant_id="summit",
+            patches=[OverlayPatch(path="target.base_url", value="x")],
+        )
+
+
+def test_tenant_overlay_requires_at_least_one_patch():
+    from pydantic import ValidationError as _VE
+
+    with pytest.raises(_VE):
+        TenantOverlay(
+            overlay_version=1,
+            base_capability="lookup_member_balance",
+            base_version="2.0",
+            tenant_id="summit",
+            patches=[],
+        )
