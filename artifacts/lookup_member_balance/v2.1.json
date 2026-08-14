@@ -231,8 +231,18 @@
           "pattern": "/members(\\?|$)"
         }
       },
-      "on_error": [],
-      "notes": "Submit auth."
+      "on_error": [
+        {
+          "on": {
+            "kind": "text_match",
+            "contains": "Please confirm your identity",
+            "case_sensitive": false
+          },
+          "do": "dismiss_dialog",
+          "max_attempts": 1
+        }
+      ],
+      "notes": "Submit auth. v2.1 adds a bounded dismiss_dialog rule for the post-login confirm-identity interstitial observed in the field."
     },
     {
       "index": 4,
@@ -377,6 +387,14 @@
       "target": {
         "strategies": [
           {
+            "kind": "role_name",
+            "spec": {
+              "role": "heading",
+              "name": "Member Profile"
+            },
+            "durability": 90
+          },
+          {
             "kind": "text",
             "spec": {
               "text": "Member Profile"
@@ -412,7 +430,7 @@
         }
       },
       "on_error": [],
-      "notes": "Outputs are extracted from this page via the OutputSpec locators."
+      "notes": "Outputs are extracted from this page via the OutputSpec locators. v2.1 promotes a role_name (heading) rung above the plain text rung for durability."
     }
   ],
   "outcomes": [
@@ -461,6 +479,6 @@
     }
   ],
   "approval": "approved",
-  "recorded_at": "2026-08-13T12:00:00Z",
+  "recorded_at": "2026-08-14T12:00:00Z",
   "recorded_by": "human_edit"
 }

@@ -9,7 +9,8 @@ allowed_domains:
 allowed_route_patterns:
   - "^/login$"
   - "^/members"
-  - "^/servicings"
+  - "^/servicing/login$"
+  - "^/servicing/members"
 
 # Action types: navigate, click, type, select, read, wait_for, assert
 allowed_action_types:

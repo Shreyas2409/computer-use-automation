@@ -67,7 +67,7 @@ def test_policy_gate_requires_confirmation_on_submit():
     """PolicyGate requires confirmation on 'Submit' pattern."""
     action = Action(
         verb="click",  # clicking a Submit button
-        url="http://localhost:8080/servicings/confirm",
+        url="http://localhost:8080/servicing/members/10001",
     )
     action.verb = "Submit"
     verdict = PolicyGate.check(action)
@@ -78,10 +78,52 @@ def test_policy_gate_requires_confirmation_on_confirm():
     """PolicyGate requires confirmation on 'Confirm' pattern."""
     action = Action(
         verb="Confirm",
-        url="http://localhost:8080/servicings",
+        url="http://localhost:8080/servicing/members",
     )
     verdict = PolicyGate.check(action)
     assert verdict == "require_confirmation", "'Confirm' should require confirmation"
+
+
+def test_policy_gate_allows_summit_members_route():
+    """FIX 1: summit tenant /servicing/members must be allowed."""
+    action = Action(verb="click", url="http://localhost:8080/servicing/members")
+    assert PolicyGate.check(action) == "allow"
+
+
+def test_policy_gate_allows_summit_member_detail_route():
+    """FIX 1: summit tenant /servicing/members/<id> must be allowed."""
+    action = Action(verb="click", url="http://localhost:8080/servicing/members/10001")
+    assert PolicyGate.check(action) == "allow"
+
+
+def test_policy_gate_allows_summit_login_route():
+    """FIX 1: summit tenant /servicing/login must be allowed."""
+    action = Action(verb="navigate", url="http://localhost:8080/servicing/login")
+    assert PolicyGate.check(action) == "allow"
+
+
+def test_policy_gate_allows_meridian_members_route():
+    """FIX 1: meridian tenant /members* must remain allowed."""
+    action = Action(verb="click", url="http://localhost:8080/members/10001")
+    assert PolicyGate.check(action) == "allow"
+
+
+def test_policy_gate_allows_meridian_login_route():
+    """FIX 1: meridian tenant /login must remain allowed."""
+    action = Action(verb="navigate", url="http://localhost:8080/login")
+    assert PolicyGate.check(action) == "allow"
+
+
+def test_policy_gate_blocks_unknown_route_under_localhost():
+    """FIX 1: unknown routes still fall to deny-by-default even on allowed domains."""
+    action = Action(verb="click", url="http://localhost:8080/admin/settings")
+    assert PolicyGate.check(action) == "block"
+
+
+def test_policy_gate_blocks_typoed_servicings_route():
+    """FIX 1: the old typo '/servicings' pattern is gone; such routes are blocked."""
+    action = Action(verb="click", url="http://localhost:8080/servicings/members")
+    assert PolicyGate.check(action) == "block"
 
 
 def test_redaction_blocks_ssn_like_pattern():
@@ -178,6 +220,71 @@ def test_evidence_writer_redact_param_internal():
     redacted = EvidenceWriter.redact_param_value(param, "token_value")
     assert "token_value" not in redacted
     assert "<redacted:internal>" in redacted
+
+
+def test_evidence_writer_pii_param_never_reaches_disk_raw():
+    """FIX 2: pii/secret ParamSpec values must be shape-only on the disk-write path.
+
+    Adversarial: log a distinctive fake value bound to a pii ParamSpec through
+    the normal log()/write_logs() flow and assert the raw value is absent from
+    the written file while the shape-only form is present.
+    """
+    param = ParamSpec(
+        name="member_id",
+        type="string",
+        required=True,
+        description="Member id under lookup.",
+        example="42424",
+        sensitivity="pii",
+    )
+    distinctive = "ZZQQRR-DISTINCTIVE-PII-9x9x9"
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        writer = EvidenceWriter(tmpdir)
+        writer.log(
+            phase="replay",
+            action="type",
+            step_index=4,
+            metadata={"member_id": distinctive},
+            params={"member_id": param},
+        )
+        log_file = writer.write_logs()
+
+        content = log_file.read_text()
+        assert distinctive not in content, (
+            "FIX 2: raw pii param value must never reach disk"
+        )
+        assert f"<redacted:pii:string:{len(distinctive)}>" in content, (
+            "FIX 2: shape-only redaction token must be present"
+        )
+
+
+def test_evidence_writer_secret_param_never_reaches_disk_raw():
+    """FIX 2: same guarantee for secret-sensitivity params."""
+    param = ParamSpec(
+        name="operator_password",
+        type="string",
+        required=True,
+        description="Login password.",
+        example="demo123",
+        sensitivity="secret",
+    )
+    distinctive = "SUPER-SECRET-XYZ-nope"
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        writer = EvidenceWriter(tmpdir)
+        writer.log(
+            phase="replay",
+            action="type",
+            step_index=2,
+            metadata={"operator_password": distinctive},
+            params={"operator_password": param},
+        )
+        log_file = writer.write_logs()
+
+        content = log_file.read_text()
+        assert distinctive not in content
+        assert f"<redacted:secret:string:{len(distinctive)}>" in content
 
 
 def test_evidence_writer_preserves_public():

@@ -28,6 +28,24 @@ class EvidenceLog:
     metadata: dict[str, Any] | None = None
 
 
+def _redact_metadata(
+    metadata: dict[str, Any] | None,
+    params: dict[str, "ParamSpec"] | None,
+) -> dict[str, Any]:
+    """Redact metadata: sensitivity-driven first, then regex fallback."""
+    out: dict[str, Any] = {}
+    if not metadata:
+        return out
+    for key, val in metadata.items():
+        if params and key in params and val is not None:
+            out[key] = EvidenceWriter.redact_param_value(params[key], val)
+        elif isinstance(val, str):
+            out[key] = redact_sensitive_value(val)
+        else:
+            out[key] = val
+    return out
+
+
 class EvidenceWriter:
     """Write evidence (logs, screenshots) with automatic redaction."""
     
@@ -49,17 +67,16 @@ class EvidenceWriter:
         message: str | None = None,
         error: str | None = None,
         metadata: dict[str, Any] | None = None,
+        params: dict[str, ParamSpec] | None = None,
     ) -> None:
-        """Add a log entry, with redaction applied to all sensitive fields."""
-        # Redact metadata values
-        redacted_metadata = {}
-        if metadata:
-            for key, val in metadata.items():
-                if isinstance(val, str):
-                    redacted_metadata[key] = redact_sensitive_value(val)
-                else:
-                    redacted_metadata[key] = val
-        
+        """Add a log entry, with redaction applied to all sensitive fields.
+
+        `params` maps metadata keys to their ParamSpec. Values for those keys
+        are redacted by declared sensitivity (shape-only for pii/secret) BEFORE
+        the regex fallback runs, so pii/secret values never reach disk raw.
+        """
+        redacted_metadata = _redact_metadata(metadata, params)
+
         entry = EvidenceLog(
             timestamp=datetime.utcnow().isoformat(),
             phase=phase,
@@ -70,21 +87,23 @@ class EvidenceWriter:
             metadata=redacted_metadata or None,
         )
         self.logs.append(entry)
-    
+
     def write_logs(self, filename: str = "evidence.json") -> Path:
-        """Write all logs to a JSON file with redaction applied."""
+        """Write all logs to a JSON file with redaction applied.
+
+        Any metadata values already redacted at log() time by ParamSpec
+        sensitivity remain in their shape-only form here; regex-based
+        redaction still runs over the free-text message/error fields.
+        """
         output_path = self.evidence_dir / filename
 
-        # Convert logs to dicts and redact string fields
         log_dicts = []
         for log in self.logs:
             log_dict = asdict(log)
-            # Redact message and error
             if log_dict.get("message"):
                 log_dict["message"] = redact_sensitive_value(log_dict["message"])
             if log_dict.get("error"):
                 log_dict["error"] = redact_sensitive_value(log_dict["error"])
-            # Redact metadata values
             if log_dict.get("metadata"):
                 redacted_meta = {}
                 for key, val in log_dict["metadata"].items():

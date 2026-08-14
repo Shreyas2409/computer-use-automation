@@ -173,16 +173,75 @@ def test_compose_from_file_summit_overlay():
     """Load and compose the committed summit.v1.json overlay."""
     overlay_path = ARTIFACTS / "lookup_member_balance" / "overlays" / "summit.v1.json"
     assert overlay_path.exists(), f"summit overlay not found at {overlay_path}"
-    
+
     overlay_data = json.loads(overlay_path.read_text())
     overlay = TenantOverlay.model_validate(overlay_data)
-    
+
     base = load("lookup_member_balance", version="2.0")
     composed = compose(base, overlay)
-    
+
     # Verify patches were applied
     assert composed.target.base_url == "http://localhost:8080/servicing"
     assert composed.steps[5].target.strategies[0].spec["name"] == "Find Member"
     # Verify it's a valid Capability
     assert isinstance(composed, Capability)
     assert composed.approval == "approved"
+
+
+def test_summit_overlay_patches_every_meridian_string():
+    """FIX 3: composed summit capability contains summit strings, not meridian.
+
+    tenants.py declares that summit uses 'Find Member' for the search button and
+    'Servicing Profile' for the member detail heading. The base v2.0 artifact
+    hardcodes 'Search' and 'Member Profile' in runtime locator rungs; the summit
+    overlay must patch every one of them so the composed capability would pass
+    its checkpoints against the summit tenant.
+    """
+    overlay_path = ARTIFACTS / "lookup_member_balance" / "overlays" / "summit.v1.json"
+    overlay = TenantOverlay.model_validate(json.loads(overlay_path.read_text()))
+    base = load("lookup_member_balance", version="2.0")
+    composed = compose(base, overlay)
+
+    # tenant_id flipped
+    assert composed.target.tenant_id == "summit"
+    assert composed.target.base_url == "http://localhost:8080/servicing"
+
+    # Every runtime locator string used by the search-click step is summit.
+    search_step = composed.steps[5]
+    search_specs = [s.spec for s in search_step.target.strategies]
+    search_role_names = [s.get("name") for s in search_specs if "name" in s]
+    search_texts = [s.get("text") for s in search_specs if "text" in s]
+    assert "Find Member" in search_role_names
+    assert "Find Member" in search_texts
+    assert "Search" not in search_role_names, (
+        "FIX 3: meridian 'Search' role_name must not remain in composed summit"
+    )
+    assert "Search" not in search_texts, (
+        "FIX 3: meridian 'Search' visible text must not remain in composed summit"
+    )
+
+    # Every runtime locator string on the profile wait_for step is summit.
+    profile_step = composed.steps[7]
+    profile_texts = [
+        s.spec.get("text") for s in profile_step.target.strategies if "text" in s.spec
+    ]
+    assert "Servicing Profile" in profile_texts
+    assert "Member Profile" not in profile_texts, (
+        "FIX 3: meridian 'Member Profile' text must not remain in composed summit"
+    )
+
+
+def test_v2_0_to_v2_1_classifies_as_minor_bump():
+    """FIX 4: v2.1 must be a real minor evolution of v2.0.
+
+    Byte-identical files (except version_minor) would classify as 'none'.
+    A genuine minor bump keeps the contract (inputs/outputs/outcome names)
+    intact but changes the recording (extra ladder rung, extra recovery rule,
+    new non-terminal outcome, ...).
+    """
+    from cua.schema import classify_version_bump
+
+    before = load("lookup_member_balance", version="2.0")
+    after = load("lookup_member_balance", version="2.1")
+    assert (after.version_major, after.version_minor) == (2, 1)
+    assert classify_version_bump(before, after) == "minor"
