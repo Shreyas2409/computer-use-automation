@@ -1,0 +1,64 @@
+# Policy configuration: action-layer gate + redaction rules.
+# Enforced on every action in both discovery and replay.
+# Design decision: policy is a gate, not a prompt suggestion.
+
+allowed_domains:
+  - localhost
+  - "*.example.com"
+
+allowed_route_patterns:
+  - "^/login$"
+  - "^/members"
+  - "^/servicings"
+
+# Action types: navigate, click, type, select, read, wait_for, assert
+allowed_action_types:
+  - navigate
+  - click
+  - type
+  - select
+  - read
+  - wait_for
+  - assert
+
+# Destructive verbs that are blocked unless explicitly confirmed.
+destructive_verbs:
+  - delete
+  - transfer
+  - close_account
+  - cancel
+  - void
+  - liquidate
+
+# Actions requiring explicit confirmation: state-changing submits.
+require_confirmation_patterns:
+  - "Confirm"
+  - "Submit"
+  - "Save"
+  - "Transfer"
+  - "Approve"
+
+# Read-only actions: allowed everywhere, no confirmation needed.
+read_only_actions:
+  - read
+  - wait_for
+  - assert
+
+# Redaction rules: patterns and replacement format for sensitive data.
+# Format: "regex_pattern": "<redacted:type:sample_length>"
+# Checked in order - first match wins.
+redaction_rules:
+  # Social security-like: 9 digit numbers (XXX-XX-XXXX or plain)
+  "\\d{3}-?\\d{2}-?\\d{4}": "<redacted:ssn:9>"
+
+  # Credit card-like: 4 groups of 4 digits
+  "\\b\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}\\b": "<redacted:card:16>"
+
+  # Account numbers: long sequences of digits (10+ contiguous digits)
+  "\\b\\d{10,}\\b": "<redacted:account_number:12>"
+
+  # Email addresses
+  "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}": "<redacted:email:mixed>"
+
+  # Phone numbers: (XXX) XXX-XXXX or variations
+  "\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}": "<redacted:phone:10>"

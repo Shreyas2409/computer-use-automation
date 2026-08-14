@@ -1,0 +1,670 @@
+{
+  "$defs": {
+    "Checkpoint": {
+      "additionalProperties": false,
+      "description": "Post-step verification the replay engine must observe before moving on.",
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "detect": {
+          "discriminator": {
+            "mapping": {
+              "element_present": "#/$defs/ElementPresentDetector",
+              "text_match": "#/$defs/TextMatchDetector",
+              "url_pattern": "#/$defs/UrlPatternDetector"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/TextMatchDetector"
+            },
+            {
+              "$ref": "#/$defs/ElementPresentDetector"
+            },
+            {
+              "$ref": "#/$defs/UrlPatternDetector"
+            }
+          ],
+          "title": "Detect"
+        }
+      },
+      "required": [
+        "description",
+        "detect"
+      ],
+      "title": "Checkpoint",
+      "type": "object"
+    },
+    "ElementPresentDetector": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "element_present",
+          "default": "element_present",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/LocatorLadder"
+        }
+      },
+      "required": [
+        "locator"
+      ],
+      "title": "ElementPresentDetector",
+      "type": "object"
+    },
+    "ExtractSpec": {
+      "additionalProperties": false,
+      "description": "How to extract an output. Never a captured value.",
+      "properties": {
+        "locator": {
+          "$ref": "#/$defs/LocatorLadder"
+        },
+        "regex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Regex"
+        },
+        "transform": {
+          "anyOf": [
+            {
+              "enum": [
+                "strip",
+                "currency_to_cents",
+                "to_int",
+                "to_lower"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transform"
+        }
+      },
+      "required": [
+        "locator"
+      ],
+      "title": "ExtractSpec",
+      "type": "object"
+    },
+    "LocatorLadder": {
+      "additionalProperties": false,
+      "description": "Ordered list of strategies + the rung that matched at record time.\n\nReplay tries `strategies` top-down; a mismatch between `recorded_match` and\nthe rung that resolves at replay is the drift signal for later analysis.",
+      "properties": {
+        "recorded_match": {
+          "enum": [
+            "role_name",
+            "label",
+            "text",
+            "table_cell",
+            "css",
+            "coordinates"
+          ],
+          "title": "Recorded Match",
+          "type": "string"
+        },
+        "strategies": {
+          "items": {
+            "$ref": "#/$defs/LocatorStrategy"
+          },
+          "minItems": 1,
+          "title": "Strategies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "strategies",
+        "recorded_match"
+      ],
+      "title": "LocatorLadder",
+      "type": "object"
+    },
+    "LocatorStrategy": {
+      "additionalProperties": false,
+      "description": "One rung of the locator ladder.\n\n`spec` is intentionally an open dict \u2014 its keys depend on `kind` (e.g.\nrole_name uses ``{\"role\": \"button\", \"name\": \"Search\"}``; table_cell uses\n``{\"table_id\": \"...\", \"row_header\": {...}, \"column\": \"Balance\"}``).",
+      "properties": {
+        "durability": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Durability",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "role_name",
+            "label",
+            "text",
+            "table_cell",
+            "css",
+            "coordinates"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "spec": {
+          "additionalProperties": true,
+          "title": "Spec",
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind",
+        "spec",
+        "durability"
+      ],
+      "title": "LocatorStrategy",
+      "type": "object"
+    },
+    "OutcomeSpec": {
+      "additionalProperties": false,
+      "description": "A declared business or failure outcome.\n\nClassification structurally separates expected business outcomes from\ncrashes: a `business_outcome` returns exit code 0 at replay; a\n`hard_failure` does not; a `recoverable` triggers bounded recovery before\nthe engine gives up.",
+      "properties": {
+        "classification": {
+          "enum": [
+            "business_outcome",
+            "recoverable",
+            "hard_failure"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "detect": {
+          "discriminator": {
+            "mapping": {
+              "element_present": "#/$defs/ElementPresentDetector",
+              "text_match": "#/$defs/TextMatchDetector",
+              "url_pattern": "#/$defs/UrlPatternDetector"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/TextMatchDetector"
+            },
+            {
+              "$ref": "#/$defs/ElementPresentDetector"
+            },
+            {
+              "$ref": "#/$defs/UrlPatternDetector"
+            }
+          ],
+          "title": "Detect"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "terminal": {
+          "title": "Terminal",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "detect",
+        "classification",
+        "terminal",
+        "message"
+      ],
+      "title": "OutcomeSpec",
+      "type": "object"
+    },
+    "OutputSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "extract": {
+          "$ref": "#/$defs/ExtractSpec"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "string",
+            "integer",
+            "currency",
+            "date",
+            "enum"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "description",
+        "extract"
+      ],
+      "title": "OutputSpec",
+      "type": "object"
+    },
+    "ParamSpec": {
+      "additionalProperties": false,
+      "description": "A declared input.\n\n`sensitivity` above ``internal`` must never reach logs or evidence \u2014 the\nredaction that enforces that lives in Wave 3; this field carries the\ncontract.",
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "example": {
+          "title": "Example"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "sensitivity": {
+          "enum": [
+            "public",
+            "internal",
+            "pii",
+            "secret"
+          ],
+          "title": "Sensitivity",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "string",
+            "integer",
+            "currency",
+            "date",
+            "enum"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "description",
+        "example",
+        "sensitivity"
+      ],
+      "title": "ParamSpec",
+      "type": "object"
+    },
+    "RecoveryRule": {
+      "additionalProperties": false,
+      "description": "Bounded, explicit recovery. Unbounded retry is a bug.",
+      "properties": {
+        "do": {
+          "enum": [
+            "dismiss_dialog",
+            "retry_with_backoff",
+            "reauth",
+            "escalate"
+          ],
+          "title": "Do",
+          "type": "string"
+        },
+        "max_attempts": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "on": {
+          "discriminator": {
+            "mapping": {
+              "element_present": "#/$defs/ElementPresentDetector",
+              "text_match": "#/$defs/TextMatchDetector",
+              "url_pattern": "#/$defs/UrlPatternDetector"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/TextMatchDetector"
+            },
+            {
+              "$ref": "#/$defs/ElementPresentDetector"
+            },
+            {
+              "$ref": "#/$defs/UrlPatternDetector"
+            }
+          ],
+          "title": "On"
+        }
+      },
+      "required": [
+        "on",
+        "do",
+        "max_attempts"
+      ],
+      "title": "RecoveryRule",
+      "type": "object"
+    },
+    "Step": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "navigate",
+            "click",
+            "type",
+            "select",
+            "read",
+            "wait_for",
+            "assert"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "checkpoint": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Checkpoint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "index": {
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "on_error": {
+          "items": {
+            "$ref": "#/$defs/RecoveryRule"
+          },
+          "title": "On Error",
+          "type": "array"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LocatorLadder"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ValueRef"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "index",
+        "action"
+      ],
+      "title": "Step",
+      "type": "object"
+    },
+    "TargetSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "base_url": {
+          "minLength": 1,
+          "title": "Base Url",
+          "type": "string"
+        },
+        "surface_kind": {
+          "enum": [
+            "web",
+            "legacy_web",
+            "desktop"
+          ],
+          "title": "Surface Kind",
+          "type": "string"
+        },
+        "target_version": {
+          "minLength": 1,
+          "title": "Target Version",
+          "type": "string"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Tenant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id",
+        "base_url",
+        "tenant_id",
+        "target_version",
+        "surface_kind"
+      ],
+      "title": "TargetSpec",
+      "type": "object"
+    },
+    "TextMatchDetector": {
+      "additionalProperties": false,
+      "properties": {
+        "case_sensitive": {
+          "default": false,
+          "title": "Case Sensitive",
+          "type": "boolean"
+        },
+        "contains": {
+          "minLength": 1,
+          "title": "Contains",
+          "type": "string"
+        },
+        "kind": {
+          "const": "text_match",
+          "default": "text_match",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contains"
+      ],
+      "title": "TextMatchDetector",
+      "type": "object"
+    },
+    "UrlPatternDetector": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "url_pattern",
+          "default": "url_pattern",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pattern": {
+          "minLength": 1,
+          "title": "Pattern",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pattern"
+      ],
+      "title": "UrlPatternDetector",
+      "type": "object"
+    },
+    "ValueRef": {
+      "additionalProperties": false,
+      "description": "A reference to a declared input parameter, resolved at replay time.\n\nSerialized as ``{\"param\": \"<name>\"}``. This is the *only* way a Step can\ncarry a runtime-supplied value; everything else must be a literal known at\nrecord time.",
+      "properties": {
+        "param": {
+          "minLength": 1,
+          "title": "Param",
+          "type": "string"
+        }
+      },
+      "required": [
+        "param"
+      ],
+      "title": "ValueRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approval": {
+      "enum": [
+        "draft",
+        "approved"
+      ],
+      "title": "Approval",
+      "type": "string"
+    },
+    "capability_id": {
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "title": "Capability Id",
+      "type": "string"
+    },
+    "description": {
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/ParamSpec"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "outcomes": {
+      "items": {
+        "$ref": "#/$defs/OutcomeSpec"
+      },
+      "title": "Outcomes",
+      "type": "array"
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/OutputSpec"
+      },
+      "title": "Outputs",
+      "type": "array"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "recorded_by": {
+      "enum": [
+        "llm_discovery",
+        "human_edit"
+      ],
+      "title": "Recorded By",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/Step"
+      },
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "target": {
+      "$ref": "#/$defs/TargetSpec"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "version_major": {
+      "minimum": 1,
+      "title": "Version Major",
+      "type": "integer"
+    },
+    "version_minor": {
+      "minimum": 0,
+      "title": "Version Minor",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "capability_id",
+    "version_major",
+    "version_minor",
+    "title",
+    "description",
+    "target",
+    "steps",
+    "approval",
+    "recorded_at",
+    "recorded_by"
+  ],
+  "title": "Capability",
+  "type": "object"
+}
