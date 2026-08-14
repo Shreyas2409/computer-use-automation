@@ -76,6 +76,30 @@ def test_no_playwright_import_in_replay():
     )
 
 
+def test_no_anthropic_import_in_replay():
+    """FIX 5 — brief hard constraint: cua/replay.py must not import the Anthropic SDK.
+
+    Deterministic replay is the production path; no model in the decision loop.
+    Grep the source (skip cleanly while replay.py doesn't exist yet).
+    """
+    repo_root = Path(__file__).resolve().parent.parent
+    replay_path = repo_root / "cua" / "replay.py"
+
+    if not replay_path.exists():
+        pytest.skip("replay.py not yet implemented")
+
+    content = replay_path.read_text()
+    assert "anthropic" not in content.lower(), (
+        "replay.py must not import the Anthropic SDK; no model in the replay loop"
+    )
+    assert "from anthropic" not in content, (
+        "replay.py must not import the Anthropic SDK; no model in the replay loop"
+    )
+    assert "import anthropic" not in content, (
+        "replay.py must not import the Anthropic SDK; no model in the replay loop"
+    )
+
+
 def test_no_playwright_import_in_policy():
     """Grep-based test: cua/policy.py must not import Playwright directly.
 
