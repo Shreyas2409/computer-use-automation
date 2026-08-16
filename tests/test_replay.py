@@ -561,6 +561,71 @@ def test_escalation_returns_escalated_on_timeout(tmp_path):
     assert broker.lease.state == "PENDING_HANDOFF"
 
 
+def test_inject_mode_escalate_fires_from_action_handler_and_resumes(tmp_path):
+    """inject_mode='escalate' raises inside _execute_action → escalation
+    opens → operator hand-back → engine retries the same step and completes.
+
+    This is the reproducible-live-escalation reliably-programmatic route: the
+    fault fires inside the action attempt (not the between-step ?inject= URL
+    path), so recovery → escalation seam is guaranteed to execute."""
+
+    from cua.escalate import EscalationBroker
+
+    steps = [
+        Step(index=0, action="navigate", value="http://localhost:8080/login"),
+        Step(index=1, action="click", target=_ladder("Go")),
+    ]
+    cap = _cap(steps)
+    surface = FakeSurface()
+    # Both click invocations succeed at the surface level; the escalate fault
+    # is injected by the engine on the *first* attempt of step 1.
+    surface.click_scripts = [
+        _Script(rung="role_name"),
+        _Script(rung="role_name"),
+    ]
+
+    broker = EscalationBroker()
+
+    async def scenario():
+        async def operator():
+            for _ in range(200):
+                if broker.pending() is not None:
+                    break
+                await asyncio.sleep(0.01)
+            assert broker.pending() is not None, (
+                "escalate inject must have opened an intervention"
+            )
+            broker.take_control(actor="alice")
+            broker.hand_back(
+                actor="alice",
+                notes="fixed it",
+                resume_token=broker.pending().resume_token,
+            )
+
+        op_task = asyncio.create_task(operator())
+        cfg = ReplayConfig(
+            escalation_broker=broker,
+            escalation_timeout_s=3.0,
+            inject_mode="escalate",
+            inject_after_step=1,
+        )
+        result = await replay_with_surface(
+            cap, surface, {}, _evidence(tmp_path), cfg
+        )
+        await op_task
+        return result
+
+    result = asyncio.run(scenario())
+    assert isinstance(result, ReplaySuccess), f"got {type(result).__name__}"
+    assert len(result.interventions) == 1
+    iv = result.interventions[0]
+    assert iv["outcome"] == "resumed"
+    assert iv["kind"] == "action_failed"
+    # Lease audit: full cycle recorded.
+    kinds = [t["to_state"] for t in iv["transitions"]]
+    assert kinds == ["PENDING_HANDOFF", "HUMAN", "RESUMING", "AUTOMATION"]
+
+
 def test_no_broker_preserves_prior_hard_failure_path(tmp_path):
     """Without a broker, exhausted recovery keeps the pre-escalation semantics."""
 

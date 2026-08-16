@@ -224,6 +224,10 @@ class _RunState:
     injected: bool = False
     escalated_steps: set[int] = field(default_factory=set)
     interventions: list[dict[str, Any]] = field(default_factory=list)
+    # inject_mode='escalate' plants exactly one fault inside the action
+    # handler for the configured step. Set to True after it fires so the
+    # post-handback retry sees the fault healed.
+    escalate_fault_fired: bool = False
 
 
 class ReplayEngine:
@@ -285,11 +289,23 @@ class ReplayEngine:
         return path
 
     async def _maybe_inject(self, after_step_index: int) -> None:
-        """Append ``?inject=MODE`` once, after the configured step."""
+        """Append ``?inject=MODE`` once, after the configured step.
+
+        ``inject_mode='escalate'`` is a purely in-process fault (fires inside
+        ``_execute_action`` for the next step); it never touches the URL, so
+        we skip the target-app query-string route for it.
+        """
 
         if not self.config.inject_mode or self.state.injected:
             return
         if after_step_index != self.config.inject_after_step:
+            return
+        if self.config.inject_mode == "escalate":
+            # Escalate is a pure in-process fault: it self-triggers inside
+            # _execute_action when step.index == inject_after_step, so this
+            # URL-injection path is not what arms it. Marking ``injected``
+            # keeps the log symmetric with the other inject modes.
+            self.state.injected = True
             return
         url = self.surface.current_url()
         sep = "&" if "?" in url else "?"
@@ -302,6 +318,28 @@ class ReplayEngine:
             injected_url, timeout_ms=self.config.step_timeout_ms
         )
         self.state.injected = True
+
+    def _maybe_escalate_fault_inject(self, step: Step) -> None:
+        """Raise once inside the action handler when inject_mode='escalate'.
+
+        Triggers the escalation seam WITHIN the step's action attempt so the
+        full lease cycle exercises: recovery-exhausted → escalate → operator
+        take_control → hand_back → RESUMING → retry action. Fires exactly once
+        per run; after handback ``escalate_fault_fired`` is set so the retry
+        proceeds normally.
+        """
+
+        if self.config.inject_mode != "escalate":
+            return
+        if step.index != self.config.inject_after_step:
+            return
+        if self.state.escalate_fault_fired:
+            return
+        self.state.escalate_fault_fired = True
+        raise RuntimeError(
+            f"injected escalate: forcing operator handoff at step "
+            f"{step.index} ({step.action})"
+        )
 
     # -- policy gate ------------------------------------------------------
 
@@ -574,6 +612,7 @@ class ReplayEngine:
     ) -> LocatorKind | None:
         """Run one step's action against the surface. Returns matched rung."""
 
+        self._maybe_escalate_fault_inject(step)
         resolved = resolve_value(step.value, self.bound)
         if step.action == "navigate":
             await self.surface.navigate(

@@ -6,6 +6,7 @@ Test 2 (brief structure): Grep-based test that replay/policy never import Playwr
 
 from __future__ import annotations
 
+import asyncio
 import subprocess
 from pathlib import Path
 
@@ -13,6 +14,11 @@ import pytest
 
 from cua.locate import build_ladder
 from cua.schema import LocatorStrategy
+from cua.surface.observation import (
+    A11yNode,
+    a11y_node_from_snapshot,
+    capture_a11y_snapshot,
+)
 
 
 def test_ladder_fallthrough_when_top_rung_removed():
@@ -195,3 +201,108 @@ def test_build_ladder_requires_non_css_first_strategy():
     """Verify CSS cannot be the only or primary locator."""
     with pytest.raises(ValueError, match="CSS cannot be the primary"):
         build_ladder(css="button.search")
+
+
+# ---- A11y capture (Playwright 1.62 compat) --------------------------------
+
+
+class _FakePage:
+    """Minimal stand-in for a Playwright Page with an ``evaluate`` coroutine."""
+
+    def __init__(self, result=None, exc: Exception | None = None) -> None:
+        self._result = result
+        self._exc = exc
+        self.calls: list[str] = []
+
+    async def evaluate(self, js: str):
+        self.calls.append(js)
+        if self._exc is not None:
+            raise self._exc
+        return self._result
+
+
+def test_capture_a11y_snapshot_delegates_to_page_evaluate():
+    snapshot = {
+        "role": "document",
+        "name": "Sign In",
+        "value": None,
+        "children": [
+            {"role": "textbox", "name": "Username", "value": "demo",
+             "children": []},
+            {"role": "button", "name": "Sign In", "value": None,
+             "children": []},
+        ],
+    }
+    page = _FakePage(result=snapshot)
+    got = asyncio.run(capture_a11y_snapshot(page))
+    assert got == snapshot
+    assert len(page.calls) == 1
+    # Sanity: the JS actually walks the DOM (no reliance on removed APIs).
+    assert "document.body" in page.calls[0]
+    assert "accessibility" not in page.calls[0]
+
+
+def test_capture_a11y_snapshot_is_loud_on_failure():
+    page = _FakePage(exc=RuntimeError("evaluate exploded"))
+    with pytest.raises(RuntimeError, match="evaluate exploded"):
+        asyncio.run(capture_a11y_snapshot(page))
+
+
+def test_a11y_node_from_snapshot_builds_tree():
+    snapshot = {
+        "role": "document", "name": "T", "value": None,
+        "children": [
+            {"role": "form", "name": "Login", "value": None, "children": [
+                {"role": "textbox", "name": "Username", "value": "demo",
+                 "children": []},
+            ]},
+        ],
+    }
+    tree = a11y_node_from_snapshot(snapshot)
+    assert isinstance(tree, A11yNode)
+    assert tree.role == "document" and tree.name == "T"
+    assert tree.children and tree.children[0].role == "form"
+    assert tree.children[0].children[0].role == "textbox"
+    assert tree.children[0].children[0].value == "demo"
+
+
+def test_a11y_node_from_snapshot_none_returns_none():
+    assert a11y_node_from_snapshot(None) is None
+    assert a11y_node_from_snapshot({}) is None
+
+
+def test_playwright_compat_shim_installs_accessibility_property():
+    """Importing cua.surface must patch Page.accessibility (Playwright 1.60+)."""
+    import cua.surface  # noqa: F401  # side-effect import
+    from playwright.async_api import Page
+
+    assert hasattr(Page, "accessibility"), (
+        "Page.accessibility should be present after cua.surface import"
+    )
+    prop = Page.__dict__.get("accessibility")
+    assert isinstance(prop, property), (
+        "accessibility should be a property descriptor installed by the shim"
+    )
+
+
+def test_playwright_compat_shim_snapshot_uses_capture_helper():
+    """The shim's snapshot() delegates to capture_a11y_snapshot on the bound page."""
+    import cua.surface  # noqa: F401  # ensures shim is installed
+    from cua.surface._playwright_compat import _AccessibilityShim
+
+    snapshot = {"role": "document", "name": "x", "value": None, "children": []}
+    page = _FakePage(result=snapshot)
+    shim = _AccessibilityShim(page)
+    got = asyncio.run(shim.snapshot(interesting_only=True))
+    assert got == snapshot
+    assert len(page.calls) == 1
+
+
+def test_playwright_compat_shim_snapshot_propagates_errors():
+    import cua.surface  # noqa: F401
+    from cua.surface._playwright_compat import _AccessibilityShim
+
+    page = _FakePage(exc=ValueError("boom"))
+    shim = _AccessibilityShim(page)
+    with pytest.raises(ValueError, match="boom"):
+        asyncio.run(shim.snapshot())

@@ -30,7 +30,12 @@ from cua.schema import (
     TextMatchDetector,
     UrlPatternDetector,
 )
-from cua.surface.observation import A11yNode, Observation
+from cua.surface.observation import (
+    A11yNode,
+    Observation,
+    a11y_node_from_snapshot,
+    capture_a11y_snapshot,
+)
 
 
 DEFAULT_TIMEOUT_MS = 6000
@@ -71,12 +76,20 @@ class WebSurface:
     async def observe(self) -> Observation:
         url = self.page.url
         title = await self.page.title()
+        # A11y capture failures are LOUD by design: an empty tree was the
+        # root cause of the discovery loop stalling silently, so let the
+        # exception propagate rather than mask it with a document-only
+        # fallback.
+        snapshot = await capture_a11y_snapshot(self.page)
+        tree = a11y_node_from_snapshot(snapshot) or A11yNode(
+            role="document", name=title
+        )
         try:
             screenshot = await self.page.screenshot()
         except Exception:
             screenshot = b""
         return Observation(
-            tree=A11yNode(role="document", name=title),
+            tree=tree,
             screenshot_bytes=screenshot,
             url=url,
             title=title,
