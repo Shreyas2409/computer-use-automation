@@ -1,0 +1,493 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "lookup_member_balance",
+  "version_major": 2,
+  "version_minor": 2,
+  "title": "Look up a member's balances",
+  "description": "Signs into the Meridian servicing console, searches for a member by ID, opens the member profile, and returns the checking-account balance and member status. Handles nonexistent and restricted members as declared business outcomes.",
+  "target": {
+    "app_id": "meridian_servicing_console",
+    "base_url": "http://localhost:8080",
+    "tenant_id": "meridian",
+    "target_version": "2024.03",
+    "surface_kind": "legacy_web"
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "required": true,
+      "description": "Member ID as printed on the servicing console (5-digit numeric).",
+      "example": "10001",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "operator_password",
+      "type": "string",
+      "required": true,
+      "description": "Password for the demo servicing operator. Never appears in logs or evidence.",
+      "example": "demo123",
+      "sensitivity": "secret"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "checking_balance",
+      "type": "currency",
+      "description": "Balance of the member's checking sub-account, in cents.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "table_cell",
+              "spec": {
+                "table_id": "ctl00_MainContent_grdAccounts",
+                "row_header": {
+                  "column": "Type",
+                  "equals": "Checking"
+                },
+                "column": "Balance"
+              },
+              "durability": 70
+            },
+            {
+              "kind": "css",
+              "spec": {
+                "selector": "#ctl00_MainContent_grdAccounts tr td:nth-child(3)"
+              },
+              "durability": 30
+            }
+          ],
+          "recorded_match": "table_cell"
+        },
+        "regex": "\\$([0-9,]+\\.[0-9]{2})",
+        "transform": "currency_to_cents"
+      }
+    },
+    {
+      "name": "member_status",
+      "type": "string",
+      "description": "Servicing status of the member (Active, Restricted, ...).",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "table_cell",
+              "spec": {
+                "table_id": "ctl00_MainContent_pnlMemberInfo",
+                "row_header": {
+                  "th_text": "Status"
+                },
+                "column_offset": 1
+              },
+              "durability": 70
+            },
+            {
+              "kind": "css",
+              "spec": {
+                "selector": "#ctl00_MainContent_pnlMemberInfo tr:nth-child(1) td:nth-child(4)"
+              },
+              "durability": 30
+            }
+          ],
+          "recorded_match": "table_cell"
+        },
+        "transform": "strip"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "action": "navigate",
+      "value": "http://localhost:8080/login",
+      "checkpoint": {
+        "description": "Login form visible.",
+        "detect": {
+          "kind": "element_present",
+          "locator": {
+            "strategies": [
+              {
+                "kind": "label",
+                "spec": {
+                  "label": "Username"
+                },
+                "durability": 90
+              }
+            ],
+            "recorded_match": "label"
+          }
+        }
+      },
+      "on_error": [],
+      "notes": "Auth is a prerequisite for every servicing route."
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Username"
+            },
+            "durability": 90
+          },
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Username"
+            },
+            "durability": 80
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtUsername"
+            },
+            "durability": 40
+          }
+        ],
+        "recorded_match": "label"
+      },
+      "value": "demo",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Fixed demo user for this capability. Real deployments would parameterize."
+    },
+    {
+      "index": 2,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Password"
+            },
+            "durability": 90
+          },
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Password"
+            },
+            "durability": 80
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtPassword"
+            },
+            "durability": 40
+          }
+        ],
+        "recorded_match": "label"
+      },
+      "value": {
+        "param": "operator_password"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Value comes from a secret input; the redaction layer keeps it out of evidence."
+    },
+    {
+      "index": 3,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Sign In"
+            },
+            "durability": 90
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Sign In"
+            },
+            "durability": 70
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_btnSignIn"
+            },
+            "durability": 40
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "checkpoint": {
+        "description": "Landed on the Member Search page.",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members(\\?|$)"
+        }
+      },
+      "on_error": [
+        {
+          "on": {
+            "kind": "text_match",
+            "contains": "Please confirm you have read",
+            "case_sensitive": false
+          },
+          "do": "dismiss_dialog",
+          "max_attempts": 1
+        }
+      ],
+      "notes": "Submit auth. v2.2 adds a bounded dismiss_dialog rule for the post-login servicing-terms interstitial observed in the field."
+    },
+    {
+      "index": 4,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Member ID"
+            },
+            "durability": 90
+          },
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Member ID"
+            },
+            "durability": 80
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtMemberId"
+            },
+            "durability": 40
+          }
+        ],
+        "recorded_match": "label"
+      },
+      "value": {
+        "param": "member_id"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Search field bound by <label for=...>; label is the durable rung here."
+    },
+    {
+      "index": 5,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Search"
+            },
+            "durability": 90
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Search"
+            },
+            "durability": 70
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_btnSearch"
+            },
+            "durability": 40
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "checkpoint": {
+        "description": "Search results table rendered (or a no-match notice).",
+        "detect": {
+          "kind": "element_present",
+          "locator": {
+            "strategies": [
+              {
+                "kind": "css",
+                "spec": {
+                  "selector": "#ctl00_MainContent_grdResults, #ctl00_MainContent_lblNoMatch"
+                },
+                "durability": 50
+              }
+            ],
+            "recorded_match": "css"
+          }
+        }
+      },
+      "on_error": [
+        {
+          "on": {
+            "kind": "url_pattern",
+            "pattern": "/login\\?reason=timeout"
+          },
+          "do": "reauth",
+          "max_attempts": 1
+        },
+        {
+          "on": {
+            "kind": "text_match",
+            "contains": "Please confirm you have read",
+            "case_sensitive": false
+          },
+          "do": "dismiss_dialog",
+          "max_attempts": 1
+        }
+      ],
+      "notes": "Under Summit tenant the button reads 'Find Member'; role_name would fall through to text/css there. Second recovery dismisses the servicing-terms interstitial when ?inject=dialog is present on the members page."
+    },
+    {
+      "index": 6,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "View"
+            },
+            "durability": 80
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "View"
+            },
+            "durability": 60
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_grdResults a"
+            },
+            "durability": 40
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "checkpoint": {
+        "description": "Landed on the Member Profile page for the searched member.",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/[0-9]+$"
+        }
+      },
+      "on_error": [],
+      "notes": "Search is exact-match so there is a single row; the link's accessible name is 'View'."
+    },
+    {
+      "index": 7,
+      "action": "wait_for",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "heading",
+              "name": "Member Profile"
+            },
+            "durability": 90
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Member Profile"
+            },
+            "durability": 80
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_hdrProfile"
+            },
+            "durability": 40
+          }
+        ],
+        "recorded_match": "text"
+      },
+      "checkpoint": {
+        "description": "Accounts grid populated.",
+        "detect": {
+          "kind": "element_present",
+          "locator": {
+            "strategies": [
+              {
+                "kind": "css",
+                "spec": {
+                  "selector": "#ctl00_MainContent_grdAccounts"
+                },
+                "durability": 40
+              }
+            ],
+            "recorded_match": "css"
+          }
+        }
+      },
+      "on_error": [],
+      "notes": "Outputs are extracted from this page via the OutputSpec locators. v2.1 promotes a role_name (heading) rung above the plain text rung for durability."
+    }
+  ],
+  "outcomes": [
+    {
+      "name": "no_such_member",
+      "detect": {
+        "kind": "text_match",
+        "contains": "No member found matching that ID",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "The supplied member_id does not exist in the servicing console."
+    },
+    {
+      "name": "member_restricted",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Restricted status and cannot be viewed",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "Member exists but is Restricted; escalate to the compliance desk."
+    },
+    {
+      "name": "session_expired",
+      "detect": {
+        "kind": "url_pattern",
+        "pattern": "/login\\?reason=timeout"
+      },
+      "classification": "recoverable",
+      "terminal": false,
+      "message": "Session timed out mid-flow; re-authenticate and resume."
+    },
+    {
+      "name": "server_error",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Internal Server Error",
+        "case_sensitive": false
+      },
+      "classification": "hard_failure",
+      "terminal": true,
+      "message": "Target app returned a 500; capture evidence and fail."
+    }
+  ],
+  "approval": "approved",
+  "recorded_at": "2026-08-14T12:00:00Z",
+  "recorded_by": "human_edit"
+}

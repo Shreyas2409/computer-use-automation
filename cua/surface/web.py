@@ -329,6 +329,14 @@ class WebSurface:
         which would break the very step we're recovering from. If nothing
         looks like a modal, fall back to a real click on known dismiss
         buttons for cases where a click really is the right thing.
+
+        BLOCKER 1: the target-app dialog is server-driven via ``?inject=dialog``
+        and preserved through the members-page form action, so a DOM-only wipe
+        lets the modal reappear on the next POST. We also strip
+        ``inject=dialog`` from the current URL (history.replaceState) and from
+        any ``<form action>`` / ``<a href>`` on the page. The recovery stays
+        bounded (one call per rule/step) and stays logged upstream — this call
+        just neutralises the underlying trigger so the retry can complete.
         """
 
         try:
@@ -342,6 +350,36 @@ class WebSurface:
                             hit += 1;
                         });
                     }
+                    // Strip inject=dialog from the URL and any form/link that
+                    // would carry it into the next request.
+                    try {
+                        const stripQuery = (raw) => {
+                            if (!raw) return raw;
+                            try {
+                                const u = new URL(raw, window.location.href);
+                                if (u.searchParams.has('inject')) {
+                                    if (u.searchParams.get('inject') === 'dialog') {
+                                        u.searchParams.delete('inject');
+                                    }
+                                }
+                                const qs = u.searchParams.toString();
+                                return u.pathname + (qs ? '?' + qs : '') + u.hash;
+                            } catch (_) { return raw; }
+                        };
+                        const here = new URL(window.location.href);
+                        if (here.searchParams.get('inject') === 'dialog') {
+                            here.searchParams.delete('inject');
+                            const qs = here.searchParams.toString();
+                            const newUrl = here.pathname + (qs ? '?' + qs : '') + here.hash;
+                            window.history.replaceState({}, '', newUrl);
+                        }
+                        document.querySelectorAll('form[action]').forEach(f => {
+                            f.setAttribute('action', stripQuery(f.getAttribute('action')));
+                        });
+                        document.querySelectorAll('a[href]').forEach(a => {
+                            a.setAttribute('href', stripQuery(a.getAttribute('href')));
+                        });
+                    } catch (_) { /* best-effort */ }
                     return hit;
                 }"""
             )

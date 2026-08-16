@@ -29,8 +29,9 @@ def test_load_version_none_returns_highest_approved():
     cap = load("lookup_member_balance", version=None)
     assert cap.capability_id == "lookup_member_balance"
     assert cap.approval == "approved"
-    # v2.1 is the highest approved version we created
-    assert (cap.version_major, cap.version_minor) == (2, 1)
+    # v2.2 is the highest approved version (v2.1 restored to pre-edit content;
+    # the recovery-rule additions live in v2.2 per the immutability rule).
+    assert (cap.version_major, cap.version_minor) == (2, 2)
 
 
 def test_load_version_major_returns_highest_major_x_approved():
@@ -38,8 +39,8 @@ def test_load_version_major_returns_highest_major_x_approved():
     cap = load("lookup_member_balance", version="2")
     assert cap.version_major == 2
     assert cap.approval == "approved"
-    # v2.1 should be returned since it's the highest 2.x
-    assert cap.version_minor == 1
+    # v2.2 should be returned since it's the highest 2.x.
+    assert cap.version_minor == 2
 
 
 def test_load_version_exact_returns_exact_match():
@@ -245,3 +246,25 @@ def test_v2_0_to_v2_1_classifies_as_minor_bump():
     after = load("lookup_member_balance", version="2.1")
     assert (after.version_major, after.version_minor) == (2, 1)
     assert classify_version_bump(before, after) == "minor"
+
+
+
+def test_v2_1_to_v2_2_classifies_as_minor_bump():
+    """BLOCKER 2: v2.1 was edited in-place with recovery rules; those additions
+    have been split into v2.2 to respect the immutable-artifact rule. v2.1 is
+    the restored pre-edit content, v2.2 = v2.1 + recovery-rule additions.
+    Contract unchanged → minor bump.
+    """
+    from cua.schema import classify_version_bump
+
+    before = load("lookup_member_balance", version="2.1")
+    after = load("lookup_member_balance", version="2.2")
+    assert (after.version_major, after.version_minor) == (2, 2)
+    assert classify_version_bump(before, after) == "minor"
+
+
+def test_registry_pin_major_2_resolves_to_v2_2():
+    """BLOCKER 2: registry pin '2' must resolve to the highest 2.x, i.e. v2.2."""
+    cap = load("lookup_member_balance", version="2")
+    assert (cap.version_major, cap.version_minor) == (2, 2)
+    assert cap.approval == "approved"

@@ -1019,10 +1019,71 @@ async def replay_with_surface(
     evidence: EvidenceWriter,
     config: ReplayConfig | None = None,
 ) -> ReplayResult:
-    """Run a replay against an already-instantiated Surface + EvidenceWriter."""
+    """Run a replay against an already-instantiated Surface + EvidenceWriter.
+
+    Writes a structured, redacted ``evidence.json`` at session end regardless
+    of outcome (success, business outcome, hard failure, escalated). The engine
+    only *appends* to ``evidence.logs`` during the run; the disk write happens
+    exactly once here so PNGs and structured logs land in the same dir.
+    """
 
     engine = ReplayEngine(capability, surface, params, evidence, config)
-    return await engine.run()
+    try:
+        result = await engine.run()
+    except BaseException:
+        # Even a crash-out (KeyboardInterrupt, cancelled task, unexpected
+        # exception the engine didn't map) must leave structured evidence on
+        # disk before it propagates.
+        _finalize_evidence(evidence, status="crashed")
+        raise
+    _finalize_evidence(
+        evidence, status=type(result).__name__, result_summary=_result_summary(result)
+    )
+    return result
+
+
+def _result_summary(result: ReplayResult) -> dict[str, Any]:
+    """Extract the outcome-relevant fields for the trailing evidence entry."""
+
+    summary: dict[str, Any] = {
+        "kind": type(result).__name__,
+        "exit_code": getattr(result, "exit_code", None),
+        "capability_id": getattr(result, "capability_id", None),
+        "version": getattr(result, "version", None),
+        "tenant_id": getattr(result, "tenant_id", None),
+        "duration_ms": getattr(result, "duration_ms", None),
+        "step_count": len(getattr(result, "steps", []) or []),
+        "recovery_count": len(getattr(result, "recovery_events", []) or []),
+    }
+    if isinstance(result, ReplayBusinessOutcome):
+        summary["outcome_name"] = result.outcome_name
+    if isinstance(result, ReplayHardFailure):
+        summary["outcome_name"] = result.outcome_name
+        summary["error"] = result.error
+    if isinstance(result, ReplayEscalated):
+        summary["intervention_id"] = result.intervention_id
+        summary["reason"] = result.reason
+    return summary
+
+
+def _finalize_evidence(
+    evidence: EvidenceWriter,
+    *,
+    status: str,
+    result_summary: dict[str, Any] | None = None,
+) -> None:
+    """Log a trailing 'replay_end' entry and flush ``evidence.json`` to disk."""
+
+    try:
+        evidence.log(
+            phase="replay",
+            message="replay_end",
+            metadata={"status": status, "result": result_summary or {}},
+        )
+        evidence.write_logs()
+    except Exception:  # noqa: BLE001
+        # Never let evidence bookkeeping mask the real result.
+        pass
 
 
 async def run_replay(

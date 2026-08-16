@@ -573,3 +573,90 @@ def test_no_broker_preserves_prior_hard_failure_path(tmp_path):
     )
     assert isinstance(result, ReplayHardFailure)
     assert result.interventions == []
+
+
+
+# ------------------------------------------------------ structured evidence
+
+
+def test_evidence_json_written_on_success_with_step_records(tmp_path):
+    """BLOCKER 3: successful replay writes evidence.json with structured
+    step-level log entries. Redaction is exercised by supplying a pii-typed
+    param whose value must not appear in the log."""
+
+    import json
+
+    inputs = [
+        ParamSpec(
+            name="member_id",
+            type="string",
+            required=True,
+            description="d",
+            example="10001",
+            sensitivity="pii",
+        )
+    ]
+    steps = [
+        Step(
+            index=0,
+            action="type",
+            target=_label_ladder("Member ID"),
+            value=ValueRef(param="member_id"),
+        ),
+        Step(index=1, action="click", target=_ladder("Search")),
+    ]
+    cap = _cap(steps, inputs=inputs)
+    surface = FakeSurface()
+    ev = _evidence(tmp_path)
+    result = asyncio.run(
+        replay_with_surface(cap, surface, {"member_id": "SECRET-987654"}, ev)
+    )
+    assert isinstance(result, ReplaySuccess)
+
+    evidence_file = tmp_path / "evidence.json"
+    assert evidence_file.exists(), (
+        "BLOCKER 3: replay must write evidence.json at session end"
+    )
+    entries = json.loads(evidence_file.read_text())
+    assert isinstance(entries, list) and len(entries) >= 3
+    phases = {e.get("phase") for e in entries}
+    assert "replay" in phases
+    # There must be at least one step-level record.
+    step_records = [e for e in entries if e.get("step_index") is not None]
+    assert step_records, (
+        "BLOCKER 3: evidence must contain step-level records, not just the "
+        "session-start/end bookends"
+    )
+    # A trailing replay_end record must summarise the outcome.
+    ends = [e for e in entries if e.get("message") == "replay_end"]
+    assert ends, "BLOCKER 3: expected a terminal replay_end record"
+    assert ends[-1]["metadata"]["status"] == "ReplaySuccess"
+
+    # Redaction: the raw pii value must not appear anywhere in the file.
+    raw = evidence_file.read_text()
+    assert "SECRET-987654" not in raw, (
+        "BLOCKER 3: pii-sensitivity param value leaked into evidence.json"
+    )
+
+
+def test_evidence_json_written_on_hard_failure(tmp_path):
+    """BLOCKER 3: failure path must still land a structured evidence file."""
+
+    import json
+
+    steps = [Step(index=0, action="click", target=_ladder("Go"))]
+    cap = _cap(steps)
+    surface = FakeSurface()
+    surface.click_scripts = [_Script(raise_exc=RuntimeError("boom"))]
+    result = asyncio.run(
+        replay_with_surface(cap, surface, {}, _evidence(tmp_path))
+    )
+    assert isinstance(result, ReplayHardFailure)
+
+    evidence_file = tmp_path / "evidence.json"
+    assert evidence_file.exists()
+    entries = json.loads(evidence_file.read_text())
+    ends = [e for e in entries if e.get("message") == "replay_end"]
+    assert ends and ends[-1]["metadata"]["status"] == "ReplayHardFailure"
+    # The pre-terminal replay_hard_failure record must be present too.
+    assert any(e.get("message") == "replay_hard_failure" for e in entries)
