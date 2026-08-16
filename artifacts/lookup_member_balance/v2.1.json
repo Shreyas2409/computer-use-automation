@@ -235,14 +235,14 @@
         {
           "on": {
             "kind": "text_match",
-            "contains": "Please confirm your identity",
+            "contains": "Please confirm you have read",
             "case_sensitive": false
           },
           "do": "dismiss_dialog",
           "max_attempts": 1
         }
       ],
-      "notes": "Submit auth. v2.1 adds a bounded dismiss_dialog rule for the post-login confirm-identity interstitial observed in the field."
+      "notes": "Submit auth. v2.1 adds a bounded dismiss_dialog rule for the post-login servicing-terms interstitial observed in the field."
     },
     {
       "index": 4,
@@ -337,9 +337,18 @@
           },
           "do": "reauth",
           "max_attempts": 1
+        },
+        {
+          "on": {
+            "kind": "text_match",
+            "contains": "Please confirm you have read",
+            "case_sensitive": false
+          },
+          "do": "dismiss_dialog",
+          "max_attempts": 1
         }
       ],
-      "notes": "Under Summit tenant the button reads 'Find Member'; role_name would fall through to text/css there."
+      "notes": "Under Summit tenant the button reads 'Find Member'; role_name would fall through to text/css there. Second recovery dismisses the servicing-terms interstitial when ?inject=dialog is present on the members page."
     },
     {
       "index": 6,
