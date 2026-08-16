@@ -66,6 +66,7 @@ class _ReplayBase:
     rung_drift: list[RungReport] = field(default_factory=list)
     recovery_events: list[RecoveryEvent] = field(default_factory=list)
     evidence_dir: str = ""
+    interventions: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass

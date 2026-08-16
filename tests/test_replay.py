@@ -483,3 +483,93 @@ def test_result_to_dict_includes_drift_flag():
     assert r.drifted is True
     r2 = RungReport(step_index=0, recorded_match="label", replay_match="label")
     assert r2.drifted is False
+
+
+# ------------------------------------------------------------ escalation seam
+
+
+def test_escalation_resumes_on_handback(tmp_path):
+    """Broker attached: unrecovered click failure escalates, human hands back,
+    engine retries the same step and completes normally."""
+
+    from cua.escalate import EscalationBroker
+
+    steps = [Step(index=0, action="click", target=_ladder("Go"))]
+    cap = _cap(steps)
+    surface = FakeSurface()
+    # First click raises (no on_error rule → recovery exhausted immediately),
+    # second click succeeds after the operator "hands back".
+    surface.click_scripts = [
+        _Script(raise_exc=RuntimeError("modal blocked click")),
+        _Script(rung="role_name"),
+    ]
+
+    broker = EscalationBroker()
+
+    async def scenario():
+        # Simulate the operator: as soon as PENDING_HANDOFF appears, take
+        # control and hand back so the engine unparks.
+        async def operator():
+            for _ in range(50):
+                if broker.pending() is not None:
+                    break
+                await asyncio.sleep(0.01)
+            assert broker.pending() is not None
+            broker.take_control(actor="alice")
+            broker.hand_back(
+                actor="alice",
+                notes="fixed the modal",
+                resume_token=broker.pending().resume_token,
+            )
+
+        op_task = asyncio.create_task(operator())
+        cfg = ReplayConfig(escalation_broker=broker, escalation_timeout_s=2.0)
+        result = await replay_with_surface(
+            cap, surface, {}, _evidence(tmp_path), cfg
+        )
+        await op_task
+        return result
+
+    result = asyncio.run(scenario())
+    assert isinstance(result, ReplaySuccess)
+    assert len(result.interventions) == 1
+    iv = result.interventions[0]
+    assert iv["outcome"] == "resumed"
+    assert iv["kind"] == "action_failed"
+
+
+def test_escalation_returns_escalated_on_timeout(tmp_path):
+    """Broker attached but no operator: wait times out → ReplayEscalated."""
+
+    from cua.escalate import EscalationBroker
+
+    steps = [Step(index=0, action="click", target=_ladder("Go"))]
+    cap = _cap(steps)
+    surface = FakeSurface()
+    surface.click_scripts = [_Script(raise_exc=RuntimeError("boom"))]
+
+    broker = EscalationBroker()
+    cfg = ReplayConfig(escalation_broker=broker, escalation_timeout_s=0.05)
+    result = asyncio.run(
+        replay_with_surface(cap, surface, {}, _evidence(tmp_path), cfg)
+    )
+    assert isinstance(result, ReplayEscalated)
+    assert result.exit_code == 3
+    assert len(result.interventions) == 1
+    assert result.interventions[0]["outcome"] == "failed"
+    # Lease should still be parked in PENDING_HANDOFF (nobody resumed it).
+    assert broker.lease.state == "PENDING_HANDOFF"
+
+
+def test_no_broker_preserves_prior_hard_failure_path(tmp_path):
+    """Without a broker, exhausted recovery keeps the pre-escalation semantics."""
+
+    steps = [Step(index=0, action="click", target=_ladder("Go"))]
+    cap = _cap(steps)
+    surface = FakeSurface()
+    surface.click_scripts = [_Script(raise_exc=RuntimeError("boom"))]
+    result = asyncio.run(
+        replay_with_surface(cap, surface, {}, _evidence(tmp_path))
+    )
+    assert isinstance(result, ReplayHardFailure)
+    assert result.interventions == []

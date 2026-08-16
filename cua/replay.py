@@ -24,6 +24,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Protocol
 
+from cua.escalate import (
+    EscalationBroker,
+    InterventionRequest,
+    LeaseError,
+    new_intervention_id,
+    new_resume_token,
+)
 from cua.evidence import EvidenceWriter
 from cua.policy import Action, PolicyGate, redact_sensitive_value
 from cua.result import (
@@ -203,6 +210,9 @@ class ReplayConfig:
     retry_backoff_ms: int = DEFAULT_RETRY_BACKOFF_MS
     inject_mode: str | None = None
     inject_after_step: int = 3
+    escalation_broker: EscalationBroker | None = None
+    escalation_timeout_s: float = 300.0
+    escalation_goal: str = ""
 
 
 @dataclass
@@ -212,6 +222,8 @@ class _RunState:
     recoveries: list[RecoveryEvent] = field(default_factory=list)
     recovery_attempts: dict[tuple[int, str], int] = field(default_factory=dict)
     injected: bool = False
+    escalated_steps: set[int] = field(default_factory=set)
+    interventions: list[dict[str, Any]] = field(default_factory=list)
 
 
 class ReplayEngine:
@@ -391,6 +403,148 @@ class ReplayEngine:
             return False
         return False
 
+    # -- escalation seam --------------------------------------------------
+
+    async def _open_intervention_and_wait(
+        self, *, step_index: int, reason: str, kind: str
+    ) -> tuple[bool, str | None]:
+        """Fire an intervention through the broker, park, wait for handback.
+
+        Returns ``(resumed, intervention_id)``. ``resumed`` is True on a clean
+        handback (caller retries the failing thing); False on timeout, cancel,
+        broker misconfiguration, or when no broker is registered. Bounded to
+        one escalation per step to prevent loops between the engine and the
+        operator.
+        """
+
+        broker = self.config.escalation_broker
+        if broker is None:
+            return False, None
+        if step_index in self.state.escalated_steps:
+            return False, None
+        self.state.escalated_steps.add(step_index)
+
+        iv_id = new_intervention_id()
+        token = new_resume_token()
+        try:
+            url = self.surface.current_url() or ""
+        except Exception:  # noqa: BLE001
+            url = ""
+        try:
+            page_text = await self.surface.page_text()
+        except Exception:  # noqa: BLE001
+            page_text = ""
+        summary = {
+            "url": url,
+            "page_text_length": len(page_text or ""),
+            "steps_completed": len(self.state.steps),
+            "kind": kind,
+        }
+        snap_name = f"intervention_{iv_id}.png"
+        snap_path = await self._snapshot(snap_name)
+        request = InterventionRequest(
+            intervention_id=iv_id,
+            capability_id=self.cap.capability_id,
+            version=f"{self.cap.version_major}.{self.cap.version_minor}",
+            tenant_id=self.cap.target.tenant_id,
+            step_index=step_index,
+            reason=reason,
+            goal=self.config.escalation_goal or self.cap.title,
+            screenshot_path=snap_path,
+            state_summary=summary,
+            resume_token=token,
+            evidence_dir=str(self.evidence.evidence_dir),
+        )
+        try:
+            await broker.open_intervention(request)
+        except LeaseError as exc:
+            self._log(
+                message="intervention_open_failed",
+                step_index=step_index,
+                error=str(exc),
+                metadata={"kind": kind},
+            )
+            return False, iv_id
+        self._log(
+            message="intervention_opened",
+            step_index=step_index,
+            metadata={
+                "intervention_id": iv_id,
+                "kind": kind,
+                "reason": reason,
+                "screenshot": snap_path,
+            },
+        )
+        try:
+            notes = await broker.wait_for_handback(
+                timeout=self.config.escalation_timeout_s
+            )
+            broker.complete_resume(
+                actor="automation",
+                reason=f"resume:{iv_id}",
+            )
+        except LeaseError as exc:
+            self._log(
+                message="intervention_wait_failed",
+                step_index=step_index,
+                error=str(exc),
+                metadata={"intervention_id": iv_id, "kind": kind},
+            )
+            self.state.interventions.append(
+                {
+                    "intervention_id": iv_id,
+                    "step_index": step_index,
+                    "kind": kind,
+                    "reason": reason,
+                    "outcome": "failed",
+                    "error": str(exc),
+                    "transitions": broker.lease.transitions_as_dicts(),
+                }
+            )
+            return False, iv_id
+        self._log(
+            message="intervention_resumed",
+            step_index=step_index,
+            metadata={"intervention_id": iv_id, "notes": notes[:200]},
+        )
+        self.state.interventions.append(
+            {
+                "intervention_id": iv_id,
+                "step_index": step_index,
+                "kind": kind,
+                "reason": reason,
+                "outcome": "resumed",
+                "notes": notes,
+                "transitions": broker.lease.transitions_as_dicts(),
+                "action_log": broker.action_log(),
+            }
+        )
+        return True, iv_id
+
+    def _escalated_result(
+        self,
+        *,
+        step_index: int,
+        started: float,
+        reason: str,
+        intervention_id: str | None,
+    ) -> ReplayEscalated:
+        duration = int((time.monotonic() - started) * 1000)
+        return ReplayEscalated(
+            capability_id=self.cap.capability_id,
+            version=f"{self.cap.version_major}.{self.cap.version_minor}",
+            tenant_id=self.cap.target.tenant_id,
+            duration_ms=duration,
+            steps=list(self.state.steps),
+            rung_drift=list(self.state.rung_drift),
+            recovery_events=list(self.state.recoveries),
+            evidence_dir=str(self.evidence.evidence_dir),
+            interventions=list(self.state.interventions),
+            intervention_id=intervention_id or f"confirm-{step_index}",
+            reason=reason,
+            resumable=True,
+        )
+
     async def _reauth_prelude(self) -> bool:
         """Best-effort re-auth: replay the first four steps (nav+creds+submit).
 
@@ -504,6 +658,7 @@ class ReplayEngine:
             rung_drift=list(self.state.rung_drift),
             recovery_events=list(self.state.recoveries),
             evidence_dir=str(self.evidence.evidence_dir),
+            interventions=list(self.state.interventions),
             outputs=outputs,
         )
 
@@ -530,20 +685,18 @@ class ReplayEngine:
                 step_index=step.index,
                 metadata={"verb": step.action, "url": action_ctx.url},
             )
-            duration = int((time.monotonic() - started) * 1000)
-            return ReplayEscalated(
-                capability_id=self.cap.capability_id,
-                version=f"{self.cap.version_major}.{self.cap.version_minor}",
-                tenant_id=self.cap.target.tenant_id,
-                duration_ms=duration,
-                steps=list(self.state.steps),
-                rung_drift=list(self.state.rung_drift),
-                recovery_events=list(self.state.recoveries),
-                evidence_dir=str(self.evidence.evidence_dir),
-                intervention_id=f"confirm-{step.index}",
-                reason=f"policy requires confirmation for {step.action!r}",
-                resumable=True,
+            reason = f"policy requires confirmation for {step.action!r}"
+            resumed, iv_id = await self._open_intervention_and_wait(
+                step_index=step.index, reason=reason, kind="policy_confirm"
             )
+            if not resumed:
+                return self._escalated_result(
+                    step_index=step.index,
+                    started=started,
+                    reason=reason,
+                    intervention_id=iv_id,
+                )
+            # Operator approved: fall through and execute the action.
 
         matched: LocatorKind | None = None
         recovered_this_step = False
@@ -564,6 +717,21 @@ class ReplayEngine:
                     )
                 recovered, rule = await self._try_recovery(step, error_detail)
                 if not recovered:
+                    resumed, iv_id = await self._open_intervention_and_wait(
+                        step_index=step.index,
+                        reason=f"action {step.action!r} failed: {error_detail}",
+                        kind="action_failed",
+                    )
+                    if resumed:
+                        recovered_this_step = True
+                        continue
+                    if iv_id is not None:
+                        return self._escalated_result(
+                            step_index=step.index,
+                            started=started,
+                            reason=f"action {step.action!r} exhausted recovery",
+                            intervention_id=iv_id,
+                        )
                     return await self._hard_failure(
                         step_index=step.index,
                         action=step.action,
@@ -609,17 +777,44 @@ class ReplayEngine:
                 if fired:
                     checkpoint_status = "ok"
                 else:
-                    return await self._hard_failure(
+                    resumed, iv_id = await self._open_intervention_and_wait(
                         step_index=step.index,
-                        action=step.action,
-                        expected=step.checkpoint.description,
-                        observed=self._describe_detector(
-                            step.checkpoint.detect
-                        )
-                        + " did not fire",
-                        started=started,
-                        error="checkpoint_failed",
+                        reason=(
+                            f"checkpoint {step.checkpoint.description!r} did "
+                            "not fire; recovery exhausted"
+                        ),
+                        kind="checkpoint_failed",
                     )
+                    if resumed:
+                        # Brief: engine re-verifies the checkpoint after
+                        # handback — cannot trust where the human left off.
+                        fired = await evaluate_detector(
+                            step.checkpoint.detect, self.surface
+                        )
+                        if fired:
+                            recovered_this_step = True
+                            checkpoint_status = "ok"
+                    if checkpoint_status != "ok":
+                        if iv_id is not None:
+                            return self._escalated_result(
+                                step_index=step.index,
+                                started=started,
+                                reason=(
+                                    "checkpoint failed after handback re-verify"
+                                ),
+                                intervention_id=iv_id,
+                            )
+                        return await self._hard_failure(
+                            step_index=step.index,
+                            action=step.action,
+                            expected=step.checkpoint.description,
+                            observed=self._describe_detector(
+                                step.checkpoint.detect
+                            )
+                            + " did not fire",
+                            started=started,
+                            error="checkpoint_failed",
+                        )
 
         duration_ms = int((time.monotonic() - step_started) * 1000)
         self.state.steps.append(
@@ -675,6 +870,7 @@ class ReplayEngine:
                 rung_drift=list(self.state.rung_drift),
                 recovery_events=list(self.state.recoveries),
                 evidence_dir=str(self.evidence.evidence_dir),
+                interventions=list(self.state.interventions),
                 outcome_name=oc.name,
                 message=oc.message,
                 step_index=step_index,
@@ -689,6 +885,7 @@ class ReplayEngine:
             rung_drift=list(self.state.rung_drift),
             recovery_events=list(self.state.recoveries),
             evidence_dir=str(self.evidence.evidence_dir),
+            interventions=list(self.state.interventions),
             step_index=step_index,
             action="outcome",
             expected="no terminal hard-failure outcome",
@@ -751,6 +948,7 @@ class ReplayEngine:
             rung_drift=list(self.state.rung_drift),
             recovery_events=list(self.state.recoveries),
             evidence_dir=str(self.evidence.evidence_dir),
+            interventions=list(self.state.interventions),
             step_index=step_index,
             action=action,
             expected=expected,

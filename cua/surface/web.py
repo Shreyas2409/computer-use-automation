@@ -429,11 +429,24 @@ async def open_web_surface(
     viewport: tuple[int, int] = (1280, 900),
     locale: str = "en-US",
     timezone_id: str = "UTC",
+    remote_debugging_port: int | None = None,
 ):
-    """Async context manager: opens Chromium, yields a ``WebSurface``."""
+    """Async context manager: opens Chromium, yields a ``WebSurface``.
 
+    When ``remote_debugging_port`` is set, Chromium is launched with
+    ``--remote-debugging-port=<port>`` so the operator surface can attach to
+    the same live session via CDP (see ``connect_web_surface``). Requires a
+    headed browser to be useful in practice — CDP against a headless
+    instance still works, it's just not what the operator UI expects.
+    """
+
+    launch_kwargs: dict[str, Any] = {"headless": headless}
+    if remote_debugging_port is not None:
+        launch_kwargs["args"] = [
+            f"--remote-debugging-port={remote_debugging_port}",
+        ]
     async with async_playwright() as pw:
-        browser: Browser = await pw.chromium.launch(headless=headless)
+        browser: Browser = await pw.chromium.launch(**launch_kwargs)
         try:
             context: BrowserContext = await browser.new_context(
                 viewport={"width": viewport[0], "height": viewport[1]},
@@ -444,3 +457,36 @@ async def open_web_surface(
             yield WebSurface(page)
         finally:
             await browser.close()
+
+
+@asynccontextmanager
+async def connect_web_surface(
+    *,
+    cdp_endpoint: str,
+):
+    """Attach to an already-running Chromium exposing a CDP endpoint.
+
+    ``cdp_endpoint`` is either the plain ``http://host:port`` root that
+    ``--remote-debugging-port=port`` exposes, or the ``ws://.../devtools/...``
+    URL. Reuses the first context and its first page so the operator sees
+    exactly what the automation was driving.
+    """
+
+    async with async_playwright() as pw:
+        browser: Browser = await pw.chromium.connect_over_cdp(cdp_endpoint)
+        try:
+            context = (
+                browser.contexts[0]
+                if browser.contexts
+                else await browser.new_context()
+            )
+            page = context.pages[0] if context.pages else await context.new_page()
+            yield WebSurface(page)
+        finally:
+            # We only detach; the browser lifetime belongs to whoever launched
+            # it via ``--remote-debugging-port``. Closing it here would kill
+            # the automation side too.
+            try:
+                await browser.close()
+            except Exception:  # noqa: BLE001
+                pass
