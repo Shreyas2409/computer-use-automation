@@ -12,6 +12,7 @@ dependencies = [
     "playwright>=1.44",
     "pydantic>=2.6",
     "anthropic>=0.34",
+    "openai>=1.40",
     "pytest>=8.0",
     "python-dotenv>=1.0",
     "pyyaml>=6.0",

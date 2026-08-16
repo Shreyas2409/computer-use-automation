@@ -100,6 +100,32 @@ def test_no_anthropic_import_in_replay():
     )
 
 
+def test_no_openai_import_in_replay():
+    """Brief hard constraint (provider-portable): cua/replay.py must not
+    import the OpenAI SDK either.
+
+    Same rationale as the Anthropic guard: deterministic replay must never
+    reach for a model client of any flavour. The discovery loop is where
+    provider selection lives; replay is model-free.
+    """
+    repo_root = Path(__file__).resolve().parent.parent
+    replay_path = repo_root / "cua" / "replay.py"
+
+    if not replay_path.exists():
+        pytest.skip("replay.py not yet implemented")
+
+    content = replay_path.read_text()
+    assert "openai" not in content.lower(), (
+        "replay.py must not import the OpenAI SDK; no model in the replay loop"
+    )
+    assert "from openai" not in content, (
+        "replay.py must not import the OpenAI SDK; no model in the replay loop"
+    )
+    assert "import openai" not in content, (
+        "replay.py must not import the OpenAI SDK; no model in the replay loop"
+    )
+
+
 def test_no_playwright_import_in_policy():
     """Grep-based test: cua/policy.py must not import Playwright directly.
 
