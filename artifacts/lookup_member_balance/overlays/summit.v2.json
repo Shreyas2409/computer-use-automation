@@ -1,0 +1,13 @@
+{
+  "overlay_version": 2,
+  "base_capability": "lookup_member_balance",
+  "base_version": "2.0",
+  "tenant_id": "summit",
+  "patches": [
+    {"path": "target.tenant_id", "value": "summit"},
+    {"path": "target.base_url", "value": "http://localhost:8080/servicing"},
+    {"path": "steps[5].target.strategies[0].spec.name", "value": "Find Member"},
+    {"path": "steps[5].target.strategies[1].spec.text", "value": "Find Member"},
+    {"path": "steps[7].target.strategies[0].spec.text", "value": "Servicing Profile"}
+  ]
+}

@@ -71,16 +71,17 @@ Run the full test suite:
 
 ## Demo commands
 
-Every command below has been executed as part of the Wave-8 self-check.Reference evidence directories are indexed in `evidence/EVIDENCE.md`.
+Every command below has been executed.
+Reference evidence directories are indexed in `evidence/EVIDENCE.md`.
 
 ### Discovery (LLM drives the UI, compiles a new capability)
 
 ```
 # OpenAI provider (default model: gpt-5; latest committed run:
-# evidence/discovery_open_subaccount_20260818T024824Z/):
+# evidence/discovery_open_subaccount_20260818T173007Z/):
 .venv/bin/python -m cua discover \
   --provider openai \
-  --goal "Sign in as demo/demo123 at the login page found at http://localhost:8080/login. Then navigate to member 10001's profile via the member search. Click the link to open a new sub-account. On the sub-account form, choose Account type = Checking, enter Opening deposit = 25.00, and choose the first Funding source option available. Then call finish. The Submit button is gated by policy — do not attempt to submit; treat 'form filled and ready' as success." \
+  --goal "Log in to the servicing console at http://localhost:8080/login as demo/demo123 and open a new checking sub-account for member 10001 with a \$25.00 opening deposit. The Submit button is gated by policy — do not attempt to submit; treat the completed form as success and call finish." \
   --base-url http://localhost:8080 --tenant meridian \
   --app-id meridian_servicing_console --target-version 2024.03 \
   --capability-id open_subaccount \
@@ -118,7 +119,7 @@ Provider auto-detects from whichever key is present in `.env` when`--provider` i
 # 5. Cross-tenant replay under the Summit overlay
 #    (requires TENANT=summit target app on 8080):
 .venv/bin/python -m cua replay --capability-id lookup_member_balance \
-  --overlay artifacts/lookup_member_balance/overlays/summit.v1.json \
+  --overlay artifacts/lookup_member_balance/overlays/summit.json \
   --param member_id=10001 --param operator_password=demo123
 ```
 
@@ -143,13 +144,10 @@ Runs `cua replay --enable-escalation --inject-mode escalate` as asubprocess agai
   --param member_id=10001 --param operator_password=demo123
 
 # One-shot LLM demo: cold catalog → tool pick → invoke → summary.
-# Under the current OpenAI default (gpt-5) the demo needs an explicit
-# CUA_MODEL override because the standalone demo script pins the legacy
-# max_tokens API; gpt-4o accepts it directly:
-CUA_MODEL=gpt-4o .venv/bin/python demo_agent_invocation.py
+.venv/bin/python demo_agent_invocation.py
 ```
 
-`demo_agent_invocation.py` auto-detects the provider from whichever keyis set in `.env`; override with `DEMO_PROVIDER=anthropic|openai`. See`REPORT.md → Deviations & known limitations` for the gpt-5 API notes.
+`demo_agent_invocation.py` auto-detects the provider from whichever keyis set in `.env`; override with `DEMO_PROVIDER=anthropic|openai`.
 
 ### Operator console standalone
 

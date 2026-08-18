@@ -1,0 +1,211 @@
+{
+  "question": "What is member 10001's checking balance?",
+  "provider": "openai",
+  "model": "gpt-4o",
+  "catalog": [
+    {
+      "name": "lookup_member_balance",
+      "description": "Look up a member's balances. Signs into the Meridian servicing console, searches for a member by ID, opens the member profile, and returns the checking-account balance and member status. Handles nonexistent and restricted members as declared business outcomes. (v2.2, tenant=meridian)",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "member_id": {
+            "type": "string",
+            "description": "Member ID as printed on the servicing console (5-digit numeric).",
+            "x-sensitivity": "internal",
+            "example": "10001"
+          },
+          "operator_password": {
+            "type": "string",
+            "description": "Password for the demo servicing operator. Never appears in logs or evidence.",
+            "x-sensitivity": "secret"
+          },
+          "version": {
+            "type": "string",
+            "description": "Optional version pin. 'N' picks the highest approved N.x; 'N.M' pins an exact version. Defaults to highest approved."
+          },
+          "tenant_id": {
+            "type": "string",
+            "description": "Optional tenant id. When set, a matching TenantOverlay under artifacts/<capability>/overlays/<tenant>.v*.json is composed onto the base capability before replay."
+          }
+        },
+        "required": [
+          "member_id",
+          "operator_password"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "turns": [
+    {
+      "turn": 0,
+      "stop_reason": "tool_calls",
+      "text": "",
+      "tool_calls": [
+        {
+          "id": "call_w8dhN6RWiJdItZWkr7zZWZWF",
+          "name": "lookup_member_balance",
+          "arguments": "{\"member_id\": \"10001\", \"operator_password\": \"***REDACTED***\"}"
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "stop_reason": "stop",
+      "text": "Member 10001's checking balance is $2,850.43 and the member status is Active.",
+      "tool_calls": []
+    }
+  ],
+  "invocations": [
+    {
+      "name": "lookup_member_balance",
+      "input": {
+        "member_id": "10001",
+        "operator_password": "***REDACTED***"
+      },
+      "result": {
+        "capability_id": "lookup_member_balance",
+        "version": "2.2",
+        "tenant_id": "meridian",
+        "duration_ms": 927,
+        "steps": [
+          {
+            "step_index": 0,
+            "action": "navigate",
+            "status": "ok",
+            "matched_rung": null,
+            "recorded_rung": null,
+            "checkpoint_status": "ok",
+            "duration_ms": 74,
+            "detail": null
+          },
+          {
+            "step_index": 1,
+            "action": "type",
+            "status": "ok",
+            "matched_rung": "label",
+            "recorded_rung": "label",
+            "checkpoint_status": "skipped",
+            "duration_ms": 50,
+            "detail": null
+          },
+          {
+            "step_index": 2,
+            "action": "type",
+            "status": "ok",
+            "matched_rung": "label",
+            "recorded_rung": "label",
+            "checkpoint_status": "skipped",
+            "duration_ms": 94,
+            "detail": null
+          },
+          {
+            "step_index": 3,
+            "action": "click",
+            "status": "ok",
+            "matched_rung": "role_name",
+            "recorded_rung": "role_name",
+            "checkpoint_status": "ok",
+            "duration_ms": 155,
+            "detail": null
+          },
+          {
+            "step_index": 4,
+            "action": "type",
+            "status": "ok",
+            "matched_rung": "label",
+            "recorded_rung": "label",
+            "checkpoint_status": "skipped",
+            "duration_ms": 35,
+            "detail": null
+          },
+          {
+            "step_index": 5,
+            "action": "click",
+            "status": "ok",
+            "matched_rung": "role_name",
+            "recorded_rung": "role_name",
+            "checkpoint_status": "ok",
+            "duration_ms": 215,
+            "detail": null
+          },
+          {
+            "step_index": 6,
+            "action": "click",
+            "status": "ok",
+            "matched_rung": "role_name",
+            "recorded_rung": "role_name",
+            "checkpoint_status": "ok",
+            "duration_ms": 208,
+            "detail": null
+          },
+          {
+            "step_index": 7,
+            "action": "wait_for",
+            "status": "ok",
+            "matched_rung": "role_name",
+            "recorded_rung": "text",
+            "checkpoint_status": "ok",
+            "duration_ms": 77,
+            "detail": null
+          }
+        ],
+        "rung_drift": [
+          {
+            "step_index": 1,
+            "recorded_match": "label",
+            "replay_match": "label",
+            "drifted": false
+          },
+          {
+            "step_index": 2,
+            "recorded_match": "label",
+            "replay_match": "label",
+            "drifted": false
+          },
+          {
+            "step_index": 3,
+            "recorded_match": "role_name",
+            "replay_match": "role_name",
+            "drifted": false
+          },
+          {
+            "step_index": 4,
+            "recorded_match": "label",
+            "replay_match": "label",
+            "drifted": false
+          },
+          {
+            "step_index": 5,
+            "recorded_match": "role_name",
+            "replay_match": "role_name",
+            "drifted": false
+          },
+          {
+            "step_index": 6,
+            "recorded_match": "role_name",
+            "replay_match": "role_name",
+            "drifted": false
+          },
+          {
+            "step_index": 7,
+            "recorded_match": "text",
+            "replay_match": "role_name",
+            "drifted": true
+          }
+        ],
+        "recovery_events": [],
+        "evidence_dir": "/Users/shreyashosagurgachndrashekhar/intent/workspaces/peaceful-halibut/repo/evidence/replay_lookup_member_balance_meridian_20260818T032418Z",
+        "interventions": [],
+        "status": "ok",
+        "outputs": {
+          "checking_balance": 285043,
+          "member_status": "Active"
+        },
+        "exit_code": 0
+      }
+    }
+  ],
+  "final_answer": "Member 10001's checking balance is $2,850.43 and the member status is Active."
+}

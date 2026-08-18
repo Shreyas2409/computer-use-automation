@@ -3,8 +3,8 @@
   "capability_id": "open_subaccount",
   "version_major": 1,
   "version_minor": 0,
-  "title": "Prepare New Checking Sub-Account (No Submit)",
-  "description": "Signs into the app, navigates to the specified member profile, and opens the New Sub-Account form. It selects Account type = Checking, inputs Opening deposit = 25.00, and chooses the first available Funding source. The run ends with the form filled and ready; it does not submit due to policy.",
+  "title": "Prepare Checking Sub-Account Form (No Submit)",
+  "description": "Logs into the servicing console, locates the target member, and opens the New Sub-Account form. It selects Checking, enters a $25.00 opening deposit, and chooses a funding source, then stops before submission per policy. Treat the completed form state as success and call finish.",
   "target": {
     "app_id": "meridian_servicing_console",
     "base_url": "http://localhost:8080",
@@ -17,7 +17,7 @@
       "name": "member_id",
       "type": "integer",
       "required": true,
-      "description": "Target member ID to locate the member profile and open a new sub-account.",
+      "description": "Numeric member ID to locate the member and open the sub-account form.",
       "example": 12345,
       "sensitivity": "internal"
     },
@@ -25,8 +25,8 @@
       "name": "operator_password",
       "type": "string",
       "required": true,
-      "description": "Operator password used to sign in as the demo user.",
-      "example": "example-password",
+      "description": "Password for the servicing console operator account used to sign in.",
+      "example": "example-secret",
       "sensitivity": "secret"
     }
   ],
@@ -39,7 +39,7 @@
       "value": "http://localhost:8080/login",
       "checkpoint": null,
       "on_error": [],
-      "notes": "Open the app’s login page to sign in with demo/demo123."
+      "notes": "Open the servicing console login page to begin the task."
     },
     {
       "index": 1,
@@ -82,7 +82,7 @@
       "value": "demo",
       "checkpoint": null,
       "on_error": [],
-      "notes": "Enter the provided demo username to sign in."
+      "notes": "Enter the provided username to log in."
     },
     {
       "index": 2,
@@ -127,7 +127,7 @@
       },
       "checkpoint": null,
       "on_error": [],
-      "notes": "Enter the provided demo password to sign in."
+      "notes": "Enter the provided password to log in."
     },
     {
       "index": 3,
@@ -170,19 +170,10 @@
       "value": "\n",
       "checkpoint": null,
       "on_error": [],
-      "notes": "Press Enter in the password field to submit the sign-in form since the button has no accessible name."
+      "notes": "Submit the sign-in form by pressing Enter in the password field since the button has no accessible name."
     },
     {
       "index": 4,
-      "action": "navigate",
-      "target": null,
-      "value": "http://localhost:8080/members",
-      "checkpoint": null,
-      "on_error": [],
-      "notes": "Ensure the members landing page is fully loaded after login so I can use the member search."
-    },
-    {
-      "index": 5,
       "action": "type",
       "target": {
         "strategies": [
@@ -224,10 +215,10 @@
       },
       "checkpoint": null,
       "on_error": [],
-      "notes": "Enter the target member ID to navigate to the member’s profile."
+      "notes": "Enter the target member ID to search for the member."
     },
     {
-      "index": 6,
+      "index": 5,
       "action": "type",
       "target": {
         "strategies": [
@@ -267,40 +258,40 @@
       "value": "\n",
       "checkpoint": null,
       "on_error": [],
-      "notes": "Press Enter in the Member ID field to submit the member search for 10001."
+      "notes": "Submit the Member Search form by pressing Enter in the Member ID field."
     },
     {
-      "index": 7,
+      "index": 6,
       "action": "wait_for",
       "target": {
         "strategies": [
           {
             "kind": "role_name",
             "spec": {
-              "role": "textbox",
-              "name": "Member ID"
+              "role": "link",
+              "name": "Sign out"
             },
             "durability": 95
           },
           {
-            "kind": "label",
+            "kind": "text",
             "spec": {
-              "label": "Member ID"
+              "text": "Sign out"
             },
-            "durability": 85
+            "durability": 75
           },
           {
             "kind": "css",
             "spec": {
-              "selector": "#ctl00_MainContent_txtMemberId"
+              "selector": "a"
             },
             "durability": 40
           },
           {
             "kind": "coordinates",
             "spec": {
-              "x": 177,
-              "y": 123
+              "x": 1241,
+              "y": 20
             },
             "durability": 20
           }
@@ -310,10 +301,10 @@
       "value": null,
       "checkpoint": null,
       "on_error": [],
-      "notes": "Wait for the member search field (or page) to stabilize after submitting the search."
+      "notes": "Wait for the member page to render after submitting the search; the signed-in header should include this link."
     },
     {
-      "index": 8,
+      "index": 7,
       "action": "click",
       "target": {
         "strategies": [
@@ -359,10 +350,10 @@
         }
       },
       "on_error": [],
-      "notes": "Open member 10001’s profile from the search results."
+      "notes": "Open the member 10001 details page to manage accounts and create a new sub-account."
     },
     {
-      "index": 9,
+      "index": 8,
       "action": "click",
       "target": {
         "strategies": [
@@ -408,10 +399,10 @@
         }
       },
       "on_error": [],
-      "notes": "Begin creating a new sub-account for member 10001."
+      "notes": "Begin creating a new sub-account for the member."
     },
     {
-      "index": 10,
+      "index": 9,
       "action": "select",
       "target": {
         "strategies": [
@@ -458,10 +449,10 @@
       "value": "Checking",
       "checkpoint": null,
       "on_error": [],
-      "notes": "Set the sub-account type to Checking as requested."
+      "notes": "Set the new sub-account type to Checking as requested."
     },
     {
-      "index": 11,
+      "index": 10,
       "action": "type",
       "target": {
         "strategies": [
@@ -501,10 +492,10 @@
       "value": 25,
       "checkpoint": null,
       "on_error": [],
-      "notes": "Enter the required opening deposit amount of $25.00."
+      "notes": "Enter the required opening deposit amount for the new checking sub-account."
     },
     {
-      "index": 12,
+      "index": 11,
       "action": "select",
       "target": {
         "strategies": [
@@ -548,22 +539,22 @@
         ],
         "recorded_match": "role_name"
       },
-      "value": "Checking ****4417",
+      "value": "Savings ****9022",
       "checkpoint": null,
       "on_error": [],
-      "notes": "Choose the first available funding source option as requested."
+      "notes": "Select a valid funding source to complete the required fields of the sub-account form."
     }
   ],
   "outcomes": [
     {
-      "name": "sub_account_form_ready",
+      "name": "form_prepared",
       "detect": {
         "kind": "url_pattern",
-        "pattern": ".*sub-?account.*new.*"
+        "pattern": ".*/members/[0-9]+/subaccounts/new.*"
       },
       "classification": "business_outcome",
       "terminal": true,
-      "message": "Sub-account form filled for the target member (Checking, $25.00, first funding source) and ready; submission intentionally not attempted."
+      "message": "Checking sub-account form prepared with $25.00 opening deposit and funding source selected (not submitted by policy)."
     },
     {
       "name": "member_not_found",
@@ -574,7 +565,7 @@
       },
       "classification": "recoverable",
       "terminal": false,
-      "message": "The member search did not return a matching member."
+      "message": "Member not found; verify the member ID and try again."
     },
     {
       "name": "invalid_credentials",
@@ -585,10 +576,10 @@
       },
       "classification": "hard_failure",
       "terminal": true,
-      "message": "Sign-in failed due to invalid username or password."
+      "message": "Login failed due to invalid credentials."
     }
   ],
   "approval": "draft",
-  "recorded_at": "2026-08-18T02:50:54.557369Z",
+  "recorded_at": "2026-08-18T17:36:04.904298Z",
   "recorded_by": "llm_discovery"
 }

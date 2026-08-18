@@ -171,8 +171,8 @@ def test_compose_with_matching_pinned_version_succeeds():
 
 
 def test_compose_from_file_summit_overlay():
-    """Load and compose the committed summit.v1.json overlay."""
-    overlay_path = ARTIFACTS / "lookup_member_balance" / "overlays" / "summit.v1.json"
+    """Load and compose the committed summit.v2.json overlay."""
+    overlay_path = ARTIFACTS / "lookup_member_balance" / "overlays" / "summit.v2.json"
     assert overlay_path.exists(), f"summit overlay not found at {overlay_path}"
 
     overlay_data = json.loads(overlay_path.read_text())
@@ -198,7 +198,7 @@ def test_summit_overlay_patches_every_meridian_string():
     overlay must patch every one of them so the composed capability would pass
     its checkpoints against the summit tenant.
     """
-    overlay_path = ARTIFACTS / "lookup_member_balance" / "overlays" / "summit.v1.json"
+    overlay_path = ARTIFACTS / "lookup_member_balance" / "overlays" / "summit.v2.json"
     overlay = TenantOverlay.model_validate(json.loads(overlay_path.read_text()))
     base = load("lookup_member_balance", version="2.0")
     composed = compose(base, overlay)
