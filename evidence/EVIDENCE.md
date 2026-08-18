@@ -19,7 +19,7 @@ Reproduce any single item with the command in the last column — see
 | 4 | Hard-failure replay (`?inject=500`) | `replay_lookup_member_balance_meridian_20260816T064006Z/` | Server 500 injected after step 3. `server_error` outcome node (classification `hard_failure`) matches; JSON status `failed`, process exit code `2`. Screenshots: `step_04_action_error.png` and `step_04_outcome_server_error.png`. | `.venv/bin/python -m cua replay --capability-id lookup_member_balance --param member_id=10001 --param operator_password=demo123 --inject-mode 500 --inject-after-step 3` |
 | 5 | Interstitial-recovery replay (`?inject=dialog`) | `replay_lookup_member_balance_meridian_20260816T180812Z/` | Servicing-terms dialog injected between steps 3 and 4. The `dismiss_dialog` recovery rule attached to step 5 (search-button click) fires, the dialog is dismissed, replay resumes, run ends `ok`. `evidence.json` records `recovery_triggered` and a subsequent `step_ok` on step 5. | `.venv/bin/python -m cua replay --capability-id lookup_member_balance --param member_id=10001 --param operator_password=demo123 --inject-mode dialog --inject-after-step 3` |
 | 6 | Intervention with handoff + resume | `live_escalation_20260816T182729Z/` + companion `replay_lookup_member_balance_meridian_20260816T182729Z/` | Full lease cycle `AUTOMATION → PENDING_HANDOFF → HUMAN → RESUMING → AUTOMATION`, driven by the auditor script against the real operator console. `manifest.json` stitches the replay evidence dir to the console `/state` timeline; `final_operator_state.json` shows the terminal lease state; `driver_cycle_log.json` records every polling step. | `.venv/bin/python scripts/live_escalation_demo.py` |
-| 7 | Agent catalog invocation (LLM picks tool cold from catalog) | `agent_catalog_invocation_20260816T182447Z/` | `gpt-4o` given only the catalog + one question; it picked `lookup_member_balance`, filled typed args, called it through the replay engine, and summarised the result. `transcript.json` is clean — the secret `operator_password` param is `***REDACTED***` in every recorded arguments blob and no schema `example` value for a `sensitivity=secret` field is published. | `.venv/bin/python demo_agent_invocation.py` |
+| 7 | Agent catalog invocation (LLM picks tool cold from catalog) | `agent_catalog_invocation_20260818T175556Z/` | `gpt-5`, the default model, given only the catalog + one question; it picked `lookup_member_balance`, filled typed args, called it through the replay engine, and summarised the result. `transcript.json` is clean — the secret `operator_password` param is `***REDACTED***` in every recorded arguments blob (including the raw `tool_calls[].arguments` string) and no schema `example` value for a `sensitivity=secret` field is published. | `.venv/bin/python demo_agent_invocation.py` |
 | 8 | Cross-tenant replay under the Summit overlay | `replay_lookup_member_balance_summit_20260816T180943Z/` | Same base capability composed with `artifacts/lookup_member_balance/overlays/summit.v2.json`. `base_url` becomes `http://localhost:8080/servicing`, tenant labels differ (`Find Member`, `Servicing Profile`), same data + flow, same success outcome. Demonstrates the overlay compose path in production. | `TENANT=summit .venv/bin/python -m target_app.app` (start the Summit instance first), then `.venv/bin/python -m cua replay --capability-id lookup_member_balance --overlay artifacts/lookup_member_balance/overlays/summit.v2.json --param member_id=10001 --param operator_password=demo123` |
 
 ## Superseded (removed)
@@ -27,9 +27,19 @@ Reproduce any single item with the command in the last column — see
 - `agent_catalog_invocation_20260816T063815Z/` — recorded before the catalog
   redaction fix landed. It leaked the operator-password value both as a
   published `example` on a `sensitivity=secret` param and as a raw
-  `tool_calls[].arguments` string in the model transcript. The clean
-  replacement is `agent_catalog_invocation_20260816T182447Z/` (item 7). See
-  `../REPORT.md → Safety`.
+  `tool_calls[].arguments` string in the model transcript.
+
+- `agent_catalog_invocation_20260816T182447Z/`, plus two undocumented reruns
+  (`...20260818T031124Z/`, `...20260818T032415Z/`) — all recorded on `gpt-4o`
+  via a `CUA_MODEL` override, before `demo_agent_invocation.py` was refactored
+  to go through `cua/llm.py`. Superseded because the default model changed
+  (see `../REPORT.md → Architecture`) and because the refactor's rewrite of
+  the transcript writer's `_shared_loop` dropped the call to
+  `_redact_arguments_string`/`_redact_anthropic_content` — both helpers stayed
+  unit-tested but unwired, so a fresh run under the current code leaked the
+  raw password into `turns[]`. Fixed by wiring both helpers back in. The
+  clean replacement, verified on the current default model with the fix
+  applied, is `agent_catalog_invocation_20260818T175556Z/` (item 7).
 
 - `discovery_open_subaccount_20260816T063050Z/`,
   `discovery_open_subaccount_20260816T063154Z/`,
@@ -52,7 +62,7 @@ redaction failures:
    operator. Every accessibility snapshot captured after navigating to
    `/login` includes that help label verbatim.
 2. **Goal-string echoes** — the discovery `--goal` string (which the
-   operator wrote) reads `"Sign in as demo/demo123 …"` to help the model
+   operator wrote) reads `"...as demo/demo123..."` to help the model
    pick the right credentials; that goal text is embedded in every
    user-turn message the model receives, so it appears in each `user`
    turn of `transcript.json`.

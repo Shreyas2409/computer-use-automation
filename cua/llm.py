@@ -272,7 +272,7 @@ class OpenAIClient(ProviderClient):
             model=self.model,
             max_completion_tokens=max_tokens * 4,
             tools=self.tools,
-            tool_choice="required",
+            tool_choice="auto",
             parallel_tool_calls=False,
             messages=self.messages,
         )

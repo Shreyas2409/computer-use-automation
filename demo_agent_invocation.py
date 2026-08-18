@@ -180,6 +180,22 @@ async def _run_tool_call(name: str, args: dict, transcript: dict) -> dict:
     return _agent_facing_result(result)
 
 
+def _redact_assistant_serialized(serialized: dict) -> dict:
+    """Scrub secret params out of a Turn's raw provider payload before it is
+    written to disk. OpenAI carries them in ``tool_calls[].arguments`` (a raw
+    JSON string); Anthropic carries them in ``content[]`` tool_use blocks."""
+
+    redacted = dict(serialized)
+    if redacted.get("provider") == "openai" and redacted.get("tool_calls"):
+        redacted["tool_calls"] = [
+            {**tc, "arguments": _redact_arguments_string(tc.get("arguments", ""))}
+            for tc in redacted["tool_calls"]
+        ]
+    elif redacted.get("provider") == "anthropic" and redacted.get("content"):
+        redacted["content"] = _redact_anthropic_content(redacted["content"])
+    return redacted
+
+
 async def _shared_loop(client, question, transcript):
     user_text = question
     for turn_idx in range(MAX_AGENT_TURNS):
@@ -188,7 +204,7 @@ async def _shared_loop(client, question, transcript):
             "turn": turn_idx,
             "stop_reason": turn.stop_reason,
             "text": turn.text,
-            "assistant_serialized": turn.assistant_serialized
+            "assistant_serialized": _redact_assistant_serialized(turn.assistant_serialized)
         })
         
         if turn.stop_reason != "tool_use":

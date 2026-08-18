@@ -119,7 +119,7 @@ Provider auto-detects from whichever key is present in `.env` when`--provider` i
 # 5. Cross-tenant replay under the Summit overlay
 #    (requires TENANT=summit target app on 8080):
 .venv/bin/python -m cua replay --capability-id lookup_member_balance \
-  --overlay artifacts/lookup_member_balance/overlays/summit.json \
+  --overlay artifacts/lookup_member_balance/overlays/summit.v2.json \
   --param member_id=10001 --param operator_password=demo123
 ```
 
