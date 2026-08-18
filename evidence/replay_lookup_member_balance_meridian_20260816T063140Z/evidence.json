@@ -1,0 +1,129 @@
+[
+  {
+    "timestamp": "2026-08-16T06:31:41.220344",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "lookup_member_balance",
+      "version": "2.2",
+      "tenant_id": "meridian",
+      "base_url": "http://localhost:8080",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": "500"
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:41.274607",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "ok",
+      "duration_ms": 53,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:41.302615",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 27,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:41.345129",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 42,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:41.441156",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 95,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:41.441189",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "inject_query_applied",
+    "error": null,
+    "metadata": {
+      "mode": "500",
+      "url": "http://localhost:8080/members?inject=500"
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:59.528152",
+    "phase": "replay",
+    "step_index": 4,
+    "action": null,
+    "message": "outcome_detected",
+    "error": null,
+    "metadata": {
+      "name": "server_error",
+      "classification": "hard_failure",
+      "terminal": true
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:59.557557",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayHardFailure",
+      "result": {
+        "kind": "ReplayHardFailure",
+        "exit_code": 2,
+        "capability_id": "lookup_member_balance",
+        "version": "2.2",
+        "tenant_id": "meridian",
+        "duration_ms": 18309,
+        "step_count": 5,
+        "recovery_count": 0,
+        "outcome_name": "server_error",
+        "error": "Target app returned a 500; capture evidence and fail."
+      }
+    }
+  }
+]

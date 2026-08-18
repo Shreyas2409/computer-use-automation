@@ -1,0 +1,177 @@
+[
+  {
+    "timestamp": "2026-08-16T06:36:34.135458",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "lookup_member_balance",
+      "version": "2.2",
+      "tenant_id": "meridian",
+      "base_url": "http://localhost:8080",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.182425",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "ok",
+      "duration_ms": 46,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.214523",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 32,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.261338",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 46,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.348403",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 87,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.367826",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 19,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.451752",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 83,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.521553",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 69,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.542619",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "wait_for",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "text",
+      "checkpoint": "ok",
+      "duration_ms": 21,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.546615",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_success",
+    "error": null,
+    "metadata": {
+      "outputs": [
+        "checking_balance",
+        "member_status"
+      ],
+      "duration_ms": 411
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:36:34.546651",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplaySuccess",
+      "result": {
+        "kind": "ReplaySuccess",
+        "exit_code": 0,
+        "capability_id": "lookup_member_balance",
+        "version": "2.2",
+        "tenant_id": "meridian",
+        "duration_ms": 411,
+        "step_count": 8,
+        "recovery_count": 0
+      }
+    }
+  }
+]

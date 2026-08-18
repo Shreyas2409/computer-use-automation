@@ -1,0 +1,594 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "open_subaccount",
+  "version_major": 1,
+  "version_minor": 0,
+  "title": "Prepare New Checking Sub-Account (No Submit)",
+  "description": "Signs into the app, navigates to the specified member profile, and opens the New Sub-Account form. It selects Account type = Checking, inputs Opening deposit = 25.00, and chooses the first available Funding source. The run ends with the form filled and ready; it does not submit due to policy.",
+  "target": {
+    "app_id": "meridian_servicing_console",
+    "base_url": "http://localhost:8080",
+    "tenant_id": "meridian",
+    "target_version": "2024.03",
+    "surface_kind": "legacy_web"
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "integer",
+      "required": true,
+      "description": "Target member ID to locate the member profile and open a new sub-account.",
+      "example": 12345,
+      "sensitivity": "internal"
+    },
+    {
+      "name": "operator_password",
+      "type": "string",
+      "required": true,
+      "description": "Operator password used to sign in as the demo user.",
+      "example": "example-password",
+      "sensitivity": "secret"
+    }
+  ],
+  "outputs": [],
+  "steps": [
+    {
+      "index": 0,
+      "action": "navigate",
+      "target": null,
+      "value": "http://localhost:8080/login",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Open the app’s login page to sign in with demo/demo123."
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Username"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Username"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtUsername"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 171,
+              "y": 123
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": "demo",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the provided demo username to sign in."
+    },
+    {
+      "index": 2,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Password"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Password"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtPassword"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 171,
+              "y": 154
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": {
+        "param": "operator_password"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the provided demo password to sign in."
+    },
+    {
+      "index": 3,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Password"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Password"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtPassword"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 171,
+              "y": 154
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": "\n",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Press Enter in the password field to submit the sign-in form since the button has no accessible name."
+    },
+    {
+      "index": 4,
+      "action": "navigate",
+      "target": null,
+      "value": "http://localhost:8080/members",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Ensure the members landing page is fully loaded after login so I can use the member search."
+    },
+    {
+      "index": 5,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Member ID"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Member ID"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtMemberId"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 177,
+              "y": 123
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": {
+        "param": "member_id"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the target member ID to navigate to the member’s profile."
+    },
+    {
+      "index": 6,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Member ID"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Member ID"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtMemberId"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 177,
+              "y": 123
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": "\n",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Press Enter in the Member ID field to submit the member search for 10001."
+    },
+    {
+      "index": 7,
+      "action": "wait_for",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Member ID"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Member ID"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtMemberId"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 177,
+              "y": 123
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Wait for the member search field (or page) to stabilize after submitting the search."
+    },
+    {
+      "index": 8,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "View"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "View"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 355,
+              "y": 183
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to http://localhost:8080/members/10001",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/10001"
+        }
+      },
+      "on_error": [],
+      "notes": "Open member 10001’s profile from the search results."
+    },
+    {
+      "index": 9,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Open Sub-Account"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Open Sub-Account"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_lnkOpenSubaccount"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 73,
+              "y": 318
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to http://localhost:8080/members/10001/subaccount",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/10001/subaccount"
+        }
+      },
+      "on_error": [],
+      "notes": "Begin creating a new sub-account for member 10001."
+    },
+    {
+      "index": 10,
+      "action": "select",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "combobox",
+              "name": "Account type"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Account type"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "-- select --\n          Checking\n          Savings\n          Money Market"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_ddlAccountType"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 211,
+              "y": 150
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": "Checking",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Set the sub-account type to Checking as requested."
+    },
+    {
+      "index": 11,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "textbox",
+              "name": "Opening deposit"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Opening deposit"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_txtOpeningDeposit"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 233,
+              "y": 181
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": 25,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the required opening deposit amount of $25.00."
+    },
+    {
+      "index": 12,
+      "action": "select",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "combobox",
+              "name": "Funding source"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "label",
+            "spec": {
+              "label": "Funding source"
+            },
+            "durability": 85
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "-- select --\n          \n          \n            Checking ****4417\n          \n    "
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "#ctl00_MainContent_ddlFundingSource"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 229,
+              "y": 243
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": "Checking ****4417",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Choose the first available funding source option as requested."
+    }
+  ],
+  "outcomes": [
+    {
+      "name": "sub_account_form_ready",
+      "detect": {
+        "kind": "url_pattern",
+        "pattern": ".*sub-?account.*new.*"
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "Sub-account form filled for the target member (Checking, $25.00, first funding source) and ready; submission intentionally not attempted."
+    },
+    {
+      "name": "member_not_found",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Member not found",
+        "case_sensitive": false
+      },
+      "classification": "recoverable",
+      "terminal": false,
+      "message": "The member search did not return a matching member."
+    },
+    {
+      "name": "invalid_credentials",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Invalid username or password",
+        "case_sensitive": false
+      },
+      "classification": "hard_failure",
+      "terminal": true,
+      "message": "Sign-in failed due to invalid username or password."
+    }
+  ],
+  "approval": "draft",
+  "recorded_at": "2026-08-18T02:50:54.557369Z",
+  "recorded_by": "llm_discovery"
+}

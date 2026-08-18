@@ -1,0 +1,14 @@
+{
+  "generated_at": "20260816T182704Z",
+  "replay_exit_code": 0,
+  "replay_evidence_dir": null,
+  "lease_final_state": "AUTOMATION",
+  "lease_transition_kinds": [
+    "PENDING_HANDOFF",
+    "HUMAN",
+    "RESUMING",
+    "AUTOMATION"
+  ],
+  "full_cycle_observed": true,
+  "interventions": null
+}

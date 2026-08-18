@@ -1,0 +1,177 @@
+[
+  {
+    "timestamp": "2026-08-16T06:30:57.820750",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "lookup_member_balance",
+      "version": "2.2",
+      "tenant_id": "summit",
+      "base_url": "http://localhost:8080/servicing",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:30:57.885031",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "ok",
+      "duration_ms": 64,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:30:57.922646",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 37,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:30:57.965162",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 42,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:30:58.050459",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 85,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:30:58.074364",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 23,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:10.180410",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "css",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 12105,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:10.234135",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 53,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:10.254302",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "wait_for",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "text",
+      "checkpoint": "ok",
+      "duration_ms": 20,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:10.259045",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_success",
+    "error": null,
+    "metadata": {
+      "outputs": [
+        "checking_balance",
+        "member_status"
+      ],
+      "duration_ms": 12438
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:31:10.259092",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplaySuccess",
+      "result": {
+        "kind": "ReplaySuccess",
+        "exit_code": 0,
+        "capability_id": "lookup_member_balance",
+        "version": "2.2",
+        "tenant_id": "summit",
+        "duration_ms": 12438,
+        "step_count": 8,
+        "recovery_count": 0
+      }
+    }
+  }
+]

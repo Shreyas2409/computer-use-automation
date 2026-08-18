@@ -1,0 +1,160 @@
+[
+  {
+    "timestamp": "2026-08-18T03:05:48.549030",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "lookup_member_balance",
+      "version": "2.2",
+      "tenant_id": "meridian",
+      "base_url": "http://localhost:8080",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": "dialog"
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:48.703603",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "ok",
+      "duration_ms": 154,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:48.773416",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 69,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:48.827408",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 53,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:48.917430",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 89,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:48.939291",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 21,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:48.939318",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "inject_query_applied",
+    "error": null,
+    "metadata": {
+      "mode": "dialog",
+      "url": "http://localhost:8080/members?inject=dialog"
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:55.139218",
+    "phase": "replay",
+    "step_index": 5,
+    "action": null,
+    "message": "recovery_triggered",
+    "error": null,
+    "metadata": {
+      "rule": "dismiss_dialog",
+      "trigger": "text~'Please confirm you have read'",
+      "attempt": 1,
+      "success": true,
+      "step_error": "TimeoutError: Locator.click: Timeout 6000ms exceeded.\nCall log:\n  - waiting for get_by_role(\"button\", name=\"Search\", exact=True).first\n    - locator resolved to <input type=\"submit\" value=\"Search\" id="
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:56.826430",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "click",
+    "message": "replay_hard_failure",
+    "error": "checkpoint_failed",
+    "metadata": {
+      "expected": "Search results table rendered (or a no-match notice).",
+      "observed": "element_present[css] did not fire",
+      "outcome_name": null,
+      "screenshot": "/Users/shreyashosagurgachndrashekhar/intent/workspaces/peaceful-halibut/repo/evidence/replay_lookup_member_balance_meridian_20260818T030546Z/step_05_failed.png"
+    }
+  },
+  {
+    "timestamp": "2026-08-18T03:05:56.826491",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayHardFailure",
+      "result": {
+        "kind": "ReplayHardFailure",
+        "exit_code": 2,
+        "capability_id": "lookup_member_balance",
+        "version": "2.2",
+        "tenant_id": "meridian",
+        "duration_ms": 8279,
+        "step_count": 6,
+        "recovery_count": 1,
+        "outcome_name": null,
+        "error": "checkpoint_failed"
+      }
+    }
+  }
+]

@@ -1,0 +1,177 @@
+[
+  {
+    "timestamp": "2026-08-16T06:42:37.991545",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "lookup_member_balance",
+      "version": "2.2",
+      "tenant_id": "meridian",
+      "base_url": "http://localhost:8080",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.121821",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "ok",
+      "duration_ms": 130,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.200015",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 78,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.262920",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 62,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.348974",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 85,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.372574",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 23,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.464035",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 91,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.552061",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 87,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.577377",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "wait_for",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "text",
+      "checkpoint": "ok",
+      "duration_ms": 25,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.592788",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_success",
+    "error": null,
+    "metadata": {
+      "outputs": [
+        "checking_balance",
+        "member_status"
+      ],
+      "duration_ms": 602
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:38.593138",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplaySuccess",
+      "result": {
+        "kind": "ReplaySuccess",
+        "exit_code": 0,
+        "capability_id": "lookup_member_balance",
+        "version": "2.2",
+        "tenant_id": "meridian",
+        "duration_ms": 602,
+        "step_count": 8,
+        "recovery_count": 0
+      }
+    }
+  }
+]

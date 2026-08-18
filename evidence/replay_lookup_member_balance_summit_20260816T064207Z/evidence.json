@@ -1,0 +1,58 @@
+[
+  {
+    "timestamp": "2026-08-16T06:42:09.572873",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "lookup_member_balance",
+      "version": "2.0",
+      "tenant_id": "summit",
+      "base_url": "http://localhost:8080/servicing",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:09.745189",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "replay_hard_failure",
+    "error": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/login\nCall log:\n  - navigating to \"http://localhost:8080/login\", waiting until \"domcontentloaded\"\n",
+    "metadata": {
+      "expected": "navigate to succeed",
+      "observed": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/login\nCall log:\n  - navigating to \"http://localhost:8080/login\", waiting until \"domcontentloaded\"\n",
+      "outcome_name": null,
+      "screenshot": "/Users/shreyashosagurgachndrashekhar/intent/workspaces/peaceful-halibut/repo/evidence/replay_lookup_member_balance_summit_20260816T064207Z/step_00_failed.png"
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:09.745239",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayHardFailure",
+      "result": {
+        "kind": "ReplayHardFailure",
+        "exit_code": 2,
+        "capability_id": "lookup_member_balance",
+        "version": "2.0",
+        "tenant_id": "summit",
+        "duration_ms": 172,
+        "step_count": 1,
+        "recovery_count": 0,
+        "outcome_name": null,
+        "error": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/login\nCall log:\n  - navigating to \"http://localhost:8080/login\", waiting until \"domcontentloaded\"\n"
+      }
+    }
+  }
+]

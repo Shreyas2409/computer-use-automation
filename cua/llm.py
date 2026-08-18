@@ -29,7 +29,7 @@ from typing import Any
 
 DEFAULT_MODELS: dict[str, str] = {
     "anthropic": "claude-sonnet-5",
-    "openai": "gpt-4o",
+    "openai": "gpt-5",
 }
 
 _KNOWN_PROVIDERS = ("anthropic", "openai")
@@ -270,7 +270,7 @@ class OpenAIClient(ProviderClient):
         self.messages.append({"role": "user", "content": user_text})
         resp = self._client.chat.completions.create(
             model=self.model,
-            max_tokens=max_tokens,
+            max_completion_tokens=max_tokens * 4,
             tools=self.tools,
             tool_choice="required",
             parallel_tool_calls=False,
@@ -294,7 +294,7 @@ class OpenAIClient(ProviderClient):
 
         asst_entry: dict[str, Any] = {
             "role": "assistant",
-            "content": text if text else None,
+            "content": text or "",
         }
         if raw_tool_calls:
             asst_entry["tool_calls"] = [
@@ -344,7 +344,8 @@ class OpenAIClient(ProviderClient):
     ) -> str:
         resp = self._client.chat.completions.create(
             model=self.model,
-            max_tokens=max_tokens,
+            max_completion_tokens=max_tokens * 4,
+            response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": user_text},

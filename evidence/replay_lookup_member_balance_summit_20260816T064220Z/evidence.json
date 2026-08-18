@@ -1,0 +1,146 @@
+[
+  {
+    "timestamp": "2026-08-16T06:42:22.081007",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "lookup_member_balance",
+      "version": "2.2",
+      "tenant_id": "summit",
+      "base_url": "http://localhost:8080/servicing",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.258186",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "ok",
+      "duration_ms": 177,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.323029",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 64,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.390962",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 67,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.492541",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 101,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.516363",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint": "skipped",
+      "duration_ms": 23,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.601282",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 84,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.673490",
+    "phase": "replay",
+    "step_index": 6,
+    "action": null,
+    "message": "outcome_detected",
+    "error": null,
+    "metadata": {
+      "name": "member_restricted",
+      "classification": "business_outcome",
+      "terminal": true
+    }
+  },
+  {
+    "timestamp": "2026-08-16T06:42:22.715576",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayBusinessOutcome",
+      "result": {
+        "kind": "ReplayBusinessOutcome",
+        "exit_code": 0,
+        "capability_id": "lookup_member_balance",
+        "version": "2.2",
+        "tenant_id": "summit",
+        "duration_ms": 593,
+        "step_count": 7,
+        "recovery_count": 0,
+        "outcome_name": "member_restricted"
+      }
+    }
+  }
+]

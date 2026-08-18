@@ -1,0 +1,108 @@
+[
+  {
+    "phase": "operator_up"
+  },
+  {
+    "phase": "pending_seen",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "pending",
+        "state": "PENDING_HANDOFF",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-16T18:27:06.312140+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: action 'click' failed: RuntimeError: injected escalate: forcing operator handoff at step 3 (click)",
+            "to_state": "PENDING_HANDOFF"
+          }
+        ]
+      },
+      "pending": {
+        "capability_id": "lookup_member_balance",
+        "evidence_dir": "/Users/shreyashosagurgachndrashekhar/intent/workspaces/peaceful-halibut/repo/evidence/replay_lookup_member_balance_meridian_20260816T182704Z",
+        "goal": "Look up a member's balances",
+        "intervention_id": "iv_1263e4e09cba6d66",
+        "reason": "action 'click' failed: RuntimeError: injected escalate: forcing operator handoff at step 3 (click)",
+        "screenshot_path": "/Users/shreyashosagurgachndrashekhar/intent/workspaces/peaceful-halibut/repo/evidence/replay_lookup_member_balance_meridian_20260816T182704Z/intervention_iv_1263e4e09cba6d66.png",
+        "state_summary": {
+          "kind": "action_failed",
+          "page_text_length": 180,
+          "steps_completed": 3,
+          "url": "http://localhost:8080/login"
+        },
+        "step_index": 3,
+        "tenant_id": "meridian",
+        "version": "2.2"
+      }
+    }
+  },
+  {
+    "phase": "take_control",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-16T18:27:06.539731+00:00",
+        "from_state": "PENDING_HANDOFF",
+        "reason": "operator took control",
+        "to_state": "HUMAN"
+      }
+    }
+  },
+  {
+    "phase": "hand_back",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-16T18:27:06.540909+00:00",
+        "from_state": "HUMAN",
+        "reason": "auditor script drove full lease cycle end-to-end",
+        "to_state": "RESUMING"
+      }
+    }
+  },
+  {
+    "phase": "post_handback",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "automation",
+        "state": "AUTOMATION",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-16T18:27:06.312140+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: action 'click' failed: RuntimeError: injected escalate: forcing operator handoff at step 3 (click)",
+            "to_state": "PENDING_HANDOFF"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-16T18:27:06.539731+00:00",
+            "from_state": "PENDING_HANDOFF",
+            "reason": "operator took control",
+            "to_state": "HUMAN"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-16T18:27:06.540909+00:00",
+            "from_state": "HUMAN",
+            "reason": "auditor script drove full lease cycle end-to-end",
+            "to_state": "RESUMING"
+          },
+          {
+            "actor": "automation",
+            "at": "2026-08-16T18:27:06.572745+00:00",
+            "from_state": "RESUMING",
+            "reason": "resume:iv_1263e4e09cba6d66",
+            "to_state": "AUTOMATION"
+          }
+        ]
+      },
+      "pending": null
+    }
+  }
+]
