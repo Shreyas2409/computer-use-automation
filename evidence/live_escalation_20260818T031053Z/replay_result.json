@@ -1,0 +1,181 @@
+{
+  "capability_id": "lookup_member_balance",
+  "version": "2.2",
+  "tenant_id": "meridian",
+  "duration_ms": 764,
+  "steps": [
+    {
+      "step_index": 0,
+      "action": "navigate",
+      "status": "ok",
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint_status": "ok",
+      "duration_ms": 46,
+      "detail": null
+    },
+    {
+      "step_index": 1,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint_status": "skipped",
+      "duration_ms": 32,
+      "detail": null
+    },
+    {
+      "step_index": 2,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint_status": "skipped",
+      "duration_ms": 45,
+      "detail": null
+    },
+    {
+      "step_index": 3,
+      "action": "click",
+      "status": "recovered",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 464,
+      "detail": null
+    },
+    {
+      "step_index": 4,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label",
+      "recorded_rung": "label",
+      "checkpoint_status": "skipped",
+      "duration_ms": 18,
+      "detail": null
+    },
+    {
+      "step_index": 5,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 79,
+      "detail": null
+    },
+    {
+      "step_index": 6,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 52,
+      "detail": null
+    },
+    {
+      "step_index": 7,
+      "action": "wait_for",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "text",
+      "checkpoint_status": "ok",
+      "duration_ms": 20,
+      "detail": null
+    }
+  ],
+  "rung_drift": [
+    {
+      "step_index": 1,
+      "recorded_match": "label",
+      "replay_match": "label",
+      "drifted": false
+    },
+    {
+      "step_index": 2,
+      "recorded_match": "label",
+      "replay_match": "label",
+      "drifted": false
+    },
+    {
+      "step_index": 3,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 4,
+      "recorded_match": "label",
+      "replay_match": "label",
+      "drifted": false
+    },
+    {
+      "step_index": 5,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 6,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 7,
+      "recorded_match": "text",
+      "replay_match": "role_name",
+      "drifted": true
+    }
+  ],
+  "recovery_events": [],
+  "evidence_dir": "/Users/shreyashosagurgachndrashekhar/intent/workspaces/peaceful-halibut/repo/evidence/replay_lookup_member_balance_meridian_20260818T031053Z",
+  "interventions": [
+    {
+      "intervention_id": "iv_b9972bc08cf16650",
+      "step_index": 3,
+      "kind": "action_failed",
+      "reason": "action 'click' failed: RuntimeError: injected escalate: forcing operator handoff at step 3 (click)",
+      "outcome": "resumed",
+      "notes": "auditor script drove full lease cycle end-to-end",
+      "transitions": [
+        {
+          "at": "2026-08-18T03:10:54.608232+00:00",
+          "from_state": "AUTOMATION",
+          "to_state": "PENDING_HANDOFF",
+          "actor": "automation",
+          "reason": "open: action 'click' failed: RuntimeError: injected escalate: forcing operator handoff at step 3 (click)"
+        },
+        {
+          "at": "2026-08-18T03:10:54.637794+00:00",
+          "from_state": "PENDING_HANDOFF",
+          "to_state": "HUMAN",
+          "actor": "alice-auditor",
+          "reason": "operator took control"
+        },
+        {
+          "at": "2026-08-18T03:10:54.638739+00:00",
+          "from_state": "HUMAN",
+          "to_state": "RESUMING",
+          "actor": "alice-auditor",
+          "reason": "auditor script drove full lease cycle end-to-end"
+        },
+        {
+          "at": "2026-08-18T03:10:54.896927+00:00",
+          "from_state": "RESUMING",
+          "to_state": "AUTOMATION",
+          "actor": "automation",
+          "reason": "resume:iv_b9972bc08cf16650"
+        }
+      ],
+      "action_log": []
+    }
+  ],
+  "status": "ok",
+  "outputs": {
+    "checking_balance": 285043,
+    "member_status": "Active"
+  },
+  "exit_code": 0
+}
