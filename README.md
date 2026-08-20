@@ -1,3 +1,64 @@
+## Adapted to Meridian Core (this submission)
+
+This repo now also targets **Meridian Core**
+(`https://web-sample.interface-hiring.com`), a live, server-rendered
+credit-union servicing console — a second, unrelated target from the one
+the rest of this README describes, chosen to test the core against a real
+system with no test IDs and no accessible-name bindings on its form
+fields. Five capabilities are recorded and approved against it:
+
+| Capability | Version |
+|---|---|
+| `mc_lookup_balance` | v1.0 |
+| `mc_transfer` | v2.1 |
+| `mc_open_share` | v1.0 |
+| `mc_update_member` | v1.0 |
+| `mc_place_hold` | v2.0 |
+
+**Read [ADAPTATION.md](ADAPTATION.md) for the write-up** — what changed in
+the core and why, what was found on the live target, what's still broken.
+**[ADAPTATION_LOG.md](ADAPTATION_LOG.md)** is the unedited, running record
+of every core-module change made to reach this target.
+
+### Run it
+
+```bash
+# Capability API + agent-facing catalog (Flask, cua/catalog.py)
+.venv/bin/python -m cua catalog list --tool-only
+
+# Dashboard — run history, capability catalog, per-run detail
+.venv/bin/python dashboard.py            # http://127.0.0.1:5051/
+
+# Chatbot — conversational driver over the same capability API
+.venv/bin/python chatbot.py              # http://127.0.0.1:5050/
+                                          # operator console (escalations): http://127.0.0.1:8765/
+```
+
+Demo operators: `teller1` / `password` (regular teller), `super1` /
+`password` (supervisor — required for `mc_place_hold` to succeed instead
+of returning a permission-denied outcome). Demo members: `100234`,
+`100987`.
+
+**Demo path**: open the chatbot and ask it to look up member `100234`'s
+balance. Then ask for a transfer between two open shares on member
+`100987` (e.g. `100987-S0001-4` to `100987-MMKT-5`) — it will run up to
+the policy gate and escalate; approve it from the operator console tab to
+watch it complete with a confirmation number. Then open the dashboard to
+see that run's step timeline, locator drift, and evidence.
+
+One honest note: this is a shared, live target, and share balances and
+HOLD/OPEN statuses shift over the course of a session — as of this
+writing, member `100234` has exactly one OPEN share (`100234-S0070`;
+every other share on that member is on HOLD), and member `100987` has
+several OPEN shares including `100987-S0001-4` and `100987-MMKT-5`. Check
+a member's current share statuses before demoing a transfer between two
+open shares.
+
+Everything below this section describes the **original** local target app
+and its demo flow — unchanged, and it still works exactly as written.
+
+---
+
 # Computer-use automation for legacy enterprise apps
 
 Some software has no API. Core banking screens, servicing tools, admin consoles —
