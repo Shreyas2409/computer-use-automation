@@ -1,0 +1,108 @@
+[
+  {
+    "phase": "operator_up"
+  },
+  {
+    "phase": "pending_seen",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "pending",
+        "state": "PENDING_HANDOFF",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T21:35:24.533658+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: policy requires confirmation for 'click'",
+            "to_state": "PENDING_HANDOFF"
+          }
+        ]
+      },
+      "pending": {
+        "capability_id": "mc_transfer",
+        "evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_transfer_meridian_core_20260820T213522Z",
+        "goal": "Meridian Core Funds Transfer (post and confirm)",
+        "intervention_id": "iv_6d3718e2675c0379",
+        "reason": "policy requires confirmation for 'click'",
+        "screenshot_path": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_transfer_meridian_core_20260820T213522Z/intervention_iv_6d3718e2675c0379.png",
+        "state_summary": {
+          "kind": "policy_confirm",
+          "page_text_length": 512,
+          "steps_completed": 14,
+          "url": "https://web-sample.interface-hiring.com/members/100234/transfer/review"
+        },
+        "step_index": 14,
+        "tenant_id": "meridian_core",
+        "version": "2.0"
+      }
+    }
+  },
+  {
+    "phase": "take_control",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T21:35:24.607126+00:00",
+        "from_state": "PENDING_HANDOFF",
+        "reason": "operator took control",
+        "to_state": "HUMAN"
+      }
+    }
+  },
+  {
+    "phase": "hand_back",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T21:35:24.608173+00:00",
+        "from_state": "HUMAN",
+        "reason": "auditor script approved the policy-gated commit",
+        "to_state": "RESUMING"
+      }
+    }
+  },
+  {
+    "phase": "post_handback",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "automation",
+        "state": "AUTOMATION",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T21:35:24.533658+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: policy requires confirmation for 'click'",
+            "to_state": "PENDING_HANDOFF"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T21:35:24.607126+00:00",
+            "from_state": "PENDING_HANDOFF",
+            "reason": "operator took control",
+            "to_state": "HUMAN"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T21:35:24.608173+00:00",
+            "from_state": "HUMAN",
+            "reason": "auditor script approved the policy-gated commit",
+            "to_state": "RESUMING"
+          },
+          {
+            "actor": "automation",
+            "at": "2026-08-20T21:35:24.635963+00:00",
+            "from_state": "RESUMING",
+            "reason": "resume:iv_6d3718e2675c0379",
+            "to_state": "AUTOMATION"
+          }
+        ]
+      },
+      "pending": null
+    }
+  }
+]

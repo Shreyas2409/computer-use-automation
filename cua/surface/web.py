@@ -20,6 +20,7 @@ from playwright.async_api import (
     async_playwright,
 )
 
+from cua.locate import label_cell_pattern
 from cua.schema import (
     Detector,
     ElementPresentDetector,
@@ -118,7 +119,7 @@ class WebSurface:
         self, strategy: LocatorStrategy, timeout_ms: int
     ) -> Locator | None:
         try:
-            locator = self._locator_for(strategy)
+            locator = await self._locator_for(strategy)
         except Exception:
             return None
         if locator is None:
@@ -129,7 +130,7 @@ class WebSurface:
             return None
         return locator
 
-    def _locator_for(self, strategy: LocatorStrategy) -> Locator | None:
+    async def _locator_for(self, strategy: LocatorStrategy) -> Locator | None:
         spec = strategy.spec
         kind = strategy.kind
         if kind == "role_name":
@@ -142,6 +143,8 @@ class WebSurface:
             return self.page.get_by_text(spec["text"], exact=True).first
         if kind == "table_cell":
             return self._table_cell_locator(spec)
+        if kind == "label_cell":
+            return await self._label_cell_locator(spec)
         if kind == "css":
             return self.page.locator(spec["selector"]).first
         if kind == "coordinates":
@@ -206,6 +209,45 @@ class WebSurface:
             )  # type: ignore[return-value]
         return None
 
+    async def _label_cell_locator(self, spec: dict[str, Any]) -> Locator | None:
+        """Locate the paired cell in the same table row as a plain label
+        cell that has no semantic association (no <label>, no aria-label) —
+        the legacy table-form pattern where role_name/label resolution has
+        no accessible name to match against at all.
+
+        Prefers an input/select/textarea in the row (the write-side case:
+        filling a form field). If the row has no interactive control, falls
+        back to the row's ``column_offset``-th <td> (default 1, the second
+        cell) — the read-side case: a plain label:value data row, e.g. a
+        confirmation page's "Confirmation:" / "CN123456" pair. A wider data
+        row (e.g. Share ID | Type | Balance | Status) needs a larger offset
+        to land on the right column instead of always grabbing the second.
+        """
+        label_text = spec.get("label_text")
+        if not label_text:
+            return None
+        column_offset = spec.get("column_offset", 1)
+        # Anchor on the label cell itself and walk up to its NEAREST
+        # enclosing row. A page-wide `tr.filter(has=...)` would also match
+        # every ancestor <tr> that happens to contain this text somewhere
+        # inside it (real hazard on nested-table legacy layouts: the
+        # outermost row wrapping the whole form "has" every label as a
+        # descendant), collapsing every field onto the first control in
+        # document order regardless of which label was searched for.
+        #
+        # Matched via a normalized pattern, not an exact string: labels on
+        # this site are inconsistently punctuated (a bare share ID used as
+        # a row label can carry a trailing colon, e.g. "100234-S0070:",
+        # that a caller-supplied value like "100234-S0070" would not
+        # exact-match). Normalizing trailing punctuation/whitespace fixes
+        # every such label, not just the one that happened to break first.
+        label = self.page.get_by_text(label_cell_pattern(label_text))
+        row = label.locator("xpath=ancestor::tr[1]")
+        controls = row.locator("input, select, textarea")
+        if await controls.count() > 0:
+            return controls.first
+        return row.locator("td").nth(column_offset)
+
     async def resolve(self, ladder: LocatorLadder) -> LocatorKind:
         for strategy in ladder.strategies:
             loc = await self._resolve_strategy(strategy, DEFAULT_TIMEOUT_MS)
@@ -265,7 +307,7 @@ class WebSurface:
         timeout_ms: int = DEFAULT_TIMEOUT_MS,
     ) -> LocatorKind:
         loc, kind = await self._find_ladder(ladder, timeout_ms)
-        await loc.select_option(label=value, timeout=timeout_ms)
+        await loc.select_option(value=value, timeout=timeout_ms)
         return kind
 
     async def wait_for(

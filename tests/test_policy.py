@@ -43,14 +43,33 @@ def test_policy_gate_blocks_destructive_action():
     assert verdict == "block", "Destructive verb 'delete' should be blocked"
 
 
-def test_policy_gate_blocks_transfer_funds():
-    """PolicyGate blocks 'transfer' (destructive)."""
+def test_policy_gate_requires_confirmation_on_post_transfer():
+    """The real irreversible commit button ('Post Transfer') requires confirmation."""
     action = Action(
-        verb="transfer",
+        verb="Post Transfer",
         url="http://localhost:8080/members/123",
     )
     verdict = PolicyGate.check(action)
-    assert verdict == "block", "Destructive verb 'transfer' should be blocked"
+    assert verdict == "require_confirmation", (
+        "'Post Transfer' must route through escalation, not be blocked outright"
+    )
+
+
+def test_policy_gate_allows_funds_transfer_nav_link():
+    """Merely opening the transfer form ('Funds Transfer' nav link) is not gated.
+
+    Regression guard: a bare 'Transfer' pattern would substring-match this
+    benign navigation label too, blocking the form from ever being reached
+    (not just its irreversible commit step) — found live on Meridian Core.
+    """
+    action = Action(
+        verb="Funds Transfer",
+        url="http://localhost:8080/members/123",
+    )
+    verdict = PolicyGate.check(action)
+    assert verdict == "allow", (
+        "navigating to the transfer form must not itself require confirmation"
+    )
 
 
 def test_policy_gate_blocks_close_account():

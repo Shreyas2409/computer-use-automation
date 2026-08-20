@@ -1,0 +1,15 @@
+{
+  "generated_at": "20260820T204457Z",
+  "capability_id": "mc_open_share",
+  "replay_exit_code": 3,
+  "replay_status": "escalated",
+  "replay_outputs": null,
+  "replay_evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_open_share_meridian_core_20260820T204457Z",
+  "lease_final_state": "RESUMING",
+  "lease_transition_kinds": [
+    "PENDING_HANDOFF",
+    "HUMAN",
+    "RESUMING"
+  ],
+  "full_cycle_observed": false
+}

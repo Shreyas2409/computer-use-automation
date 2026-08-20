@@ -1,0 +1,296 @@
+{
+  "capability_id": "mc_transfer",
+  "version": "2.0",
+  "tenant_id": "meridian_core",
+  "duration_ms": 1614,
+  "steps": [
+    {
+      "step_index": 0,
+      "action": "navigate",
+      "status": "ok",
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint_status": "skipped",
+      "duration_ms": 214,
+      "detail": null
+    },
+    {
+      "step_index": 1,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 38,
+      "detail": null
+    },
+    {
+      "step_index": 2,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 38,
+      "detail": null
+    },
+    {
+      "step_index": 3,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 147,
+      "detail": null
+    },
+    {
+      "step_index": 4,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 129,
+      "detail": null
+    },
+    {
+      "step_index": 5,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 13,
+      "detail": null
+    },
+    {
+      "step_index": 6,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 93,
+      "detail": null
+    },
+    {
+      "step_index": 7,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 85,
+      "detail": null
+    },
+    {
+      "step_index": 8,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 93,
+      "detail": null
+    },
+    {
+      "step_index": 9,
+      "action": "select",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 15,
+      "detail": null
+    },
+    {
+      "step_index": 10,
+      "action": "select",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 5,
+      "detail": null
+    },
+    {
+      "step_index": 11,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 5,
+      "detail": null
+    },
+    {
+      "step_index": 12,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 4,
+      "detail": null
+    },
+    {
+      "step_index": 13,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 92,
+      "detail": null
+    },
+    {
+      "step_index": 14,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 605,
+      "detail": null
+    }
+  ],
+  "rung_drift": [
+    {
+      "step_index": 1,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 2,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 3,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 4,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 5,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 6,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 7,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 8,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 9,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 10,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 11,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 12,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 13,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 14,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    }
+  ],
+  "recovery_events": [],
+  "evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_transfer_meridian_core_20260820T210720Z",
+  "interventions": [
+    {
+      "intervention_id": "iv_8cb50433c948773c",
+      "step_index": 14,
+      "kind": "policy_confirm",
+      "reason": "policy requires confirmation for 'click'",
+      "outcome": "resumed",
+      "notes": "auditor script approved the policy-gated commit",
+      "transitions": [
+        {
+          "at": "2026-08-20T21:07:22.318470+00:00",
+          "from_state": "AUTOMATION",
+          "to_state": "PENDING_HANDOFF",
+          "actor": "automation",
+          "reason": "open: policy requires confirmation for 'click'"
+        },
+        {
+          "at": "2026-08-20T21:07:22.483249+00:00",
+          "from_state": "PENDING_HANDOFF",
+          "to_state": "HUMAN",
+          "actor": "alice-auditor",
+          "reason": "operator took control"
+        },
+        {
+          "at": "2026-08-20T21:07:22.483992+00:00",
+          "from_state": "HUMAN",
+          "to_state": "RESUMING",
+          "actor": "alice-auditor",
+          "reason": "auditor script approved the policy-gated commit"
+        },
+        {
+          "at": "2026-08-20T21:07:22.767687+00:00",
+          "from_state": "RESUMING",
+          "to_state": "AUTOMATION",
+          "actor": "automation",
+          "reason": "resume:iv_8cb50433c948773c"
+        }
+      ],
+      "action_log": []
+    }
+  ],
+  "status": "ok",
+  "outputs": {
+    "confirmation_number": "CN480122",
+    "posted_at": "08/20/2026 21:07:22",
+    "amount_posted": 500,
+    "from_share_resulting_balance": 19804,
+    "to_share_resulting_balance": 205151
+  },
+  "exit_code": 0
+}

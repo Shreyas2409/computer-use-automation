@@ -1,0 +1,260 @@
+{
+  "capability_id": "mc_update_member",
+  "version": "1.0",
+  "tenant_id": "meridian_core",
+  "duration_ms": 1289,
+  "steps": [
+    {
+      "step_index": 0,
+      "action": "navigate",
+      "status": "ok",
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint_status": "skipped",
+      "duration_ms": 133,
+      "detail": null
+    },
+    {
+      "step_index": 1,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 23,
+      "detail": null
+    },
+    {
+      "step_index": 2,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 38,
+      "detail": null
+    },
+    {
+      "step_index": 3,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 132,
+      "detail": null
+    },
+    {
+      "step_index": 4,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 87,
+      "detail": null
+    },
+    {
+      "step_index": 5,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 16,
+      "detail": null
+    },
+    {
+      "step_index": 6,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 99,
+      "detail": null
+    },
+    {
+      "step_index": 7,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 85,
+      "detail": null
+    },
+    {
+      "step_index": 8,
+      "action": "click",
+      "status": "ok",
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint_status": "ok",
+      "duration_ms": 92,
+      "detail": null
+    },
+    {
+      "step_index": 9,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 16,
+      "detail": null
+    },
+    {
+      "step_index": 10,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 7,
+      "detail": null
+    },
+    {
+      "step_index": 11,
+      "action": "type",
+      "status": "ok",
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint_status": "skipped",
+      "duration_ms": 7,
+      "detail": null
+    },
+    {
+      "step_index": 12,
+      "action": "outcome",
+      "status": "outcome",
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint_status": "skipped",
+      "duration_ms": 0,
+      "detail": "invalid_email"
+    }
+  ],
+  "rung_drift": [
+    {
+      "step_index": 1,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 2,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 3,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 4,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 5,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 6,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 7,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 8,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    },
+    {
+      "step_index": 9,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 10,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 11,
+      "recorded_match": "label_cell",
+      "replay_match": "label_cell",
+      "drifted": false
+    },
+    {
+      "step_index": 12,
+      "recorded_match": "role_name",
+      "replay_match": "role_name",
+      "drifted": false
+    }
+  ],
+  "recovery_events": [],
+  "evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_update_member_meridian_core_20260820T205620Z",
+  "interventions": [
+    {
+      "intervention_id": "iv_33260e74b83eb9b3",
+      "step_index": 12,
+      "kind": "policy_confirm",
+      "reason": "policy requires confirmation for 'click'",
+      "outcome": "resumed",
+      "notes": "auditor script approved the policy-gated commit",
+      "transitions": [
+        {
+          "at": "2026-08-20T20:56:21.687886+00:00",
+          "from_state": "AUTOMATION",
+          "to_state": "PENDING_HANDOFF",
+          "actor": "automation",
+          "reason": "open: policy requires confirmation for 'click'"
+        },
+        {
+          "at": "2026-08-20T20:56:21.884154+00:00",
+          "from_state": "PENDING_HANDOFF",
+          "to_state": "HUMAN",
+          "actor": "alice-auditor",
+          "reason": "operator took control"
+        },
+        {
+          "at": "2026-08-20T20:56:21.885334+00:00",
+          "from_state": "HUMAN",
+          "to_state": "RESUMING",
+          "actor": "alice-auditor",
+          "reason": "auditor script approved the policy-gated commit"
+        },
+        {
+          "at": "2026-08-20T20:56:22.119394+00:00",
+          "from_state": "RESUMING",
+          "to_state": "AUTOMATION",
+          "actor": "automation",
+          "reason": "resume:iv_33260e74b83eb9b3"
+        }
+      ],
+      "action_log": []
+    }
+  ],
+  "status": "business_outcome",
+  "outcome_name": "invalid_email",
+  "message": "The update was rejected: e-mail address is not in a valid format.",
+  "step_index": 12,
+  "exit_code": 0
+}

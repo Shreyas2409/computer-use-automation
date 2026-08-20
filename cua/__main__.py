@@ -236,8 +236,12 @@ def _add_replay_parser(sub: argparse._SubParsersAction) -> None:
         "--inject-mode",
         default=None,
         choices=[
+            # Original demo target's fault vocabulary.
             "notfound", "slow", "500", "expired", "dialog", "denied",
             "escalate",
+            # Meridian Core's fault vocabulary (?inject=<mode> per the brief).
+            # "notfound" is shared with the list above; the rest are new.
+            "validation", "permission", "timeout", "maintenance", "server",
         ],
         help=(
             "Injection mode. Target-app modes append ?inject=MODE once; "

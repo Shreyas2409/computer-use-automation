@@ -214,18 +214,35 @@ class EscalationBroker:
         self._cancelled = False
 
     async def wait_for_handback(self, timeout: float = 300.0) -> str:
-        """Automation-side: block until operator hands back or timeout hits."""
+        """Automation-side: block until operator hands back or timeout hits.
 
-        try:
-            await asyncio.wait_for(self._handback_event.wait(), timeout)
-        except asyncio.TimeoutError as exc:  # noqa: PERF203
-            raise LeaseError(
-                f"handback timed out after {timeout:.1f}s in state "
-                f"{self.lease.state}"
-            ) from exc
-        if self._cancelled:
-            raise LeaseError("intervention cancelled before handback")
-        return self._handback_notes
+        Polls a bounded interval rather than awaiting the event's own
+        wake-notification. hand_back() (and cancel_pending()) may run on a
+        different thread than whichever event loop is running this
+        coroutine — e.g. the operator console's Flask handler thread versus
+        a per-request asyncio.run() loop in a caller that opens a fresh
+        loop per call. A cross-thread Event.set() updates the flag
+        correctly (a plain attribute write, safe under the GIL) but is not
+        guaranteed to wake a *different* thread's event loop out of its own
+        selector wait; polling only depends on reading that flag, never on
+        being notified, so it works the same regardless of which thread
+        signalled it or how many event loops have come and gone since this
+        wait started.
+        """
+        poll_interval = 0.05
+        elapsed = 0.0
+        while True:
+            if self._cancelled:
+                raise LeaseError("intervention cancelled before handback")
+            if self._handback_event.is_set():
+                return self._handback_notes
+            if elapsed >= timeout:
+                raise LeaseError(
+                    f"handback timed out after {timeout:.1f}s in state "
+                    f"{self.lease.state}"
+                )
+            await asyncio.sleep(min(poll_interval, timeout - elapsed))
+            elapsed += poll_interval
 
     def complete_resume(
         self, *, actor: str = "automation", reason: str = "resumed"

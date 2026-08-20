@@ -1,0 +1,282 @@
+[
+  {
+    "timestamp": "2026-08-20T18:08:09.774839",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "session_start",
+    "error": null,
+    "metadata": {
+      "goal": "Log in to the Meridian Core servicing console at https://web-sample.interface-hiring.com/signon as operator teller1 with password password, leaving Branch at its default selection (MAIN-001). Then use Member Inquiry to search by Member Number for member 100234, select that member from the results, and read their share balances and status from the member record page. Once you can see the balances c",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "tenant": "meridian_core",
+      "capability_id": "mc_lookup_balance",
+      "model": "gpt-5",
+      "provider": "openai",
+      "max_steps": 25,
+      "param_names": [
+        "member_id",
+        "operator_password"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:11.025529",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_00.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 5289
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:12.973988",
+    "phase": "discovery",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "navigate",
+    "error": null,
+    "metadata": {
+      "why": "Open the Meridian Core sign-on page to begin login.",
+      "value_shape": "https://web-sample.interface-hiring.com/signon",
+      "url_before": "about:blank",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:13.005012",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_01.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 29601
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:32.618438",
+    "phase": "discovery",
+    "step_index": 1,
+    "action": "type",
+    "message": "type_text textbox Operator ID:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the operator username as teller1 while leaving Branch at default.",
+      "value_shape": "teller1",
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:32.639113",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_02.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 30495
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:50.577865",
+    "phase": "discovery",
+    "step_index": 2,
+    "action": "type",
+    "message": "type_text textbox Password:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the operator password while keeping Branch at default MAIN-001.",
+      "value_shape": "<redacted:secret:string:8>",
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:50.612369",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_03.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 30567
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:53.359561",
+    "phase": "discovery",
+    "step_index": 3,
+    "action": "click",
+    "message": "click button Sign On",
+    "error": null,
+    "metadata": {
+      "why": "Submit the operator credentials and sign on, keeping the default branch MAIN-001.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/menu"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:53.392167",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_04.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 41884
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:55.647557",
+    "phase": "discovery",
+    "step_index": 4,
+    "action": "click",
+    "message": "click link Member Inquiry / Selection",
+    "error": null,
+    "metadata": {
+      "why": "Open the Member Inquiry screen to search for the member by number.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/menu",
+      "url_after": "https://web-sample.interface-hiring.com/members"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:08:55.674174",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_05.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 33399
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:09:13.382678",
+    "phase": "discovery",
+    "step_index": 5,
+    "action": "type",
+    "message": "type_text textbox Value:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the member number to search via Member Inquiry.",
+      "value_shape": "<redacted:internal>",
+      "url_before": "https://web-sample.interface-hiring.com/members",
+      "url_after": "https://web-sample.interface-hiring.com/members"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:09:13.407576",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_06.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 34305
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:09:14.711011",
+    "phase": "discovery",
+    "step_index": 6,
+    "action": "click",
+    "message": "click button Search",
+    "error": null,
+    "metadata": {
+      "why": "Run the member inquiry search for member number 100234.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members",
+      "url_after": "https://web-sample.interface-hiring.com/members?by=number&q=100234"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:09:14.742142",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_07.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 38632
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:09:16.224086",
+    "phase": "discovery",
+    "step_index": 7,
+    "action": "click",
+    "message": "click link Select",
+    "error": null,
+    "metadata": {
+      "why": "Open the member record for member 100234 to view share balances and status.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members?by=number&q=100234",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:09:16.263919",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_08.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 55263
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:09:56.501144",
+    "phase": "discovery",
+    "step_index": null,
+    "action": "read_text",
+    "message": "tool_execution_failed",
+    "error": "Locator.wait_for: Timeout 8000ms exceeded.\nCall log:\n  - waiting for get_by_text(\"Member No.:100234 Name:Lovelace, Ada\", exact=True).locator(\"xpath=ancestor::tr[1]\").locator(\"input, select, textarea\")",
+    "metadata": null
+  },
+  {
+    "timestamp": "2026-08-20T18:09:56.592213",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_09.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 55263
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:10:17.481716",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "finish",
+    "error": null,
+    "metadata": {
+      "summary": "Member 100234 (Lovelace, Ada) record displayed with shares: 100234-S0001 Regular Shares $1,499.00 HOLD [HOLD]; 100234-S0070 Share Draft (Checking) $2,236.55 OPEN; 100234-S0001-3 Regular Shares $15.00 OPEN."
+    }
+  },
+  {
+    "timestamp": "2026-08-20T18:10:46.713989",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "artifact_written",
+    "error": null,
+    "metadata": {
+      "path": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/artifacts/mc_lookup_balance/v1.0.json",
+      "steps": 8,
+      "outcomes": [
+        "success_viewed_member_balances",
+        "member_not_found",
+        "login_failed"
+      ]
+    }
+  }
+]

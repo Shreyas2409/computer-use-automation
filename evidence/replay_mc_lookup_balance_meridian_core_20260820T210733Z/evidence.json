@@ -1,0 +1,175 @@
+[
+  {
+    "timestamp": "2026-08-20T21:07:34.099928",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "mc_lookup_balance",
+      "version": "1.0",
+      "tenant_id": "meridian_core",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": "notfound"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.297941",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "skipped",
+      "duration_ms": 197,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.332406",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 34,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.365666",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 33,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.499193",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 133,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.576136",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 76,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.590227",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 14,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.675216",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 84,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:34.675243",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "inject_query_applied",
+    "error": null,
+    "metadata": {
+      "mode": "notfound",
+      "url": "https://web-sample.interface-hiring.com/members?by=number&q=100234&inject=notfound"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:46.852324",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "click",
+    "message": "replay_hard_failure",
+    "error": "checkpoint_failed",
+    "metadata": {
+      "expected": "URL advanced to https://web-sample.interface-hiring.com/members/100234",
+      "observed": "url~'/members/100234' did not fire",
+      "outcome_name": null,
+      "screenshot": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_lookup_balance_meridian_core_20260820T210733Z/step_07_failed.png"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T21:07:46.852349",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayHardFailure",
+      "result": {
+        "kind": "ReplayHardFailure",
+        "exit_code": 2,
+        "capability_id": "mc_lookup_balance",
+        "version": "1.0",
+        "tenant_id": "meridian_core",
+        "duration_ms": 12752,
+        "step_count": 8,
+        "recovery_count": 0,
+        "outcome_name": null,
+        "error": "checkpoint_failed"
+      }
+    }
+  }
+]

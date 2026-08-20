@@ -1,0 +1,783 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "mc_transfer",
+  "version_major": 2,
+  "version_minor": 1,
+  "title": "Meridian Core Funds Transfer (post and confirm)",
+  "description": "Sign on to the Meridian Core servicing console as operator teller1, open the specified member record, and post a funds transfer. Populates the transfer form, proceeds through the review screen, and clicks Post Transfer (policy-gated: requires confirmation via the escalation path at replay time). Reads the confirmation number, posted timestamp, posted amount, and resulting balances of both shares. Insufficient funds is detected and returned as a business outcome before the post step is ever reached.",
+  "target": {
+    "app_id": "meridian_core",
+    "base_url": "https://web-sample.interface-hiring.com",
+    "tenant_id": "meridian_core",
+    "target_version": "4.2.1",
+    "surface_kind": "legacy_web"
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "required": true,
+      "description": "Member number to search and open before initiating the transfer.",
+      "example": "123456",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "from_share",
+      "type": "string",
+      "required": true,
+      "description": "Source share/account identifier in the member's profile to transfer funds from.",
+      "example": "123456-S0070",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "to_share",
+      "type": "string",
+      "required": true,
+      "description": "Destination share/account identifier in the member's profile to transfer funds to.",
+      "example": "123456-S0001-1",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "amount",
+      "type": "currency",
+      "required": true,
+      "description": "Transfer amount to be entered on the Funds Transfer form.",
+      "example": "25.00",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "memo",
+      "type": "string",
+      "required": true,
+      "description": "Memo text to include with the transfer.",
+      "example": "example memo",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "operator_password",
+      "type": "string",
+      "required": true,
+      "description": "Password for operator teller1 used on the sign-on screen.",
+      "example": "Abc123$%",
+      "sensitivity": "secret"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "confirmation_number",
+      "type": "string",
+      "description": "Confirmation number shown on the transaction-complete screen (format CN######).",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "label_cell",
+              "spec": {
+                "label_text": "Confirmation:"
+              },
+              "durability": 65
+            }
+          ],
+          "recorded_match": "label_cell"
+        },
+        "regex": null,
+        "transform": null
+      }
+    },
+    {
+      "name": "posted_at",
+      "type": "string",
+      "description": "Timestamp shown on the transaction-complete screen for when the transfer posted.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "label_cell",
+              "spec": {
+                "label_text": "Posted:"
+              },
+              "durability": 65
+            }
+          ],
+          "recorded_match": "label_cell"
+        },
+        "regex": null,
+        "transform": null
+      }
+    },
+    {
+      "name": "amount_posted",
+      "type": "currency",
+      "description": "Amount actually posted, in cents, as shown on the transaction-complete screen.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "label_cell",
+              "spec": {
+                "label_text": "Amount:"
+              },
+              "durability": 65
+            }
+          ],
+          "recorded_match": "label_cell"
+        },
+        "regex": null,
+        "transform": "currency_to_cents"
+      }
+    },
+    {
+      "name": "from_share_resulting_balance",
+      "type": "currency",
+      "description": "Resulting balance of the source share after posting, in cents.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "label_cell",
+              "spec": {
+                "label_text": "100234-S0070"
+              },
+              "durability": 65
+            }
+          ],
+          "recorded_match": "label_cell"
+        },
+        "regex": null,
+        "transform": "currency_to_cents"
+      }
+    },
+    {
+      "name": "to_share_resulting_balance",
+      "type": "currency",
+      "description": "Resulting balance of the destination share after posting, in cents.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "label_cell",
+              "spec": {
+                "label_text": "100234-S0001-3"
+              },
+              "durability": 65
+            }
+          ],
+          "recorded_match": "label_cell"
+        },
+        "regex": null,
+        "transform": "currency_to_cents"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "action": "navigate",
+      "target": null,
+      "value": "https://web-sample.interface-hiring.com/signon",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Open the sign-on page to begin the login process as instructed"
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Operator ID:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 104
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": "teller1",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator ID to sign on"
+    },
+    {
+      "index": 2,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Password:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 127
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "operator_password"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator password to sign on"
+    },
+    {
+      "index": 3,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Sign On"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 406,
+              "y": 189
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/menu",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/menu"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the credentials to sign into the Meridian Core console"
+    },
+    {
+      "index": 4,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Member Inquiry / Selection"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Member Inquiry / Selection"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 400,
+              "y": 131
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the member inquiry screen to search for the member"
+    },
+    {
+      "index": 5,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Value:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 464,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "member_id"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the member number to search for the member"
+    },
+    {
+      "index": 6,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Search"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 607,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to the search results page",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Search for the member record"
+    },
+    {
+      "index": 7,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Select"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Select"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 906,
+              "y": 220
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to the member record",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the member record"
+    },
+    {
+      "index": 8,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Funds Transfer"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Funds Transfer"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 315,
+              "y": 324
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to the transfer form",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+/transfer"
+        }
+      },
+      "on_error": [],
+      "notes": "Initiate a funds transfer from the member record"
+    },
+    {
+      "index": 9,
+      "action": "select",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "From Share:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "select"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 537,
+              "y": 135
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "from_share"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Set the source account as specified (matched by option value attribute, not label text)"
+    },
+    {
+      "index": 10,
+      "action": "select",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "To Share:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "select"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 537,
+              "y": 160
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "to_share"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Set the destination account as specified (matched by option value attribute, not label text)"
+    },
+    {
+      "index": 11,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Amount:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 444,
+              "y": 184
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "amount"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the transfer amount as specified"
+    },
+    {
+      "index": 12,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Memo:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 528,
+              "y": 207
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "memo"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the memo exactly as specified for this transfer"
+    },
+    {
+      "index": 13,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Continue"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 417,
+              "y": 244
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to the review screen",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+/transfer/review"
+        }
+      },
+      "on_error": [],
+      "notes": "Proceed to the confirmation/review screen to verify the transfer details. If the amount exceeds the source share's available balance, the server rejects here with 'Insufficient available balance in the source share.' (declared as the insufficient_funds business outcome) instead of advancing \u2014 this step's own checkpoint would then fail, but the outcome check runs first and returns cleanly."
+    },
+    {
+      "index": 14,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Post Transfer"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 417,
+              "y": 244
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "TRANSACTION COMPLETE screen shown",
+        "detect": {
+          "kind": "text_match",
+          "contains": "TRANSACTION COMPLETE",
+          "case_sensitive": false
+        }
+      },
+      "on_error": [],
+      "notes": "Post the transfer. Policy-gated (require_confirmation): replay pauses and escalates to the operator console for approval before this click executes. The review page mints its own, second _token (different from the form page's); this is a real browser click on the review page's own rendered form, so it submits whatever token is currently in that page's DOM \u2014 no separate token-read step is needed or recorded."
+    }
+  ],
+  "outcomes": [
+    {
+      "name": "insufficient_funds",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Insufficient available balance in the source share.",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "The transfer was rejected: insufficient available balance in the source share."
+    },
+    {
+      "name": "hold_share_debit_blocked",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Source share is HOLD and cannot be debited.",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "The transfer was rejected: the source share is on HOLD and cannot be debited. Select a share that is not on hold, or clear the hold before retrying."
+    }
+  ],
+  "approval": "approved",
+  "recorded_at": "2026-08-20T22:08:56.319867Z",
+  "recorded_by": "human_edit"
+}

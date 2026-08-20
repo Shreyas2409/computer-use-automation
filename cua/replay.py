@@ -343,10 +343,27 @@ class ReplayEngine:
 
     # -- policy gate ------------------------------------------------------
 
+    @staticmethod
+    def _click_label(ladder: LocatorLadder) -> str | None:
+        """Best-effort accessible label for a click, for policy verb matching.
+
+        Mirrors discover.py, which uses the clicked element's name/text as
+        the policy verb so require_confirmation_patterns (Submit, Confirm,
+        Transfer, ...) can match. Without this, replay always sees the
+        generic action kind ("click") and those patterns can never fire.
+        """
+        for strategy in ladder.strategies:
+            label = strategy.spec.get("name") or strategy.spec.get("text")
+            if label:
+                return str(label)
+        return None
+
     def _policy_verdict(
         self, step: Step, resolved_value: Any
     ) -> tuple[str, Action]:
         verb = step.action
+        if step.action == "click" and step.target is not None:
+            verb = self._click_label(step.target) or step.action
         # For a navigate the *destination* is what policy must vet; for every
         # other action, we vet the current page (``about:blank`` before the
         # first navigate is fine because the domain allowlist happens to

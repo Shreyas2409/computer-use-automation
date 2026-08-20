@@ -5,12 +5,17 @@
 allowed_domains:
   - localhost
   - "*.example.com"
+  - web-sample.interface-hiring.com
 
 allowed_route_patterns:
   - "^/login$"
   - "^/members"
   - "^/servicing/login$"
   - "^/servicing/members"
+  - "^/signon$"
+  - "^/menu$"
+  - "^/settings$"
+  - "^/signoff$"
 
 # Action types: navigate, click, type, select, read, wait_for, assert
 allowed_action_types:
@@ -22,22 +27,37 @@ allowed_action_types:
   - wait_for
   - assert
 
-# Destructive verbs that are blocked unless explicitly confirmed.
+# Destructive verbs that are unconditionally blocked — no escalation path,
+# because these have no legitimate use in any capability we record.
 destructive_verbs:
   - delete
-  - transfer
   - close_account
   - cancel
   - void
   - liquidate
 
-# Actions requiring explicit confirmation: state-changing submits.
+# Actions requiring explicit confirmation: irreversible state-changing
+# submits that a capability legitimately needs to complete, routed through
+# escalation rather than blocked outright. Deliberately NOT "Transfer" or
+# "Hold" bare: Meridian Core has benign navigation links labeled "Funds
+# Transfer" and "Place Account Hold" that merely open a form — a bare
+# substring match on those words blocks reaching the form at all, not just
+# the irreversible commit. "Post" alone precisely matches the real commit
+# button (confirmed: "Post Transfer") without matching any nav label seen
+# on the site. "Open Share" added after confirming Open New Share's actual
+# confirm-button text is "Open Share" (not "Post ..." like Transfer) — not a
+# substring of the "Open New Share" nav link ("new" breaks the match), so no
+# collision with reaching the form. "Apply Hold" added the same way after
+# confirming Place Account Hold's actual confirm-button text — not a
+# substring of the "Place Account Hold" nav link.
 require_confirmation_patterns:
   - "Confirm"
   - "Submit"
   - "Save"
-  - "Transfer"
   - "Approve"
+  - "Post"
+  - "Open Share"
+  - "Apply Hold"
 
 # Read-only actions: allowed everywhere, no confirmation needed.
 read_only_actions:

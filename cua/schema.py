@@ -22,7 +22,8 @@ ActionKind = Literal[
     "navigate", "click", "type", "select", "read", "wait_for", "assert"
 ]
 LocatorKind = Literal[
-    "role_name", "label", "text", "table_cell", "css", "coordinates"
+    "role_name", "label", "text", "table_cell", "label_cell", "css",
+    "coordinates",
 ]
 OutcomeClass = Literal["business_outcome", "recoverable", "hard_failure"]
 Approval = Literal["draft", "approved"]
@@ -69,7 +70,12 @@ class LocatorStrategy(_Strict):
 
     `spec` is intentionally an open dict — its keys depend on `kind` (e.g.
     role_name uses ``{"role": "button", "name": "Search"}``; table_cell uses
-    ``{"table_id": "...", "row_header": {...}, "column": "Balance"}``).
+    ``{"table_id": "...", "row_header": {...}, "column": "Balance"}``;
+    label_cell uses ``{"label_text": "Operator ID:"}`` — legacy table-form
+    markup where a field's "label" is a plain adjacent cell with no
+    ``<label>``/``aria-label`` association, so no accessible name exists for
+    role_name to match; resolved as the interactive control in the same
+    table row as the cell with that exact text).
     """
 
     kind: LocatorKind

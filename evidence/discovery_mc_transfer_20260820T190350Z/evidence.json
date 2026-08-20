@@ -1,0 +1,563 @@
+[
+  {
+    "timestamp": "2026-08-20T19:03:50.482809",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "session_start",
+    "error": null,
+    "metadata": {
+      "goal": "Starting at https://web-sample.interface-hiring.com/signon, sign on to the Meridian Core servicing console as operator teller1 (password: password). Search for member 100234 and open their member record. Initiate a Funds Transfer from share 100234-S0001 to share 100234-S0070 for amount 10.00 with memo 'test transfer'. Fill in the transfer form with these exact values and click Continue to reach th",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "tenant": "meridian_core",
+      "capability_id": "mc_transfer",
+      "model": "gpt-5",
+      "provider": "openai",
+      "max_steps": 25,
+      "param_names": [
+        "amount",
+        "from_share",
+        "member_id",
+        "memo",
+        "operator_password",
+        "to_share"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:03:51.868674",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_00.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 5289
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:03:55.291153",
+    "phase": "discovery",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "navigate",
+    "error": null,
+    "metadata": {
+      "why": "Open the Meridian Core sign-on page to begin the workflow.",
+      "value_shape": "https://web-sample.interface-hiring.com/signon",
+      "url_before": "about:blank",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:03:55.346661",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_01.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 29727
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:15.358452",
+    "phase": "discovery",
+    "step_index": 1,
+    "action": "type",
+    "message": "type_text textbox Operator ID:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the operator ID to sign on.",
+      "value_shape": "teller1",
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:15.382504",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_02.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 30623
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:34.397054",
+    "phase": "discovery",
+    "step_index": 2,
+    "action": "type",
+    "message": "type_text textbox Password:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the operator password to sign on.",
+      "value_shape": "<redacted:secret:string:8>",
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:34.431948",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_03.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 30692
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:36.438313",
+    "phase": "discovery",
+    "step_index": 3,
+    "action": "click",
+    "message": "click button Sign On",
+    "error": null,
+    "metadata": {
+      "why": "Submit credentials to sign on to the Meridian Core console.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/menu"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:36.468123",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_04.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 41901
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:39.423965",
+    "phase": "discovery",
+    "step_index": 4,
+    "action": "click",
+    "message": "click link Member Inquiry / Selection",
+    "error": null,
+    "metadata": {
+      "why": "Open the Member Inquiry page to search for member 100234.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/menu",
+      "url_after": "https://web-sample.interface-hiring.com/members"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:39.450151",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_05.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 33504
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:57.715415",
+    "phase": "discovery",
+    "step_index": 5,
+    "action": "type",
+    "message": "type_text textbox Value:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the member number to search for the member record.",
+      "value_shape": "<redacted:internal>",
+      "url_before": "https://web-sample.interface-hiring.com/members",
+      "url_after": "https://web-sample.interface-hiring.com/members"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:57.748020",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_06.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 34408
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:59.203603",
+    "phase": "discovery",
+    "step_index": 6,
+    "action": "click",
+    "message": "click button Search",
+    "error": null,
+    "metadata": {
+      "why": "Search for member number 100234.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members",
+      "url_after": "https://web-sample.interface-hiring.com/members?by=number&q=100234"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:04:59.233349",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_07.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 38718
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:05:01.619966",
+    "phase": "discovery",
+    "step_index": 7,
+    "action": "click",
+    "message": "click link Select",
+    "error": null,
+    "metadata": {
+      "why": "Open the member record for member 100234.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members?by=number&q=100234",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:05:01.654909",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_08.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 57128
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:05:04.976539",
+    "phase": "discovery",
+    "step_index": 8,
+    "action": "click",
+    "message": "click link Funds Transfer",
+    "error": null,
+    "metadata": {
+      "why": "Start a funds transfer for this member.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members/100234",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:05:05.022305",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_09.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 39165
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:05:34.755164",
+    "phase": "discovery",
+    "step_index": 9,
+    "action": "select",
+    "message": "select_option combobox From Share:",
+    "error": null,
+    "metadata": {
+      "why": "Ensure the From Share is set to 100234-S0001 as required.",
+      "value_shape": "100234-S0001 - Regular Shares ($1,499.00)",
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:05:34.783889",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_10.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 39165
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:04.044642",
+    "phase": "discovery",
+    "step_index": 10,
+    "action": "select",
+    "message": "select_option combobox To Share:",
+    "error": null,
+    "metadata": {
+      "why": "Set the destination share to 100234-S0070 as specified.",
+      "value_shape": "100234-S0070 - Share Draft (Checking) ($212.54)",
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:04.088196",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_11.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 39688
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:24.024648",
+    "phase": "discovery",
+    "step_index": 11,
+    "action": "type",
+    "message": "type_text textbox Amount:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the transfer amount as specified.",
+      "value_shape": "<redacted:internal>",
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:24.053035",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_12.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 40277
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:43.907309",
+    "phase": "discovery",
+    "step_index": 12,
+    "action": "type",
+    "message": "type_text textbox Memo:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the memo exactly as specified.",
+      "value_shape": "<redacted:internal>",
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:43.938228",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_13.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 41357
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:45.147255",
+    "phase": "discovery",
+    "step_index": 13,
+    "action": "click",
+    "message": "click button Continue",
+    "error": null,
+    "metadata": {
+      "why": "Proceed to the confirmation/review screen to verify transfer details before posting.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer/review"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:45.179867",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_14.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 32465
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:59.631493",
+    "phase": "discovery",
+    "step_index": 14,
+    "action": "click",
+    "message": "click link Return to Funds Transfer",
+    "error": null,
+    "metadata": {
+      "why": "Go back to the transfer form to see if an override option is available for the HOLD restriction.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer/review",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:06:59.671257",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_15.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 39143
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:07:34.909942",
+    "phase": "discovery",
+    "step_index": 15,
+    "action": "click",
+    "message": "click link Main Menu",
+    "error": null,
+    "metadata": {
+      "why": "Try initiating the transfer from the main menu workflow, which may present a review screen before enforcing hold restrictions.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer",
+      "url_after": "https://web-sample.interface-hiring.com/menu"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:07:34.950997",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_16.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 41896
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:07:42.625221",
+    "phase": "discovery",
+    "step_index": 16,
+    "action": "click",
+    "message": "click link Funds Transfer",
+    "error": null,
+    "metadata": {
+      "why": "Initiate the global Funds Transfer workflow which may present a confirmation screen before enforcing hold validation.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/menu",
+      "url_after": "https://web-sample.interface-hiring.com/members?next=transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:07:42.646896",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_17.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 33583
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:08:07.639287",
+    "phase": "discovery",
+    "step_index": 17,
+    "action": "type",
+    "message": "type_text textbox Value:",
+    "error": null,
+    "metadata": {
+      "why": "Search for member 100234 to initiate the funds transfer workflow.",
+      "value_shape": "<redacted:internal>",
+      "url_before": "https://web-sample.interface-hiring.com/members?next=transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members?next=transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:08:07.667092",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_18.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 34491
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:08:09.239997",
+    "phase": "discovery",
+    "step_index": 18,
+    "action": "click",
+    "message": "click button Search",
+    "error": null,
+    "metadata": {
+      "why": "Find the member 100234 to proceed to funds transfer from the main menu workflow.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members?next=transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members?next=transfer&by=number&q=100234"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:08:09.269412",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_19.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 38668
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:08:24.797688",
+    "phase": "discovery",
+    "step_index": 19,
+    "action": "click",
+    "message": "click link Select",
+    "error": null,
+    "metadata": {
+      "why": "Choose member 100234 to start the global Funds Transfer flow.",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members?next=transfer&by=number&q=100234",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:08:24.840191",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_20.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 39259
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:09:11.351671",
+    "phase": "discovery",
+    "step_index": 20,
+    "action": "select",
+    "message": "select_option combobox To Share:",
+    "error": null,
+    "metadata": {
+      "why": "Set the destination share to the required 100234-S0070.",
+      "value_shape": "100234-S0070 - Share Draft (Checking) ($212.54)",
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/transfer",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/transfer"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T19:09:11.355817",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "skip_compile",
+    "error": null,
+    "metadata": {
+      "status": "timeout"
+    }
+  }
+]

@@ -36,7 +36,7 @@ from cua.llm import (
     make_provider_client,
     select_provider,
 )
-from cua.locate import build_ladder
+from cua.locate import build_ladder, label_cell_pattern
 from cua.policy import Action, PolicyGate
 from cua.schema import (
     Capability,
@@ -321,6 +321,32 @@ async def _find_label_text(page, element_id: str | None) -> str | None:
         return None
 
 
+async def _resolve_label_cell(page, label_text: str):
+    """Locate the control in the table row containing this exact text.
+
+    Fallback for legacy table-form markup where a field's "label" is a
+    plain adjacent cell with no <label>/aria-label association — real
+    Chromium computes no accessible name for the control either, so
+    role+name resolution can never match regardless of what name is
+    guessed. Mirrors ``WebSurface._label_cell_locator`` used at replay time.
+    """
+    # Anchor on the label cell and walk up to its NEAREST enclosing row
+    # (mirrors WebSurface._label_cell_locator) — a page-wide
+    # `tr.filter(has=...)` also matches every ancestor <tr> that contains
+    # the text anywhere inside it, which on a nested-table legacy layout
+    # includes the outermost row wrapping the whole form.
+    # Matched via a normalized pattern (see cua.locate.label_cell_pattern),
+    # not an exact string: labels on this site are inconsistently
+    # punctuated (trailing colons appear on some, not others), and
+    # normalizing that once protects every label lookup rather than
+    # patching one string at a time.
+    label = page.get_by_text(label_cell_pattern(label_text))
+    row = label.locator("xpath=ancestor::tr[1]")
+    locator = row.locator("input, select, textarea").first
+    await locator.wait_for(state="visible", timeout=PLAYWRIGHT_ACTION_TIMEOUT_MS)
+    return locator
+
+
 async def resolve_element_and_ladder(
     page, role: str, name: str
 ) -> tuple[Any, LocatorLadder]:
@@ -331,18 +357,30 @@ async def resolve_element_and_ladder(
     ladder includes every rung we can derive from the resolved DOM element:
     role+name, associated label, visible text, id-based CSS, and bounding
     box center coordinates.
+
+    If no accessible name exists at all for this element (no <label>,
+    aria-label, or aria-labelledby — common on legacy table-form markup),
+    role+name resolution can never match no matter what name was guessed;
+    falls back to locating the control by the table row containing that
+    exact visible text instead, and records that as the ladder's primary
+    rung (role_name is never included when it didn't actually resolve).
     """
 
+    resolved_via_role_name = True
     try:
         locator = page.get_by_role(role, name=name, exact=True).first
         await locator.wait_for(
             state="visible", timeout=PLAYWRIGHT_ACTION_TIMEOUT_MS
         )
     except Exception:
-        locator = page.get_by_role(role, name=name).first
-        await locator.wait_for(
-            state="visible", timeout=PLAYWRIGHT_ACTION_TIMEOUT_MS
-        )
+        try:
+            locator = page.get_by_role(role, name=name).first
+            await locator.wait_for(
+                state="visible", timeout=PLAYWRIGHT_ACTION_TIMEOUT_MS
+            )
+        except Exception:
+            locator = await _resolve_label_cell(page, name)
+            resolved_via_role_name = False
 
     handle = await locator.element_handle()
     element_id = None
@@ -378,14 +416,26 @@ async def resolve_element_and_ladder(
     label_text = await _find_label_text(page, element_id)
     css = f"#{element_id}" if element_id else (tag if tag else None)
 
-    ladder = build_ladder(
-        role=role,
-        name=name,
-        label_text=label_text,
-        text=text_content,
-        css=css,
-        coordinates=coords,
-    )
+    if resolved_via_role_name:
+        ladder = build_ladder(
+            role=role,
+            name=name,
+            label_text=label_text,
+            text=text_content,
+            css=css,
+            coordinates=coords,
+        )
+    else:
+        # role_name never matched (no accessible name existed) — omitting
+        # it here rather than recording a rung that structurally can't
+        # resolve at replay either.
+        ladder = build_ladder(
+            label_cell={"label_text": name},
+            label_text=label_text,
+            text=text_content,
+            css=css,
+            coordinates=coords,
+        )
     return locator, ladder
 
 
@@ -732,9 +782,27 @@ class DiscoverySession:
             )
             oh = observation_hash(url, nodes)
             self.obs_hashes.append(oh)
+            # A run of identical observations connected entirely by successful
+            # non-mutating actions (`read`, `wait_for`) is not a stall —
+            # reading several values off one static page, optionally waiting
+            # for an element first, is expected to leave the page unchanged
+            # each time. `self.steps` only ever holds successfully-completed
+            # actions (a failing read/wait_for never gets recorded), so this
+            # exemption only fires when these are genuinely succeeding
+            # repeatedly; a real stall (repeated failures, or repeated no-op
+            # clicks/types/selects/navigates) still trips it.
+            _NON_MUTATING_ACTIONS = ("read", "wait_for")
+            connecting_actions = [
+                s.action for s in self.steps[-(MAX_UNCHANGED_OBS - 1):]
+            ]
+            all_reads = (
+                len(connecting_actions) == MAX_UNCHANGED_OBS - 1
+                and all(a in _NON_MUTATING_ACTIONS for a in connecting_actions)
+            )
             if (
                 len(self.obs_hashes) >= MAX_UNCHANGED_OBS
                 and len(set(self.obs_hashes[-MAX_UNCHANGED_OBS:])) == 1
+                and not all_reads
             ):
                 self.evidence.log(
                     phase="discovery",
@@ -946,11 +1014,19 @@ def _proposal_prompt(
         "     — declare 0..N outputs; each must reference the index of a "
         "`read` step in the trajectory that captured this value.\n"
         "  outcomes: [ {name, classification, terminal, message, detector} ]\n"
-        "     — declare at least one business_outcome for success and one "
-        "for the empirically-known failure mode (e.g. member_not_found). "
-        "classification in {business_outcome, recoverable, hard_failure}; "
-        "detector is {kind: 'text_match', contains: '...'} or "
-        "{kind: 'url_pattern', pattern: '...'} (regex).\n"
+        "     — declare outcomes ONLY for states you can empirically "
+        "distinguish in the page (e.g. member_not_found). Do NOT declare a "
+        "terminal business_outcome for the plain success path unless its "
+        "detector is true ONLY after every `read` step above has executed "
+        "— text already present on the page before any reads run (e.g. a "
+        "static table heading) will fire at replay time before extraction "
+        "happens and short-circuit the run before outputs are captured. If "
+        "the trajectory ends in `read` steps with no further page "
+        "transition, declare zero success outcomes: falling through all "
+        "steps to extraction and returning success is the correct default "
+        "behavior. classification in {business_outcome, recoverable, "
+        "hard_failure}; detector is {kind: 'text_match', contains: '...'} "
+        "or {kind: 'url_pattern', pattern: '...'} (regex).\n"
     )
 
 

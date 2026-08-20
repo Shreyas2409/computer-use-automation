@@ -1,0 +1,360 @@
+[
+  {
+    "timestamp": "2026-08-20T20:39:50.488054",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "session_start",
+    "error": null,
+    "metadata": {
+      "goal": "Starting at https://web-sample.interface-hiring.com/signon, sign on to the Meridian Core servicing console as operator teller1 (password: password). Search for member 100234 and open their member record. Initiate Open New Share with share type Money Market (MMKT) and initial deposit 25.00. Fill in the form with these exact values and click Continue to reach the confirmation/review screen showing t",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "tenant": "meridian_core",
+      "capability_id": "mc_open_share",
+      "model": "gpt-5",
+      "provider": "openai",
+      "max_steps": 15,
+      "param_names": [
+        "initial_deposit",
+        "member_id",
+        "operator_password",
+        "share_type"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:39:51.911892",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_00.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 5289
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:39:54.572803",
+    "phase": "discovery",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "navigate",
+    "error": null,
+    "metadata": {
+      "why": "Start at the sign-on page per the goal",
+      "value_shape": "https://web-sample.interface-hiring.com/signon",
+      "url_before": "about:blank",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:39:54.639758",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_01.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 29841
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:15.537743",
+    "phase": "discovery",
+    "step_index": 1,
+    "action": "type",
+    "message": "type_text textbox Operator ID:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the operator ID provided in the goal",
+      "value_shape": "teller1",
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:15.580482",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_02.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 30737
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:33.374962",
+    "phase": "discovery",
+    "step_index": 2,
+    "action": "type",
+    "message": "type_text textbox Password:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the operator password to sign on",
+      "value_shape": "<redacted:secret:string:8>",
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/signon"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:33.408205",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_03.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 30806
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:34.641728",
+    "phase": "discovery",
+    "step_index": 3,
+    "action": "click",
+    "message": "click button Sign On",
+    "error": null,
+    "metadata": {
+      "why": "Submit the credentials to sign into the console",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/signon",
+      "url_after": "https://web-sample.interface-hiring.com/menu"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:34.674056",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_04.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 41955
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:38.142074",
+    "phase": "discovery",
+    "step_index": 4,
+    "action": "click",
+    "message": "click link Member Inquiry / Selection",
+    "error": null,
+    "metadata": {
+      "why": "Begin by searching for the member to open their record",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/menu",
+      "url_after": "https://web-sample.interface-hiring.com/members"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:38.178140",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_05.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 33564
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:56.939921",
+    "phase": "discovery",
+    "step_index": 5,
+    "action": "type",
+    "message": "type_text textbox Value:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the member number to search",
+      "value_shape": "<redacted:internal>",
+      "url_before": "https://web-sample.interface-hiring.com/members",
+      "url_after": "https://web-sample.interface-hiring.com/members"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:57.001586",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_06.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 34470
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:58.482923",
+    "phase": "discovery",
+    "step_index": 6,
+    "action": "click",
+    "message": "click button Search",
+    "error": null,
+    "metadata": {
+      "why": "Search for the member by number",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members",
+      "url_after": "https://web-sample.interface-hiring.com/members?by=number&q=100234"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:40:58.508744",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_07.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 38814
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:03.408923",
+    "phase": "discovery",
+    "step_index": 7,
+    "action": "click",
+    "message": "click link Select",
+    "error": null,
+    "metadata": {
+      "why": "Open the member record for member 100234",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members?by=number&q=100234",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:03.442582",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_08.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 57314
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:08.624653",
+    "phase": "discovery",
+    "step_index": 8,
+    "action": "click",
+    "message": "click link Open New Share",
+    "error": null,
+    "metadata": {
+      "why": "Start the workflow to open a new share for this member",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members/100234",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/open-share"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:08.657195",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_09.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 34385
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:38.320656",
+    "phase": "discovery",
+    "step_index": 9,
+    "action": "select",
+    "message": "select_option combobox Share Type:",
+    "error": null,
+    "metadata": {
+      "why": "Select the Money Market share type as specified",
+      "value_shape": "MMKT - Money Market",
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/open-share",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/open-share"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:38.364458",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_10.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 34168
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:59.574883",
+    "phase": "discovery",
+    "step_index": 10,
+    "action": "type",
+    "message": "type_text textbox Initial Deposit:",
+    "error": null,
+    "metadata": {
+      "why": "Enter the specified initial deposit amount",
+      "value_shape": "<redacted:internal>",
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/open-share",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/open-share"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:41:59.609154",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_11.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 34962
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:42:01.940666",
+    "phase": "discovery",
+    "step_index": 11,
+    "action": "click",
+    "message": "click button Continue",
+    "error": null,
+    "metadata": {
+      "why": "Proceed to the confirmation/review screen for the new share details",
+      "value_shape": null,
+      "url_before": "https://web-sample.interface-hiring.com/members/100234/open-share",
+      "url_after": "https://web-sample.interface-hiring.com/members/100234/open-share/review"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:42:01.973931",
+    "phase": "evidence",
+    "step_index": null,
+    "action": null,
+    "message": "Screenshot saved: step_12.png",
+    "error": null,
+    "metadata": {
+      "size_bytes": 35510
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:42:06.983989",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "finish",
+    "error": null,
+    "metadata": {
+      "summary": "Reached the CONFIRM NEW SHARE screen showing Member 100234 - Lovelace, Ada with Share Type MMKT - Money Market and Initial Deposit $25.00."
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:42:40.037690",
+    "phase": "discovery",
+    "step_index": null,
+    "action": null,
+    "message": "artifact_written",
+    "error": null,
+    "metadata": {
+      "path": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/artifacts/mc_open_share/v1.0.json",
+      "steps": 12,
+      "outcomes": []
+    }
+  }
+]

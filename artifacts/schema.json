@@ -112,6 +112,7 @@
             "label",
             "text",
             "table_cell",
+            "label_cell",
             "css",
             "coordinates"
           ],
@@ -136,7 +137,7 @@
     },
     "LocatorStrategy": {
       "additionalProperties": false,
-      "description": "One rung of the locator ladder.\n\n`spec` is intentionally an open dict \u2014 its keys depend on `kind` (e.g.\nrole_name uses ``{\"role\": \"button\", \"name\": \"Search\"}``; table_cell uses\n``{\"table_id\": \"...\", \"row_header\": {...}, \"column\": \"Balance\"}``).",
+      "description": "One rung of the locator ladder.\n\n`spec` is intentionally an open dict \u2014 its keys depend on `kind` (e.g.\nrole_name uses ``{\"role\": \"button\", \"name\": \"Search\"}``; table_cell uses\n``{\"table_id\": \"...\", \"row_header\": {...}, \"column\": \"Balance\"}``;\nlabel_cell uses ``{\"label_text\": \"Operator ID:\"}`` \u2014 legacy table-form\nmarkup where a field's \"label\" is a plain adjacent cell with no\n``<label>``/``aria-label`` association, so no accessible name exists for\nrole_name to match; resolved as the interactive control in the same\ntable row as the cell with that exact text).",
       "properties": {
         "durability": {
           "maximum": 100,
@@ -150,6 +151,7 @@
             "label",
             "text",
             "table_cell",
+            "label_cell",
             "css",
             "coordinates"
           ],

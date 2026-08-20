@@ -1,0 +1,15 @@
+{
+  "generated_at": "20260820T195149Z",
+  "replay_exit_code": 2,
+  "replay_status": "failed",
+  "replay_outputs": null,
+  "replay_evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_transfer_meridian_core_20260820T195149Z",
+  "lease_final_state": "AUTOMATION",
+  "lease_transition_kinds": [
+    "PENDING_HANDOFF",
+    "HUMAN",
+    "RESUMING",
+    "AUTOMATION"
+  ],
+  "full_cycle_observed": true
+}

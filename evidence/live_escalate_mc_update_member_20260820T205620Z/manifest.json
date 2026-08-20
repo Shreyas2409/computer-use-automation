@@ -1,0 +1,16 @@
+{
+  "generated_at": "20260820T205620Z",
+  "capability_id": "mc_update_member",
+  "replay_exit_code": 0,
+  "replay_status": "business_outcome",
+  "replay_outputs": null,
+  "replay_evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_update_member_meridian_core_20260820T205620Z",
+  "lease_final_state": "AUTOMATION",
+  "lease_transition_kinds": [
+    "PENDING_HANDOFF",
+    "HUMAN",
+    "RESUMING",
+    "AUTOMATION"
+  ],
+  "full_cycle_observed": true
+}

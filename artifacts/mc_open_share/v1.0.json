@@ -1,0 +1,544 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "mc_open_share",
+  "version_major": 1,
+  "version_minor": 0,
+  "title": "Open Money Market Share to Confirmation",
+  "description": "Signs on to the Meridian Core console as operator teller1 using the supplied password. Searches for the specified member ID, opens the member record, and initiates Open New Share. Selects the Money Market share type and enters the provided initial deposit, then continues to the confirmation/review screen. The flow stops at confirmation and does not post.",
+  "target": {
+    "app_id": "meridian_core",
+    "base_url": "https://web-sample.interface-hiring.com",
+    "tenant_id": "meridian_core",
+    "target_version": "4.2.1",
+    "surface_kind": "legacy_web"
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "integer",
+      "required": true,
+      "description": "Numeric member identifier to search and open.",
+      "example": 123456,
+      "sensitivity": "internal"
+    },
+    {
+      "name": "share_type",
+      "type": "enum",
+      "required": true,
+      "description": "Share type code to select from the dropdown (e.g., Money Market).",
+      "example": "DEMO_TYPE",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "initial_deposit",
+      "type": "currency",
+      "required": true,
+      "description": "Initial deposit amount to populate for the new share.",
+      "example": "100.00",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "operator_password",
+      "type": "string",
+      "required": true,
+      "description": "Password for operator teller1 to sign on.",
+      "example": "<PASSWORD>",
+      "sensitivity": "secret"
+    }
+  ],
+  "outputs": [],
+  "steps": [
+    {
+      "index": 0,
+      "action": "navigate",
+      "target": null,
+      "value": "https://web-sample.interface-hiring.com/signon",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Start at the sign-on page per the goal"
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Operator ID:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 104
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": "teller1",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator ID provided in the goal"
+    },
+    {
+      "index": 2,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Password:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 127
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "operator_password"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator password to sign on"
+    },
+    {
+      "index": 3,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Sign On"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 406,
+              "y": 189
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/menu",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/menu"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the credentials to sign into the console"
+    },
+    {
+      "index": 4,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Member Inquiry / Selection"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Member Inquiry / Selection"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 400,
+              "y": 131
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Begin by searching for the member to open their record"
+    },
+    {
+      "index": 5,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Value:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 464,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "member_id"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the member number to search"
+    },
+    {
+      "index": 6,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Search"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 607,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members?by=number&q=100234",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Search for the member by number"
+    },
+    {
+      "index": 7,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Select"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Select"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 906,
+              "y": 220
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the member record for member 100234"
+    },
+    {
+      "index": 8,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Open New Share"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Open New Share"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 422,
+              "y": 324
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234/open-share",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+/open\\-share"
+        }
+      },
+      "on_error": [],
+      "notes": "Start the workflow to open a new share for this member"
+    },
+    {
+      "index": 9,
+      "action": "select",
+      "target": {
+        "strategies": [
+          {
+            "kind": "text",
+            "spec": {
+              "text": "S0001 - Regular SharesS0070 - Share Draft (Checking)MMKT - Money MarketCERT - Ce"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Share Type:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "select"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 501,
+              "y": 135
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "text"
+      },
+      "value": {
+        "param": "share_type"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Select the Money Market share type as specified"
+    },
+    {
+      "index": 10,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Initial Deposit:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 461,
+              "y": 159
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "initial_deposit"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the specified initial deposit amount"
+    },
+    {
+      "index": 11,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Continue"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 434,
+              "y": 196
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234/open-share/review",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+/open\\-share/review"
+        }
+      },
+      "on_error": [],
+      "notes": "Proceed to the confirmation/review screen for the new share details"
+    },
+    {
+      "index": 12,
+      "action": "click",
+      "target": {
+        "strategies": [
+          { "kind": "role_name", "spec": { "role": "button", "name": "Open Share" }, "durability": 95 },
+          { "kind": "css", "spec": { "selector": "input" }, "durability": 40 },
+          { "kind": "coordinates", "spec": { "x": 417, "y": 244 }, "durability": 20 }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Post the new share. Policy-gated (require_confirmation, verified via policy.yaml's 'Open Share' pattern) — replay escalates to the operator console for approval before this click executes."
+    }
+  ],
+  "outcomes": [],
+  "approval": "approved",
+  "recorded_at": "2026-08-20T20:42:40.031508Z",
+  "recorded_by": "human_edit"
+}

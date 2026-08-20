@@ -1,0 +1,271 @@
+[
+  {
+    "timestamp": "2026-08-20T22:35:07.835336",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "mc_lookup_balance",
+      "version": "1.0",
+      "tenant_id": "meridian_core",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.191966",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "skipped",
+      "duration_ms": 356,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.302180",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 110,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.367578",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 65,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.499465",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 131,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.585157",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 85,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.606746",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 21,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.695985",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 89,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.784353",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 88,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.806330",
+    "phase": "replay",
+    "step_index": 8,
+    "action": "read",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": "role_name",
+      "checkpoint": "skipped",
+      "duration_ms": 21,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.813659",
+    "phase": "replay",
+    "step_index": 9,
+    "action": "read",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": "role_name",
+      "checkpoint": "skipped",
+      "duration_ms": 7,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:08.820266",
+    "phase": "replay",
+    "step_index": 10,
+    "action": "read",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": "role_name",
+      "checkpoint": "skipped",
+      "duration_ms": 6,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:20.905875",
+    "phase": "replay",
+    "step_index": 11,
+    "action": "read",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": "role_name",
+      "checkpoint": "skipped",
+      "duration_ms": 12085,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:20.921896",
+    "phase": "replay",
+    "step_index": 12,
+    "action": "read",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": "role_name",
+      "checkpoint": "skipped",
+      "duration_ms": 15,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:32.992213",
+    "phase": "replay",
+    "step_index": 13,
+    "action": "read",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": "role_name",
+      "checkpoint": "skipped",
+      "duration_ms": 12069,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:33.045690",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_success",
+    "error": null,
+    "metadata": {
+      "outputs": [
+        "balance_row_1",
+        "balance_row_2",
+        "balance_row_3",
+        "share_id_row_1",
+        "share_id_row_2",
+        "share_id_row_3"
+      ],
+      "duration_ms": 25211
+    }
+  },
+  {
+    "timestamp": "2026-08-20T22:35:33.046113",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplaySuccess",
+      "result": {
+        "kind": "ReplaySuccess",
+        "exit_code": 0,
+        "capability_id": "mc_lookup_balance",
+        "version": "1.0",
+        "tenant_id": "meridian_core",
+        "duration_ms": 25211,
+        "step_count": 14,
+        "recovery_count": 0
+      }
+    }
+  }
+]

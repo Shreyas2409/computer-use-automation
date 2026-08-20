@@ -1,0 +1,108 @@
+[
+  {
+    "phase": "operator_up"
+  },
+  {
+    "phase": "pending_seen",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "pending",
+        "state": "PENDING_HANDOFF",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T21:03:47.504199+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: policy requires confirmation for 'click'",
+            "to_state": "PENDING_HANDOFF"
+          }
+        ]
+      },
+      "pending": {
+        "capability_id": "mc_place_hold",
+        "evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_place_hold_meridian_core_20260820T210333Z",
+        "goal": "Meridian Core: Supervisor Place Account Hold to Confirmation",
+        "intervention_id": "iv_7803e3104f99047a",
+        "reason": "policy requires confirmation for 'click'",
+        "screenshot_path": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_place_hold_meridian_core_20260820T210333Z/intervention_iv_7803e3104f99047a.png",
+        "state_summary": {
+          "kind": "policy_confirm",
+          "page_text_length": 448,
+          "steps_completed": 13,
+          "url": "https://web-sample.interface-hiring.com/members/100234/hold/review"
+        },
+        "step_index": 13,
+        "tenant_id": "meridian_core",
+        "version": "2.0"
+      }
+    }
+  },
+  {
+    "phase": "take_control",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T21:03:47.736537+00:00",
+        "from_state": "PENDING_HANDOFF",
+        "reason": "operator took control",
+        "to_state": "HUMAN"
+      }
+    }
+  },
+  {
+    "phase": "hand_back",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T21:03:47.738283+00:00",
+        "from_state": "HUMAN",
+        "reason": "auditor script approved the policy-gated commit",
+        "to_state": "RESUMING"
+      }
+    }
+  },
+  {
+    "phase": "post_handback",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "automation",
+        "state": "AUTOMATION",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T21:03:47.504199+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: policy requires confirmation for 'click'",
+            "to_state": "PENDING_HANDOFF"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T21:03:47.736537+00:00",
+            "from_state": "PENDING_HANDOFF",
+            "reason": "operator took control",
+            "to_state": "HUMAN"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T21:03:47.738283+00:00",
+            "from_state": "HUMAN",
+            "reason": "auditor script approved the policy-gated commit",
+            "to_state": "RESUMING"
+          },
+          {
+            "actor": "automation",
+            "at": "2026-08-20T21:03:47.940565+00:00",
+            "from_state": "RESUMING",
+            "reason": "resume:iv_7803e3104f99047a",
+            "to_state": "AUTOMATION"
+          }
+        ]
+      },
+      "pending": null
+    }
+  }
+]

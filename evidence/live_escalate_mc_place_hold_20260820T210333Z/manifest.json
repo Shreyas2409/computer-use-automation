@@ -1,0 +1,16 @@
+{
+  "generated_at": "20260820T210333Z",
+  "capability_id": "mc_place_hold",
+  "replay_exit_code": 0,
+  "replay_status": "ok",
+  "replay_outputs": {},
+  "replay_evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_place_hold_meridian_core_20260820T210333Z",
+  "lease_final_state": "AUTOMATION",
+  "lease_transition_kinds": [
+    "PENDING_HANDOFF",
+    "HUMAN",
+    "RESUMING",
+    "AUTOMATION"
+  ],
+  "full_cycle_observed": true
+}

@@ -1,0 +1,526 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "mc_place_hold",
+  "version_major": 1,
+  "version_minor": 0,
+  "title": "Meridian Core: Attempt Place Account Hold as teller1 (override expected)",
+  "description": "Signs on to the Meridian Core servicing console as operator teller1 and opens member 100234. Initiates Place Account Hold on the specified share with reason FRAUD and provided notes, then continues. For teller1 (non-supervisor), a supervisor-override/permission-denied message is the correct, expected terminal outcome; if a confirmation appears instead, report that. Do not switch operators or attempt alternate paths.",
+  "target": {
+    "app_id": "meridian_core",
+    "base_url": "https://web-sample.interface-hiring.com",
+    "tenant_id": "meridian_core",
+    "target_version": "4.2.1",
+    "surface_kind": "legacy_web"
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "required": true,
+      "description": "Member number to open before placing the account hold.",
+      "example": "000000",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "share",
+      "type": "string",
+      "required": true,
+      "description": "Full share ID on which to place the hold (e.g., member-share suffix).",
+      "example": "123456-S0001",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "reason",
+      "type": "string",
+      "required": true,
+      "description": "Reason code to use for the hold.",
+      "example": "FRAUD",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "required": true,
+      "description": "Notes to include when placing the hold.",
+      "example": "placeholder notes",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "operator_password",
+      "type": "string",
+      "required": true,
+      "description": "Password for operator teller1 to sign on.",
+      "example": "********",
+      "sensitivity": "secret"
+    }
+  ],
+  "outputs": [],
+  "steps": [
+    {
+      "index": 0,
+      "action": "navigate",
+      "target": null,
+      "value": "https://web-sample.interface-hiring.com/signon",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Open the Meridian Core servicing console sign-on page to begin the workflow."
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Operator ID:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 104
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": "teller1",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator ID to sign on as teller1."
+    },
+    {
+      "index": 2,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Password:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 127
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "operator_password"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator password to sign on as teller1."
+    },
+    {
+      "index": 3,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Sign On"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 406,
+              "y": 189
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/menu",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/menu"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the sign-on form with operator ID teller1 and password to log in."
+    },
+    {
+      "index": 4,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Member Inquiry / Selection"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Member Inquiry / Selection"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 400,
+              "y": 131
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Begin by searching for and selecting member 100234 as required by the workflow."
+    },
+    {
+      "index": 5,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Value:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 464,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "member_id"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Search for the member by member number 100234 as instructed."
+    },
+    {
+      "index": 6,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Search"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 607,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members?by=number&q=100234",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the member search for member number 100234 to locate their record."
+    },
+    {
+      "index": 7,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Select"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Select"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 906,
+              "y": 220
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the member record for member 100234 to perform actions on their account."
+    },
+    {
+      "index": 8,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Place Account Hold"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Place Account Hold"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 716,
+              "y": 324
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234/hold",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+/hold"
+        }
+      },
+      "on_error": [],
+      "notes": "Begin the Place Account Hold process for this member as required."
+    },
+    {
+      "index": 9,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Notes:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 564,
+              "y": 184
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "notes"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the required notes for the account hold per instructions."
+    },
+    {
+      "index": 10,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Continue"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 426,
+              "y": 221
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234/hold/review",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+/hold/review"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the Place Account Hold form with share 100234-S0001, reason code FRAUD, and notes 'test hold' to observe the expected supervisor override rejection."
+    }
+  ],
+  "outcomes": [
+    {
+      "name": "supervisor_override_required",
+      "detect": {
+        "kind": "text_match",
+        "contains": "SUPERVISOR OVERRIDE REQUIRED",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "Action rejected: Supervisor override required for this operator when attempting to place the hold."
+    },
+    {
+      "name": "invalid_credentials",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Sign On Failed",
+        "case_sensitive": false
+      },
+      "classification": "recoverable",
+      "terminal": true,
+      "message": "Sign-on failed: invalid operator credentials."
+    },
+    {
+      "name": "member_not_found",
+      "detect": {
+        "kind": "text_match",
+        "contains": "No results found",
+        "case_sensitive": false
+      },
+      "classification": "recoverable",
+      "terminal": true,
+      "message": "No member record matched the provided member_id."
+    }
+  ],
+  "approval": "approved",
+  "recorded_at": "2026-08-20T19:33:11.197749Z",
+  "recorded_by": "human_edit"
+}

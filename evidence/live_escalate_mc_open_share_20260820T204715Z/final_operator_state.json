@@ -1,0 +1,38 @@
+{
+  "action_log": [],
+  "lease": {
+    "holder": "automation",
+    "state": "AUTOMATION",
+    "transitions": [
+      {
+        "actor": "automation",
+        "at": "2026-08-20T20:47:24.014999+00:00",
+        "from_state": "AUTOMATION",
+        "reason": "open: policy requires confirmation for 'click'",
+        "to_state": "PENDING_HANDOFF"
+      },
+      {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T20:47:24.144853+00:00",
+        "from_state": "PENDING_HANDOFF",
+        "reason": "operator took control",
+        "to_state": "HUMAN"
+      },
+      {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T20:47:24.145580+00:00",
+        "from_state": "HUMAN",
+        "reason": "auditor script approved the policy-gated commit",
+        "to_state": "RESUMING"
+      },
+      {
+        "actor": "automation",
+        "at": "2026-08-20T20:47:24.465718+00:00",
+        "from_state": "RESUMING",
+        "reason": "resume:iv_aefa4a35a5f608f4",
+        "to_state": "AUTOMATION"
+      }
+    ]
+  },
+  "pending": null
+}

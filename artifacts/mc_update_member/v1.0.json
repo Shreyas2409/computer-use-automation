@@ -1,0 +1,596 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "mc_update_member",
+  "version_major": 1,
+  "version_minor": 0,
+  "title": "Populate Member Contact Info Form (Meridian Core)",
+  "description": "Signs on to the Meridian Core servicing console as operator teller1 using the provided operator_password. Searches for the specified member_id, opens the member record, navigates to Update Member Information, and fills E-mail, Phone, and Mailing Address with the provided values. The flow intentionally does not click Save Changes; completion is when the form fields reflect the provided inputs.",
+  "target": {
+    "app_id": "meridian_core",
+    "base_url": "https://web-sample.interface-hiring.com",
+    "tenant_id": "meridian_core",
+    "target_version": "4.2.1",
+    "surface_kind": "legacy_web"
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "required": true,
+      "description": "Member number to search and open before updating contact information.",
+      "example": "<MEMBER_ID>",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "required": true,
+      "description": "E-mail address to populate in Update Member Information.",
+      "example": "<EMAIL_ADDRESS>",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "phone",
+      "type": "string",
+      "required": true,
+      "description": "Phone number to populate in Update Member Information.",
+      "example": "<PHONE_NUMBER>",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "address",
+      "type": "string",
+      "required": true,
+      "description": "Mailing address to populate in Update Member Information.",
+      "example": "<MAILING_ADDRESS>",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "operator_password",
+      "type": "string",
+      "required": true,
+      "description": "Password for operator teller1 used to sign on to the console.",
+      "example": "<OPERATOR_PASSWORD>",
+      "sensitivity": "secret"
+    }
+  ],
+  "outputs": [],
+  "steps": [
+    {
+      "index": 0,
+      "action": "navigate",
+      "target": null,
+      "value": "https://web-sample.interface-hiring.com/signon",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Open the Meridian Core servicing console sign-on page to begin the login process."
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Operator ID"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 104
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": "teller1",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator ID to sign on as teller1."
+    },
+    {
+      "index": 2,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Password"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 127
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "operator_password"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the password for operator teller1."
+    },
+    {
+      "index": 3,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Sign On"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 406,
+              "y": 189
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/menu",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/menu"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the operator credentials to sign on to the Meridian Core console."
+    },
+    {
+      "index": 4,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Member Inquiry / Selection"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Member Inquiry / Selection"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 400,
+              "y": 131
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Start a member search to find member 100234 and open their record."
+    },
+    {
+      "index": 5,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Value"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 464,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "member_id"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the member number to search for member 100234."
+    },
+    {
+      "index": 6,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Search"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 607,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members?by=number&q=100234",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Execute the member search using the entered member number 100234."
+    },
+    {
+      "index": 7,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Select"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Select"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 906,
+              "y": 220
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the member record for member 100234 from the search results."
+    },
+    {
+      "index": 8,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Update Member Information"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Update Member Information"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 566,
+              "y": 347
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members/100234/update",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+/update"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the form to update the member’s contact information."
+    },
+    {
+      "index": 9,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "E-mail"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 541,
+              "y": 134
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "email"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Update the member’s email to the specified value."
+    },
+    {
+      "index": 10,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Phone"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 485,
+              "y": 157
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "phone"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Update the member’s phone number to the specified value."
+    },
+    {
+      "index": 11,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Mailing Address"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 583,
+              "y": 180
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "address"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Update the member’s mailing address to the specified value."
+    },
+    {
+      "index": 12,
+      "action": "click",
+      "target": {
+        "strategies": [
+          { "kind": "role_name", "spec": { "role": "button", "name": "Save Changes" }, "durability": 95 },
+          { "kind": "css", "spec": { "selector": "input" }, "durability": 40 },
+          { "kind": "coordinates", "spec": { "x": 417, "y": 244 }, "durability": 20 }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Save the updated contact information. Policy-gated (require_confirmation, matches 'Save') — replay escalates to the operator console for approval before this click executes. If email/phone fail server-side validation, the resulting rejection page fires the invalid_email/invalid_phone business outcome instead of a hard failure — the gate still requires confirmation first regardless of whether the data turns out to be valid, since it can't know that in advance."
+    }
+  ],
+  "outcomes": [
+    {
+      "name": "invalid_email",
+      "detect": {
+        "kind": "text_match",
+        "contains": "E-mail address is not in a valid format.",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "The update was rejected: e-mail address is not in a valid format."
+    },
+    {
+      "name": "invalid_phone",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Phone number is not valid.",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "The update was rejected: phone number is not valid."
+    },
+    {
+      "name": "invalid_credentials",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Invalid operator ID or password",
+        "case_sensitive": false
+      },
+      "classification": "recoverable",
+      "terminal": true,
+      "message": "Sign on failed: invalid operator ID or password."
+    },
+    {
+      "name": "signon_failed",
+      "detect": {
+        "kind": "text_match",
+        "contains": "Sign-on failed",
+        "case_sensitive": false
+      },
+      "classification": "recoverable",
+      "terminal": true,
+      "message": "Sign on failed. Please verify credentials and try again."
+    },
+    {
+      "name": "member_not_found",
+      "detect": {
+        "kind": "text_match",
+        "contains": "No member records matched your search.",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "No member found for the provided member_id."
+    }
+  ],
+  "approval": "approved",
+  "recorded_at": "2026-08-20T20:54:56.391162Z",
+  "recorded_by": "human_edit"
+}

@@ -1,0 +1,21 @@
+{
+  "generated_at": "20260820T195613Z",
+  "replay_exit_code": 0,
+  "replay_status": "ok",
+  "replay_outputs": {
+    "confirmation_number": "CN480079",
+    "posted_at": "08/20/2026 19:56:16",
+    "amount_posted": 100,
+    "from_share_resulting_balance": 20754,
+    "to_share_resulting_balance": 204201
+  },
+  "replay_evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_transfer_meridian_core_20260820T195613Z",
+  "lease_final_state": "AUTOMATION",
+  "lease_transition_kinds": [
+    "PENDING_HANDOFF",
+    "HUMAN",
+    "RESUMING",
+    "AUTOMATION"
+  ],
+  "full_cycle_observed": true
+}

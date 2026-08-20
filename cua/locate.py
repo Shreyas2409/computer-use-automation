@@ -11,8 +11,10 @@ Rung order (durability, most to least durable):
 2. label — <label> element's text
 3. text — visible text in the element
 4. table_cell — table row+column headers (for table cells)
-5. css — CSS selector
-6. coordinates — x,y pixels (least durable; layout changes break it)
+5. label_cell — legacy table-form field with no <label>/aria-label at all
+   (plain adjacent cell text); resolved as the control in the same row
+6. css — CSS selector
+7. coordinates — x,y pixels (least durable; layout changes break it)
 
 CSS is never used as the primary/first rung because:
 - Highly fragile to class/style changes
@@ -22,9 +24,27 @@ CSS is never used as the primary/first rung because:
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from cua.schema import LocatorKind, LocatorLadder, LocatorStrategy
+
+
+def label_cell_pattern(label_text: str) -> re.Pattern[str]:
+    """Regex matching a label cell's text, normalized against trailing punctuation.
+
+    Legacy table-form labels are inconsistently punctuated across this kind
+    of site — "Operator ID:", "Confirmation:", but also a bare share ID used
+    as a row label with a trailing colon ("100234-S0070:") that the model
+    (or a caller) may reasonably supply without it. Matching on the label
+    text with any trailing `:`/`.` and surrounding whitespace stripped —
+    rather than patching one exact string at a time — is what actually
+    protects every label lookup on the site, not just the one that broke.
+    Leading punctuation/whitespace is deliberately left alone: nothing
+    observed on this target puts stray characters before a label.
+    """
+
+    return re.compile(r"^\s*" + re.escape(label_text) + r"\s*[:.]?\s*$")
 
 
 def build_ladder(
@@ -33,6 +53,7 @@ def build_ladder(
     label_text: str | None = None,
     text: str | None = None,
     table_cell: dict[str, Any] | None = None,
+    label_cell: dict[str, Any] | None = None,
     css: str | None = None,
     coordinates: tuple[int, int] | None = None,
 ) -> LocatorLadder:
@@ -49,6 +70,9 @@ def build_ladder(
         label_text: Text of a <label> element
         text: Visible text content
         table_cell: Dict with table headers (e.g., {"row": "...", "column": "..."})
+        label_cell: Dict with the adjacent-cell label text (e.g.,
+            {"label_text": "Operator ID:"}) for legacy table-form fields
+            with no real <label>/aria-label association
         css: CSS selector
         coordinates: (x, y) tuple
 
@@ -89,6 +113,13 @@ def build_ladder(
         )
         if recorded_match is None:
             recorded_match = "table_cell"
+
+    if label_cell:
+        strategies.append(
+            LocatorStrategy(kind="label_cell", spec=label_cell, durability=65)
+        )
+        if recorded_match is None:
+            recorded_match = "label_cell"
 
     # CSS can only be added if we already have a higher-durability primary rung
     if css:

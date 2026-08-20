@@ -1,0 +1,277 @@
+[
+  {
+    "timestamp": "2026-08-20T20:56:20.921583",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "mc_update_member",
+      "version": "1.0",
+      "tenant_id": "meridian_core",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "params": [
+        "address",
+        "email",
+        "member_id",
+        "operator_password",
+        "phone"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.054648",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "skipped",
+      "duration_ms": 133,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.077744",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 23,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.116188",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 38,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.249060",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 132,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.336984",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 87,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.353814",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 16,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.453704",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 99,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.539042",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 85,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.631953",
+    "phase": "replay",
+    "step_index": 8,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 92,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.648616",
+    "phase": "replay",
+    "step_index": 9,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 16,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.656307",
+    "phase": "replay",
+    "step_index": 10,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 7,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.663625",
+    "phase": "replay",
+    "step_index": 11,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 7,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.663663",
+    "phase": "replay",
+    "step_index": 12,
+    "action": null,
+    "message": "policy_require_confirmation",
+    "error": null,
+    "metadata": {
+      "verb": "click",
+      "url": "https://web-sample.interface-hiring.com/members/100234/update"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:21.687949",
+    "phase": "replay",
+    "step_index": 12,
+    "action": null,
+    "message": "intervention_opened",
+    "error": null,
+    "metadata": {
+      "intervention_id": "iv_33260e74b83eb9b3",
+      "kind": "policy_confirm",
+      "reason": "policy requires confirmation for 'click'",
+      "screenshot": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_update_member_meridian_core_20260820T205620Z/intervention_iv_33260e74b83eb9b3.png"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:22.119427",
+    "phase": "replay",
+    "step_index": 12,
+    "action": null,
+    "message": "intervention_resumed",
+    "error": null,
+    "metadata": {
+      "intervention_id": "iv_33260e74b83eb9b3",
+      "notes": "auditor script approved the policy-gated commit"
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:22.210724",
+    "phase": "replay",
+    "step_index": 12,
+    "action": null,
+    "message": "outcome_detected",
+    "error": null,
+    "metadata": {
+      "name": "invalid_email",
+      "classification": "business_outcome",
+      "terminal": true
+    }
+  },
+  {
+    "timestamp": "2026-08-20T20:56:22.238851",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayBusinessOutcome",
+      "result": {
+        "kind": "ReplayBusinessOutcome",
+        "exit_code": 0,
+        "capability_id": "mc_update_member",
+        "version": "1.0",
+        "tenant_id": "meridian_core",
+        "duration_ms": 1289,
+        "step_count": 13,
+        "recovery_count": 0,
+        "outcome_name": "invalid_email"
+      }
+    }
+  }
+]

@@ -1,0 +1,117 @@
+[
+  {
+    "phase": "operator_up"
+  },
+  {
+    "phase": "pending_seen",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "pending",
+        "state": "PENDING_HANDOFF",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T20:07:41.034697+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: checkpoint 'URL advanced to https://web-sample.interface-hiring.com/members/100234' did not fire; recovery exhausted",
+            "to_state": "PENDING_HANDOFF"
+          }
+        ]
+      },
+      "pending": {
+        "capability_id": "mc_lookup_balance",
+        "evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_lookup_balance_meridian_core_20260820T200727Z",
+        "goal": "Read Member Share IDs and Balances (3 rows)",
+        "intervention_id": "iv_a04ded16e1f4f959",
+        "reason": "checkpoint 'URL advanced to https://web-sample.interface-hiring.com/members/100234' did not fire; recovery exhausted",
+        "screenshot_path": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_lookup_balance_meridian_core_20260820T200727Z/intervention_iv_a04ded16e1f4f959.png",
+        "state_summary": {
+          "kind": "checkpoint_failed",
+          "page_text_length": 532,
+          "steps_completed": 7,
+          "url": "https://web-sample.interface-hiring.com/menu"
+        },
+        "step_index": 7,
+        "tenant_id": "meridian_core",
+        "version": "1.0"
+      }
+    }
+  },
+  {
+    "phase": "take_control",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T20:44:57.686035+00:00",
+        "from_state": "PENDING_HANDOFF",
+        "reason": "operator took control",
+        "to_state": "HUMAN"
+      }
+    }
+  },
+  {
+    "phase": "hand_back",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T20:44:57.688279+00:00",
+        "from_state": "HUMAN",
+        "reason": "auditor script approved the policy-gated commit",
+        "to_state": "RESUMING"
+      }
+    }
+  },
+  {
+    "phase": "post_handback",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "resuming",
+        "state": "RESUMING",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T20:07:41.034697+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: checkpoint 'URL advanced to https://web-sample.interface-hiring.com/members/100234' did not fire; recovery exhausted",
+            "to_state": "PENDING_HANDOFF"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T20:44:57.686035+00:00",
+            "from_state": "PENDING_HANDOFF",
+            "reason": "operator took control",
+            "to_state": "HUMAN"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T20:44:57.688279+00:00",
+            "from_state": "HUMAN",
+            "reason": "auditor script approved the policy-gated commit",
+            "to_state": "RESUMING"
+          }
+        ]
+      },
+      "pending": {
+        "capability_id": "mc_lookup_balance",
+        "evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_lookup_balance_meridian_core_20260820T200727Z",
+        "goal": "Read Member Share IDs and Balances (3 rows)",
+        "intervention_id": "iv_a04ded16e1f4f959",
+        "reason": "checkpoint 'URL advanced to https://web-sample.interface-hiring.com/members/100234' did not fire; recovery exhausted",
+        "screenshot_path": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_lookup_balance_meridian_core_20260820T200727Z/intervention_iv_a04ded16e1f4f959.png",
+        "state_summary": {
+          "kind": "checkpoint_failed",
+          "page_text_length": 532,
+          "steps_completed": 7,
+          "url": "https://web-sample.interface-hiring.com/menu"
+        },
+        "step_index": 7,
+        "tenant_id": "meridian_core",
+        "version": "1.0"
+      }
+    }
+  }
+]

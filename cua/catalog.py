@@ -29,6 +29,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 
+from cua.escalate import EscalationBroker
 from cua.evidence import EvidenceWriter
 from cua.registry import _get_artifacts_dir, _parse_version, compose, load
 from cua.replay import (
@@ -415,6 +416,8 @@ class InvokeOptions:
     step_timeout_ms: int = 6000
     inject_mode: Optional[str] = None
     inject_after_step: int = 3
+    escalation_broker: Optional[EscalationBroker] = None
+    escalation_timeout_s: float = 300.0
 
 
 def _split_options(payload: dict[str, Any]) -> tuple[InvokeOptions, dict[str, Any]]:
@@ -512,6 +515,9 @@ async def invoke(
         step_timeout_ms=opts.step_timeout_ms,
         inject_mode=opts.inject_mode,
         inject_after_step=opts.inject_after_step,
+        escalation_broker=opts.escalation_broker,
+        escalation_timeout_s=opts.escalation_timeout_s,
+        escalation_goal=cap.title,
     )
     result = await run_replay(
         cap, bound, evidence_root=Path(evidence_root),
@@ -527,6 +533,8 @@ def create_app(
     *,
     artifacts_dir: Path | str | None = None,
     evidence_root: Path | str = DEFAULT_EVIDENCE_ROOT,
+    escalation_broker: EscalationBroker | None = None,
+    escalation_timeout_s: float = 300.0,
 ):
     """Build the tiny agent-facing HTTP surface.
 
@@ -536,6 +544,12 @@ def create_app(
 
     Flask is imported inside the factory so importing ``cua.catalog`` in
     minimal environments (tests, offline agents) doesn't require Flask.
+
+    ``escalation_broker`` is optional and caller-supplied (this module does
+    not construct or own operator-console lifecycle, matching how it already
+    takes ``evidence_root``/``artifacts_dir`` rather than owning storage);
+    when a broker is passed, every invocation through this app can escalate
+    to whichever operator console that broker is wired to.
     """
 
     from flask import Flask, jsonify, request
@@ -561,6 +575,10 @@ def create_app(
     def _invoke(name: str):
         payload = request.get_json(force=True, silent=True) or {}
         opts, params = _split_options(payload)
+        # Broker is caller-supplied at app construction (can't arrive over
+        # JSON); every invocation through this app shares it.
+        opts.escalation_broker = escalation_broker
+        opts.escalation_timeout_s = escalation_timeout_s
         try:
             result = asyncio.run(
                 invoke(

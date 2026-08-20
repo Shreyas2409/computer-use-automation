@@ -1,0 +1,108 @@
+[
+  {
+    "phase": "operator_up"
+  },
+  {
+    "phase": "pending_seen",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "pending",
+        "state": "PENDING_HANDOFF",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T20:47:24.014999+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: policy requires confirmation for 'click'",
+            "to_state": "PENDING_HANDOFF"
+          }
+        ]
+      },
+      "pending": {
+        "capability_id": "mc_open_share",
+        "evidence_dir": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_open_share_meridian_core_20260820T204716Z",
+        "goal": "Open Money Market Share to Confirmation",
+        "intervention_id": "iv_aefa4a35a5f608f4",
+        "reason": "policy requires confirmation for 'click'",
+        "screenshot_path": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_open_share_meridian_core_20260820T204716Z/intervention_iv_aefa4a35a5f608f4.png",
+        "state_summary": {
+          "kind": "policy_confirm",
+          "page_text_length": 392,
+          "steps_completed": 12,
+          "url": "https://web-sample.interface-hiring.com/members/100234/open-share/review"
+        },
+        "step_index": 12,
+        "tenant_id": "meridian_core",
+        "version": "1.0"
+      }
+    }
+  },
+  {
+    "phase": "take_control",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T20:47:24.144853+00:00",
+        "from_state": "PENDING_HANDOFF",
+        "reason": "operator took control",
+        "to_state": "HUMAN"
+      }
+    }
+  },
+  {
+    "phase": "hand_back",
+    "response": {
+      "ok": true,
+      "transition": {
+        "actor": "alice-auditor",
+        "at": "2026-08-20T20:47:24.145580+00:00",
+        "from_state": "HUMAN",
+        "reason": "auditor script approved the policy-gated commit",
+        "to_state": "RESUMING"
+      }
+    }
+  },
+  {
+    "phase": "post_handback",
+    "state": {
+      "action_log": [],
+      "lease": {
+        "holder": "automation",
+        "state": "AUTOMATION",
+        "transitions": [
+          {
+            "actor": "automation",
+            "at": "2026-08-20T20:47:24.014999+00:00",
+            "from_state": "AUTOMATION",
+            "reason": "open: policy requires confirmation for 'click'",
+            "to_state": "PENDING_HANDOFF"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T20:47:24.144853+00:00",
+            "from_state": "PENDING_HANDOFF",
+            "reason": "operator took control",
+            "to_state": "HUMAN"
+          },
+          {
+            "actor": "alice-auditor",
+            "at": "2026-08-20T20:47:24.145580+00:00",
+            "from_state": "HUMAN",
+            "reason": "auditor script approved the policy-gated commit",
+            "to_state": "RESUMING"
+          },
+          {
+            "actor": "automation",
+            "at": "2026-08-20T20:47:24.465718+00:00",
+            "from_state": "RESUMING",
+            "reason": "resume:iv_aefa4a35a5f608f4",
+            "to_state": "AUTOMATION"
+          }
+        ]
+      },
+      "pending": null
+    }
+  }
+]

@@ -123,6 +123,13 @@ _A11Y_CAPTURE_JS = r"""
       if (t) return t;
     }
     const tag = el.tagName;
+    if (tag === 'INPUT') {
+      const type = (el.getAttribute('type') || '').toLowerCase();
+      if (type === 'submit' || type === 'button' || type === 'reset') {
+        const v = el.getAttribute('value');
+        if (v && v.trim()) return cleanText(v);
+      }
+    }
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
       const ph = el.getAttribute('placeholder');
       if (ph && ph.trim()) return cleanText(ph);
