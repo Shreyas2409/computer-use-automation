@@ -654,3 +654,101 @@ Turing, Alan`, `From: 100987-S0001-4 ($5.00)`, `To: 100987-MMKT-5
 ($10.00)`, `Amount: $1.00`, sitting at `Post Transfer`, correctly parked
 before any commit. Left it pending rather than approving it — this was a
 pre-demo readiness check, not a request to complete the transfer.
+
+## "Generic system error" on an approved escalation — diagnosed before touching anything, confirmed mapping-only, fixed
+
+**Reported**: a run parked, was approved 5 seconds later, and the chatbot
+still reported failure — explicitly ruled out as a timeout. Instructions
+were to diagnose and report four specific things before changing anything,
+and to stop rather than attempt a fix if the root cause turned out to be
+waiting behavior rather than message mapping.
+
+**Diagnosed via a faithful live reproduction, not by reading code and
+guessing.** Wrote a standalone script calling the exact same
+`cua.catalog.invoke()` function `chatbot.py`'s `_invoke_one()` calls, with
+the same `InvokeOptions(headless=True, escalation_broker=broker)` shape,
+against the member/share pair given for verification
+(`100987-MMKT-11` → `100987-MMKT-5`) — but wired to its own operator
+console on port 8767 so the live demo chatbot (port 5050/8765) wasn't
+disturbed mid-diagnosis. Ran it, waited for `PENDING_HANDOFF`, approved
+via the same `take_control`/`hand_back` cycle a real operator would use,
+and printed the complete raw dict `invoke()` returned — no filtering.
+
+**Answered all four questions before changing anything:**
+
+1. **Raw result** (full dict, not summarized): `status: "failed"`,
+   `exit_code: 2`, `step_index: 14`, `action: "extract"`,
+   `error/observed: "extract 'from_share_resulting_balance': no value
+   found"`, `outcome_name: null` — and, critically, a real
+   `interventions: [{"intervention_id": "iv_3eec4f3411a6a34b", "outcome":
+   "resumed", "transitions": [...PENDING_HANDOFF→HUMAN→RESUMING→
+   AUTOMATION...]}]`. The approval had genuinely succeeded; Post Transfer
+   (step 14) had `status: "ok"`; the failure is the output-extraction step
+   immediately after, and it is the *same, already-logged* bug from
+   earlier tonight — `mc_transfer`'s `from_share_resulting_balance`/
+   `to_share_resulting_balance` locators are still anchored to member
+   `100234`'s literal share IDs, so they throw on any other member. Not a
+   new bug; this diagnosis just connected it to the reported symptom.
+2. **Where status maps to reply text**: `chatbot.py`,
+   `_agent_facing_result()` — `keys = ("status", "outputs", "outcome_name",
+   "message", "exit_code")`. Applied to the raw result above: `outputs`
+   isn't a field on `ReplayHardFailure` (dropped), `message` isn't either
+   (dropped), leaving `{"status": "failed", "outcome_name": None,
+   "exit_code": 2}` as literally the entire tool result the model ever
+   saw. `interventions` — the one field that would have told it the
+   approval worked — was never in the whitelist at all, for *any* status.
+3. **Does the chatbot wait for handback?** Yes, confirmed by wall-clock
+   timing, not inferred from reading the code: `invoke()` returned 20.7
+   seconds after being called — spanning park, the operator's
+   `take_control`/`hand_back`, resume, and continued step execution
+   through to the extraction failure — all inside the single blocking
+   call underneath the chatbot's one `/chat` request. It does not return
+   early on `"escalated"`. This directly rules out a waiting-behavior bug.
+4. **Mapping only.** Reported this plainly before writing any fix, per
+   instruction, including the nuance that the *specific* repro used
+   (member `100987`) was never going to reach `status: "escalated"` at
+   all under normal approval timing — a genuine `"escalated"` status only
+   fires on an actual timeout/cancel, which is a narrower, separate case
+   from what this repro exercised (a `resumed`-then-`failed` result that
+   merely *looks* similar from the chatbot's reply).
+
+**Fix — `chatbot.py`, `_agent_facing_result()` and `SYSTEM_PROMPT` only,
+no other file touched.** Widened the field whitelist to also forward
+`intervention_id`, `reason`, `resumable`, `interventions`, `error`,
+`observed`, `expected`, `step_index`, `action` when present — nothing
+invented, just nothing withheld that `invoke()` actually returned. Added
+prompt guidance distinguishing the two shapes this now makes visible: a
+genuine `"escalated"` status (approval window really did close — name the
+`intervention_id`, point at `http://127.0.0.1:8765`) versus a `resumed`
+intervention inside an overall `"failed"` result (the approval worked;
+state the real `error`/`observed` text instead of a generic one). Did not
+touch the underlying `mc_transfer` output-locator bug that actually causes
+this specific failure — that's the same pre-existing, already-logged,
+deliberately-deferred issue from earlier tonight, out of scope for a
+mapping fix.
+
+**Verified**: restarted the chatbot (required — `SYSTEM_PROMPT` is baked
+into the process's `.start()`-ed conversation at launch, same as every
+prior chatbot-prompt edit tonight), reran the exact reported scenario
+(`100987-MMKT-11` → `100987-MMKT-5`) live through the real chatbot on port
+5050/8765, approved within 10 seconds. Reply post-fix: *"Approval to post
+the $1.00 transfer ... was granted by the operator (intervention_id
+iv_667ede88b7e555f0). However, the run failed afterward because it
+couldn't read the from-share resulting balance ('extract
+'from_share_resulting_balance': no value found'). No confirmation number
+or resulting balances were captured, so I can't confirm whether the
+transfer posted."* — names the real intervention, states the real error,
+and correctly declines to assert whether the underlying transfer posted
+(the tool result itself doesn't resolve that either, and the model didn't
+invent an answer). All 148 tests still pass.
+
+**Confirmed, not just asserted, that restarting clears conversation
+drift** (separately reported: the chatbot's last reply had summarized the
+whole session instead of answering the request — the known single-shared-
+conversation weakness already documented). `create_app()` calls
+`client.start(SYSTEM_PROMPT, tools)` exactly once, at process start, with
+no conversation state persisted anywhere on disk — a fresh process is
+structurally guaranteed to start clean. Didn't need a separate test to
+confirm this; the restart already required for the prompt fix constitutes
+the same proof. Not fixed tonight, per instruction — still the same
+documented limitation.

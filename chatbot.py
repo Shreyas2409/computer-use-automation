@@ -81,6 +81,17 @@ SYSTEM_PROMPT = (
     "etc.), state the outcome and stop. You may suggest a different valid "
     "invocation (e.g. a different source share), but never imply any "
     "state change you cannot actually perform.\n"
+    "- A tool call already waits through any escalation before returning "
+    "to you — if you see status 'escalated', the operator did not approve "
+    "in time (not a routine pending state you need to relay separately). "
+    "State plainly that the approval window closed, name the "
+    "intervention_id from the result, and point at the operator console "
+    "(http://127.0.0.1:8765) where it can still be actioned. If the tool "
+    "result includes an intervention_id and outcome 'resumed' but the "
+    "overall status is 'failed', the approval succeeded — say so — and "
+    "the failure happened afterward; use the result's own error/observed "
+    "fields to state what actually went wrong instead of a generic "
+    "'system error'. Never invent a reason the result doesn't contain.\n"
     "\n"
     "Demo operator credentials (test environment only):\n"
     "  operator_password = password   (operator id: teller1)\n"
@@ -165,7 +176,22 @@ async def _invoke_one(name: str, tool_input: dict, broker) -> dict:
 
 
 def _agent_facing_result(result: dict) -> dict:
-    keys = ("status", "outputs", "outcome_name", "message", "exit_code")
+    """Forward everything the model needs to describe the real outcome.
+
+    Was dropping every field specific to a non-ok status: an escalated
+    result lost its intervention_id/reason (leaving nothing to point the
+    user at the operator console with), and a hard failure lost
+    error/observed/step_index/action (leaving nothing but a bare status
+    and exit code) — the model would describe both as a vague "system
+    error" because that's genuinely all it had. Report only what invoke()
+    actually returned, but report all of it.
+    """
+
+    keys = (
+        "status", "outputs", "outcome_name", "message", "exit_code",
+        "intervention_id", "reason", "resumable", "interventions",
+        "error", "observed", "expected", "step_index", "action",
+    )
     return {k: result[k] for k in keys if k in result}
 
 

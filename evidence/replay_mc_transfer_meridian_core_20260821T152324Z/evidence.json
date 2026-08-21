@@ -1,0 +1,325 @@
+[
+  {
+    "timestamp": "2026-08-21T15:23:25.894134",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "mc_transfer",
+      "version": "2.1",
+      "tenant_id": "meridian_core",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "params": [
+        "amount",
+        "from_share",
+        "member_id",
+        "memo",
+        "operator_password",
+        "to_share"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.196562",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "skipped",
+      "duration_ms": 302,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.270161",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 73,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.330048",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 59,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.476311",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 146,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.577692",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 101,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.597513",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 19,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.705234",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 107,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.797893",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 92,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.892919",
+    "phase": "replay",
+    "step_index": 8,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 94,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.915325",
+    "phase": "replay",
+    "step_index": 9,
+    "action": "select",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 22,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.926123",
+    "phase": "replay",
+    "step_index": 10,
+    "action": "select",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 10,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.936023",
+    "phase": "replay",
+    "step_index": 11,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 9,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:26.944652",
+    "phase": "replay",
+    "step_index": 12,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 8,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:29.031225",
+    "phase": "replay",
+    "step_index": 13,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 2086,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:29.031317",
+    "phase": "replay",
+    "step_index": 14,
+    "action": null,
+    "message": "policy_require_confirmation",
+    "error": null,
+    "metadata": {
+      "verb": "click",
+      "url": "https://web-sample.interface-hiring.com/members/100987/transfer/review"
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:29.081167",
+    "phase": "replay",
+    "step_index": 14,
+    "action": null,
+    "message": "intervention_opened",
+    "error": null,
+    "metadata": {
+      "intervention_id": "iv_3eec4f3411a6a34b",
+      "kind": "policy_confirm",
+      "reason": "policy requires confirmation for 'click'",
+      "screenshot": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_transfer_meridian_core_20260821T152324Z/intervention_iv_3eec4f3411a6a34b.png"
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:39.203840",
+    "phase": "replay",
+    "step_index": 14,
+    "action": null,
+    "message": "intervention_resumed",
+    "error": null,
+    "metadata": {
+      "intervention_id": "iv_3eec4f3411a6a34b",
+      "notes": "diagnostic approval"
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:39.328237",
+    "phase": "replay",
+    "step_index": 14,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 10296,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:45.413036",
+    "phase": "replay",
+    "step_index": 14,
+    "action": "extract",
+    "message": "replay_hard_failure",
+    "error": "extract 'from_share_resulting_balance': no value found",
+    "metadata": {
+      "expected": "output extraction to succeed",
+      "observed": "extract 'from_share_resulting_balance': no value found",
+      "outcome_name": null,
+      "screenshot": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_transfer_meridian_core_20260821T152324Z/step_14_failed.png"
+    }
+  },
+  {
+    "timestamp": "2026-08-21T15:23:45.413088",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayHardFailure",
+      "result": {
+        "kind": "ReplayHardFailure",
+        "exit_code": 2,
+        "capability_id": "mc_transfer",
+        "version": "2.1",
+        "tenant_id": "meridian_core",
+        "duration_ms": 19520,
+        "step_count": 16,
+        "recovery_count": 0,
+        "outcome_name": null,
+        "error": "extract 'from_share_resulting_balance': no value found"
+      }
+    }
+  }
+]

@@ -516,6 +516,40 @@ same ambiguous phrasing that previously misrouted now correctly reaches
 `mc_transfer` and `mc_place_hold` sign on correctly too — checked their
 own sign-on steps directly; neither carries the same defect.
 
+**Finding — the chatbot reported "generic system error" on an escalation
+that had actually been approved, because it was throwing away the only
+fields that explained why.** Reported as an escalation-handling bug: a
+run parked, was approved five seconds later, and the chatbot still said
+failure — not a timeout. Diagnosed before touching anything, per
+instruction, with a faithful live reproduction (same `invoke()` call
+`chatbot.py` makes, own operator console so the live demo wasn't
+disturbed): **waiting behavior was already correct** — `invoke()` blocked
+20.7 seconds wall-clock through park → approval → resume → continued
+execution, all inside the one call; it never returns early on
+`"escalated"`. The actual raw result was `status: "failed"`, with a real
+`resumed` intervention in it — the approval had worked; a separate,
+already-known bug (`mc_transfer`'s resulting-balance outputs still
+anchored to member `100234`'s literal share IDs) threw immediately
+afterward. The bug was `chatbot.py`'s `_agent_facing_result()`: its field
+whitelist kept only `status`/`outputs`/`outcome_name`/`message`/
+`exit_code` — for this result that's `{"status": "failed",
+"outcome_name": null, "exit_code": 2}` and nothing else, so the model
+wasn't being vague on purpose, it had nothing else to say.
+
+**Fixed by widening the whitelist**, not by inventing new logic: forward
+`intervention_id`, `reason`, `resumable`, `interventions`, `error`,
+`observed`, `expected`, `step_index`, `action` when the result actually
+has them. Added prompt guidance for how to read the two shapes this
+unlocks: a genuine `escalated` status (the approval window really did
+close — name the `intervention_id`, point at the operator console) versus
+a `resumed`-then-`failed` result (the approval worked; state the real
+error instead of a generic one). Verified against the exact reported
+scenario: the chatbot now names the approving operator, the real
+intervention id, and the exact underlying error — and correctly declines
+to guess whether the transfer actually posted, rather than fabricating
+either a confirmation or a definitive failure claim the tool result
+doesn't support. All 148 tests still pass.
+
 ## Dashboard and chatbot
 
 Both are server-rendered, no framework, no build step, no database — the
