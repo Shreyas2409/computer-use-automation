@@ -548,3 +548,109 @@ matrix), and the explicit instruction tonight was to convert silent-wrong
 into loud-fail, not to make any additional member (including revalidating
 `100234`'s own read steps) work. Flagged for direction rather than fixed
 on the spot.
+
+## "mc_lookup_balance signing on with wrong credentials" — traced to chatbot tool-routing, not the artifact; fixed in the prompt
+
+**Reported**: `mc_lookup_balance` was recorded against the original
+target's credentials (`demo`/`demo123`); Meridian Core needs
+`teller1`/`password`.
+
+**Diagnosed the artifact before touching anything**, per instruction.
+Checked all three versions on disk:
+```
+$ grep -rn "demo123\|\"demo\"" artifacts/mc_lookup_balance/
+(no matches — v1.0, v1.1, v1.2 all clean)
+```
+Step 1 (`type` into "Operator ID:"): `value` is the literal string
+`"teller1"`, not a `ValueRef`, not a default — hardcoded correctly at
+every version. Step 2 (`type` into "Password:"): `value` is
+`{"param": "operator_password"}`, correctly sourced from the caller.
+`ParamSpec.operator_password.example` is the generic placeholder
+`<OPERATOR_PASSWORD>`. `chatbot.py`'s `SYSTEM_PROMPT` already stated
+`operator_password = password (operator id: teller1)` correctly. The
+artifact and the prompt's stated credentials were both already right, in
+every place credentials could live.
+
+`demo123` is real — it's `lookup_member_balance`'s (the original
+take-home target's capability) `ParamSpec.operator_password.example`,
+confirmed via `grep`. That capability is published (`approval: approved`
+on all four of its versions) and exposed to the chatbot exactly like the
+`mc_*` ones, with no tenant/target disambiguation anywhere in
+`list_published()` or the system prompt — the same routing ambiguity
+already found and reported (not yet fixed) two conversations ago, when
+"Look up the balance for member 100234" first misrouted to
+`lookup_member_balance` against `localhost:8080`.
+
+**Confirmed live that this is exactly what happened again**: checked the
+chatbot's own evidence directories by modification time and found
+`evidence/replay_lookup_member_balance_meridian_20260821T045240Z` —
+`capability_id: lookup_member_balance`, `base_url: http://localhost:8080`
+— timestamped moments before the report. Restarted the chatbot (to load
+current code, not a stale in-memory import from before tonight's other
+fixes) and retried the identical ambiguous phrasing: it correctly reached
+`mc_lookup_balance` this time. Non-deterministic tool selection, not a
+credentials bug — the artifact was never the problem.
+
+**Fix — `chatbot.py`, `SYSTEM_PROMPT` only.** Added a capability-selection
+paragraph: every `mc_*`-prefixed tool targets Meridian Core and should be
+preferred for member/balance/transfer/share/hold requests; plain-named
+tools (`lookup_member_balance`, `open_subaccount`) are left over from a
+different, unrelated demo application on a different host with separate
+credentials, and must not be used for a Meridian Core request even when
+the name/description sounds similar. Restarted the chatbot process again
+to load the new prompt (killed and relaunched, same as every prior
+`chatbot.py` edit tonight — the running process's LLM client has the
+prompt baked into its `.start()`-ed conversation, so editing the file
+alone doesn't change live behavior).
+
+**Verified**: sent the identical ambiguous phrasing ("Look up the balance
+for member 100234") four times total across this fix (one before
+restarting, three after) — all four correctly invoked `mc_lookup_balance`,
+confirmed via each run's own `evidence.json` `replay_start` metadata
+(`capability_id`, `base_url`), not the chatbot's reply text alone:
+```
+replay_mc_lookup_balance_meridian_core_20260821T045857Z -> mc_lookup_balance https://web-sample.interface-hiring.com
+replay_mc_lookup_balance_meridian_core_20260821T050100Z -> mc_lookup_balance https://web-sample.interface-hiring.com
+replay_mc_lookup_balance_meridian_core_20260821T050113Z -> mc_lookup_balance https://web-sample.interface-hiring.com
+replay_mc_lookup_balance_meridian_core_20260821T050118Z -> mc_lookup_balance https://web-sample.interface-hiring.com
+```
+`mc_transfer` (`business_outcome`/`hold_share_debit_blocked`, exit 0) and
+`mc_place_hold` (`business_outcome`/`supervisor_override_required`, exit
+0) both still sign on correctly — checked their own sign-on steps
+directly too: `mc_transfer` step 1 is the literal `"teller1"`;
+`mc_place_hold` steps 1/2 are both `ValueRef`s to `operator_id`/
+`operator_password` (a genuine parameter there, by design, so it can
+replay as either `teller1` or `super1`). Neither carries the defect that
+was never actually in `mc_lookup_balance` either.
+
+**Not fixed — the routing ambiguity itself is a prompt-level mitigation,
+not a structural one**, same caveat as the chatbot-fabrication fix
+earlier tonight. A future model, a reworded request, or a new published
+capability with an overlapping name could still misroute; nothing
+verifies which capability actually ran against which claim beyond what
+this prompt happens to steer today. The cleaner structural fix — scoping
+the chatbot's tool list to only `mc_*` capabilities at the `list_published`
+call site, or unpublishing the legacy capabilities entirely — was not
+done tonight; flagged as the same class of "prompt constrains, doesn't
+guarantee" gap as the escalation-fabrication finding.
+
+## Live pre-demo check — Meridian Core open shares, escalation park/screenshot verified
+
+Checked live (`teller1`), not from memory: member `100987` currently has
+three OPEN shares — `100987-S0001-4` ($5.00), `100987-MMKT-5` ($10.00),
+`100987-MMKT-7` ($23.00). Didn't need to check `100234` further once
+`100987` already had a usable pair.
+
+Ran a real transfer through the chatbot (`100987-S0001-4` →
+`100987-MMKT-5`, $1.00) and watched it live: correctly routed to
+`mc_transfer` (routing fix above holds), reached the policy gate, parked
+at `PENDING_HANDOFF`. Operator console (`/state`) shows a genuine
+intervention — `intervention_id: iv_acbdc50d856cc440`, real
+`evidence_dir`, `step_index: 14`,
+`url: https://web-sample.interface-hiring.com/members/100987/transfer/review`.
+Opened the screenshot directly (not just checked the file exists): it
+renders the actual `CONFIRM FUNDS TRANSFER` page — `Member: 100987 -
+Turing, Alan`, `From: 100987-S0001-4 ($5.00)`, `To: 100987-MMKT-5
+($10.00)`, `Amount: $1.00`, sitting at `Post Transfer`, correctly parked
+before any commit. Left it pending rather than approving it — this was a
+pre-demo readiness check, not a request to complete the transfer.

@@ -480,6 +480,42 @@ be a response validator that checks every claim the reply makes about an
 action taken against the actual invocation record before the reply is
 sent, rather than trusting the model to self-constrain. Not built today.
 
+**Finding — the chatbot non-deterministically picked the wrong capability,
+and it looked like a credentials bug from the outside.** Reported as
+"`mc_lookup_balance` is signing on with the wrong credentials — it was
+recorded against the original target (`demo`/`demo123`); Meridian Core
+uses `teller1`/`password`." Investigated the artifact first, not the
+symptom: every version of `mc_lookup_balance` on disk (`v1.0`–`v1.2`) has
+the operator ID hardcoded correctly as the literal `"teller1"` in its
+sign-on step, and `operator_password` is a `ValueRef` correctly sourced
+from the caller — zero occurrences of `demo`/`demo123` anywhere in the
+artifact, and the chatbot's own system prompt already stated the correct
+credentials. `demo123` belongs to a different, unrelated capability
+(`lookup_member_balance`, the original take-home target, a different host
+entirely) that's *also* published and exposed to the chatbot with no
+disambiguation from the `mc_*` ones. Confirmed live, not guessed: the same
+chatbot session had already invoked `lookup_member_balance` against
+`localhost:8080` moments before the report — the wrong capability, wrong
+target, and (naturally) credentials that don't apply to Meridian Core.
+Retried the identical ambiguous phrasing that triggered it and got a
+different (correct) capability the very next time — non-deterministic,
+not reliably reproducible, and the artifact was never actually at fault.
+
+**Fixed at the layer that was actually wrong** (`chatbot.py`,
+`SYSTEM_PROMPT`, not the artifact — hand-editing a correct artifact
+because a symptom pointed elsewhere would have been the wrong fix): added
+explicit capability-selection guidance — every `mc_*`-prefixed tool
+targets Meridian Core and should be preferred for any member/balance/
+transfer/share/hold request; plain-named tools left over from the
+original demo target (`lookup_member_balance`, `open_subaccount`) target
+an unrelated host with separate credentials and must not be used for a
+Meridian Core request even when the wording sounds similar. Verified: the
+same ambiguous phrasing that previously misrouted now correctly reaches
+`mc_lookup_balance` 4 times in a row (confirmed via each run's own
+`evidence.json` `capability_id`/`base_url`, not just the reply text).
+`mc_transfer` and `mc_place_hold` sign on correctly too — checked their
+own sign-on steps directly; neither carries the same defect.
+
 ## Dashboard and chatbot
 
 Both are server-rendered, no framework, no build step, no database — the

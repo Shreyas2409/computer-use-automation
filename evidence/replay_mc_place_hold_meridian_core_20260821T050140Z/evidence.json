@@ -1,0 +1,240 @@
+[
+  {
+    "timestamp": "2026-08-21T05:01:40.631350",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "mc_place_hold",
+      "version": "2.0",
+      "tenant_id": "meridian_core",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "params": [
+        "member_id",
+        "notes",
+        "operator_id",
+        "operator_password",
+        "reason",
+        "share"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:40.816992",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "skipped",
+      "duration_ms": 185,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:40.852426",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 35,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:40.901914",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 49,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:41.068404",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 166,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:41.159773",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 91,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:41.182492",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 22,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:41.290808",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 108,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:41.394824",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 103,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:41.489666",
+    "phase": "replay",
+    "step_index": 8,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 94,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:47.533054",
+    "phase": "replay",
+    "step_index": 9,
+    "action": "select",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "text",
+      "checkpoint": "skipped",
+      "duration_ms": 6043,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:53.562029",
+    "phase": "replay",
+    "step_index": 10,
+    "action": "select",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "text",
+      "checkpoint": "skipped",
+      "duration_ms": 6029,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:53.574880",
+    "phase": "replay",
+    "step_index": 11,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 12,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:53.692540",
+    "phase": "replay",
+    "step_index": 12,
+    "action": null,
+    "message": "outcome_detected",
+    "error": null,
+    "metadata": {
+      "name": "supervisor_override_required",
+      "classification": "business_outcome",
+      "terminal": true
+    }
+  },
+  {
+    "timestamp": "2026-08-21T05:01:53.732939",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayBusinessOutcome",
+      "result": {
+        "kind": "ReplayBusinessOutcome",
+        "exit_code": 0,
+        "capability_id": "mc_place_hold",
+        "version": "2.0",
+        "tenant_id": "meridian_core",
+        "duration_ms": 13062,
+        "step_count": 13,
+        "recovery_count": 0,
+        "outcome_name": "supervisor_override_required"
+      }
+    }
+  }
+]
