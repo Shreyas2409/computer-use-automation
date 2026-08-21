@@ -399,3 +399,152 @@ compliance; that's a data-correctness problem in `mc_transfer`'s output
 locators (already logged above), not a prompt problem, and a response
 validator checking against a wrong invocation record wouldn't catch it
 either.
+
+## Over-broad CSS fallback rung — fixed at both resolve time and record time, verified across all five seed members
+
+**Measured, not assumed, before touching anything.** Two read-only
+investigations first: (1) confirmed `mc_lookup_balance` is reachable via
+the chatbot's live `/chat` path (no auth on that route), not just the CLI
+— `list_published()` exposes every approved capability with no
+tenant/environment filter, and `cua.catalog.create_app()` (the one place
+that *would* need auth) is never actually launched anywhere in the repo.
+(2) Ran `mc_lookup_balance` against all five seed members
+(`100234`/`100987`/`101555`/`102777`/`103001` — the last three found via
+the target's own search-page hint text, not guessed) and hand-resolved
+each output's locator ladder directly against the live page to see the
+real value, not just the pass/fail exit code. Result: `share_id_row_1`,
+`balance_row_1`, `share_id_row_2` on **four of five** members resolved to
+the literal string `'MERIDIAN CORE\n      \xa0\xa0Member Services
+Platform \xa0 v4.2.1\n      Cornerstone Financial Systems™'` — the page
+header, byte-identical every time, served as if it were a share ID or a
+dollar balance. `balance_row_2`/`balance_row_3` failed loud instead only
+because those two happen to be single-rung `label_cell` outputs with no
+`css` fallback.
+
+**Root cause**: `WebSurface._locator_for` (`cua/surface/web.py`), `kind ==
+"css"` branch, returned `self.page.locator(spec["selector"]).first`
+unconditionally. `{"selector": "td"}` matches every `<td>` on the page —
+measured live: 12 on the signon page, 87 on a member-detail page, 15 on
+the funds-transfer form. `.first` always resolves to *something*, so a
+genuine miss (higher rungs' `role_name`/`text` correctly finding nothing,
+because the recorded text doesn't exist on this member's page) looked
+identical to success.
+
+**Fix, resolve time (`cua/surface/web.py`, `_locator_for`)**: count
+matches via `.count()` before taking `.first`; anything other than
+exactly one match is now treated as unresolved (returns `None`, same as
+any other rung miss). **Threshold: exactly 1, not "a small number."**
+Justified empirically, not chosen arbitrarily — surveyed every `css`
+strategy across every artifact in the repo (both targets) before picking
+it: every legitimate one (`#ctl00_MainContent_txtUsername`,
+`#ctl00_MainContent_grdAccounts tr td:nth-child(3)`, etc.) is an ID
+selector or a scoped compound selector, and every one of those already
+resolves to exactly one element on its page. Only the bare single-tag
+selectors used across the `mc_*` capabilities (`td`, `input`, `a`,
+`select`) ever need `.first` to break a tie — and measured live, `select`
+matches 2 elements on the funds-transfer form specifically (`From Share`
+and `To Share` — two different fields, not two interchangeable copies of
+the same one), which is direct proof that `.first` among >1 matches is
+not "probably fine," it's a coin flip between genuinely different
+elements. A looser threshold (e.g. "reject if >5 matches") would still
+permit exactly this coin flip on smaller pages; only `== 1` has zero
+ambiguity.
+
+**Fix, record time (`cua/locate.py`, `build_ladder()`)**: added
+`_BARE_TAG_SELECTOR = re.compile(r"^[a-zA-Z][a-zA-Z0-9]*$")`; a `css`
+value matching it now raises `ValueError` with an actionable message,
+exactly the same pattern already used to refuse CSS as the *primary*
+rung. **Did both, deliberately, not one instead of the other**: the
+resolve-time check is what actually protects the ~90 `css:td`/`css:input`/
+`css:a`/`css:select` strategies already sitting in artifacts tonight — a
+record-time-only fix does nothing for data already on disk. The
+record-time check is what stops a *future* discovery session from writing
+the same landmine again, with an immediate, actionable error during
+recording instead of a silent one that only detonates later against a
+different member's page. Verified the record-time guard directly:
+`build_ladder(role="cell", name="x", css="td")` and `css="input"` both
+raise; `css="#foo"`, `css="table#x tr:nth-child(2)"`, `css=".some-class"`
+all still pass through unchanged.
+
+**Verified — full matrix, as asked:**
+
+1. All 148 existing tests still pass, unchanged.
+2. `mc_lookup_balance` against `100987`/`101555`/`102777`/`103001`: all
+   four now raise `LocatorNotFoundError: no rung resolved:
+   kinds=['role_name', 'text', 'css', 'coordinates']` — a clean, loud
+   hard failure naming the step and every rung tried. Never header text
+   again on any of the four.
+3. `mc_lookup_balance` against `100234`: **now also fails** — see the
+   dedicated section immediately below. Not glossed over.
+4. `mc_transfer` regression check (`from_share=100234-S0001` [HOLD],
+   `to_share=100234-S0070`, no escalation needed): `status:
+   business_outcome`, `outcome_name: hold_share_debit_blocked`, `exit: 0`
+   — byte-identical to pre-fix behavior.
+5. `mc_place_hold` regression check (`operator_id=teller1`,
+   `share=100234-S0070`): first attempt used a guessed `reason=fraud_review`
+   and hard-failed on `select_option` — a bad param on my part, unrelated
+   to the fix (the `label_cell` locator resolved the `<select>` correctly;
+   the *option value* `fraud_review` doesn't exist). Retried with the
+   correct code (`reason=FRAUD`, read off the step's recorded option text):
+   `status: business_outcome`, `outcome_name: supervisor_override_required`,
+   `exit: 0` — byte-identical to pre-fix behavior.
+6. Latency: **unchanged**. Confirmed via code
+   (`DEFAULT_TIMEOUT_MS = 6000`) and step-level timing data that the ~12s
+   was always `role_name` (6s visibility-wait timeout, element doesn't
+   exist) + `text` (another 6s timeout) *before* the `css` rung is ever
+   reached — the fix only changes what happens once `css` *is* reached
+   (instant reject vs. instant wrong-accept), which was never where the
+   time went. Post-fix step timing on `100987`: steps 0–7 (navigate
+   through the member-select click) total 763ms combined; step 8 (the
+   first `read`, now a clean immediate failure) shows `duration_ms: 0` in
+   the per-step log, with the ~12s appearing in the run's total instead —
+   i.e. the cost lives inside the rung-timeout cascade the log doesn't
+   break out per-rung, not in anything the fix touches.
+
+**New finding, surfaced by verifying the fix, not caused by it — `100234`
+itself now fails too.** Traced precisely before reporting anything:
+`mc_lookup_balance`'s six recorded `read` steps (index 8–13, *separate*
+from and independent of the `outputs` extraction phase that actually
+populates the returned result) are:
+
+| step | field | anchor |
+|---|---|---|
+| 8 | share ID, row 1 | `100234-S0001` (stable) |
+| 9 | balance, row 1 | `$1,499.00` (a snapshot) |
+| 10 | share ID, row 2 | `100234-S0070` (stable) |
+| 11 | balance, row 2 | `$226.55` (a snapshot) |
+| 12 | share ID, row 3 | `100234-S0001-3` (stable) |
+| 13 | balance, row 3 | `$2,025.00` (a snapshot) |
+
+The three share-ID reads (8/10/12) are anchored to a stable identifier and
+still resolve fine. The three balance reads (9/11/13) are anchored to the
+*exact dollar figure seen at the original discovery session* — and this
+target's balances drift live, including from tonight's own repeated $1
+transfers against `100234-S0070` specifically. Step 9 (`$1,499.00`,
+`100234-S0001`) still passes only because that share is on HOLD and
+hasn't moved all night. Step 11 (`$226.55`, `100234-S0070`) fails —
+confirmed live, `100234-S0070` is `$26.04` right now, nowhere close.
+Step 13 (`$2,025.00`, `100234-S0001-3`) never got attempted (step 11's
+failure aborts the run first) but live `100234-S0001-3` is `$2,070.51` —
+also long drifted, so it would almost certainly fail too if reached.
+
+**This was already broken, silently, before tonight's fix** — the same
+`css:td` fallback was propping up step 11 (and would have propped up step
+13) exactly the same way it was propping up the four other members' outputs,
+just not yet caught here because the drift on `100234-S0070` specifically
+had to accumulate past `$226.55` before it would ever have been visible,
+and nobody had cross-checked *these particular steps'* resolved value
+against a live probe before tonight. The resolve-time fix didn't introduce
+this — it refused to keep silently returning header text for it, the same
+way it now refuses to for every other member.
+
+**Left unresolved, deliberately, not silently patched.** Re-anchoring
+steps 9/11/13 onto their row's stable share-ID text (the same
+`label_cell`-with-`column_offset` technique already proven correct for
+the `outputs` phase's `balance_row_2`/`balance_row_3`) is a small,
+well-precedented, obviously-correct-shaped fix — but it is new scope
+beyond tonight's authorization (the CSS-fallback fix and its verification
+matrix), and the explicit instruction tonight was to convert silent-wrong
+into loud-fail, not to make any additional member (including revalidating
+`100234`'s own read steps) work. Flagged for direction rather than fixed
+on the spot.

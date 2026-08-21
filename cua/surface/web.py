@@ -146,7 +146,19 @@ class WebSurface:
         if kind == "label_cell":
             return await self._label_cell_locator(spec)
         if kind == "css":
-            return self.page.locator(spec["selector"]).first
+            candidates = self.page.locator(spec["selector"])
+            # A css rung is only meaningful if it identifies ONE specific
+            # element. Taking .first when the selector matches more than
+            # one treats "which element" as a coin flip on DOM order — on
+            # this target, css:{"selector": "td"} matches 12-87 elements
+            # per page, so .first silently returns the first table cell
+            # (the page header) as if it were a share ID or a balance. A
+            # rung that can never fail to resolve to *something* defeats
+            # rung-drift telemetry exactly where it matters most: treat
+            # more than one match as a miss, not a match.
+            if await candidates.count() != 1:
+                return None
+            return candidates.first
         if kind == "coordinates":
             return None
         raise ValueError(f"unknown locator kind: {kind}")

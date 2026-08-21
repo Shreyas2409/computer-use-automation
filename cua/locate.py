@@ -29,6 +29,13 @@ from typing import Any
 
 from cua.schema import LocatorKind, LocatorLadder, LocatorStrategy
 
+# A bare HTML tag name with no id/class/attribute/combinator qualifier
+# (e.g. "td", "input", "a") — matches every element of that tag on the
+# page, so it can never fail to resolve to *something* and can never be
+# trusted to be the *right* something. "#id", ".class", "tr td:nth-child(2)"
+# etc. are all narrower than this and pass through untouched.
+_BARE_TAG_SELECTOR = re.compile(r"^[a-zA-Z][a-zA-Z0-9]*$")
+
 
 def label_cell_pattern(label_text: str) -> re.Pattern[str]:
     """Regex matching a label cell's text, normalized against trailing punctuation.
@@ -127,6 +134,16 @@ def build_ladder(
             raise ValueError(
                 "CSS cannot be the primary locator strategy; provide at least one "
                 "higher-durability strategy (role_name, label, text, or table_cell)"
+            )
+        if _BARE_TAG_SELECTOR.match(css.strip()):
+            raise ValueError(
+                f"CSS selector {css!r} is a bare tag name with no id/class/"
+                "attribute/combinator qualifier — it will match every element "
+                "of that tag on the page (e.g. every <td>), so a fallback "
+                "match can never fail and can never be trusted to be the "
+                "right element. Narrow it (an id, a class, a scoped "
+                "compound selector like 'table#x tr:nth-child(2)') or drop "
+                "to coordinates instead."
             )
         strategies.append(
             LocatorStrategy(kind="css", spec={"selector": css}, durability=40)

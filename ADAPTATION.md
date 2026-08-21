@@ -198,16 +198,69 @@ accessible name. `label_cell` picks up every field `role_name` can't reach.
 
 Two things I want to be honest about rather than gloss over:
 
-- **The `css: {"selector": "td"}` last-resort rung can never fail.** When
-  every higher rung misses, this fallback — "any `<td>` on the page,
-  first match" — always resolves to *something*, so a genuine miss looks
-  like success and returns whatever that first cell happens to be (I hit
-  this directly: it returned the page's own header text as a member's
-  balance). This defeats rung-drift telemetry exactly where it matters
-  most. I did not fix it — flagged as a named finding below and in the log,
-  with a concrete proposed fix (reject over-broad single-tag CSS selectors
-  as a fallback rung at record time, the same way `build_ladder()` already
-  refuses to let CSS be *primary*).
+- **The `css: {"selector": "td"}` last-resort rung could never fail — fixed,
+  measured before and after.** When every higher rung missed, this
+  fallback — "any `<td>` on the page, first match" — always resolved to
+  *something*, so a genuine miss looked like success. Measured precisely,
+  not just hit once: run `mc_lookup_balance` against all five seed members
+  (`100234`, `100987`, `101555`, `102777`, `103001`), and **four of five**
+  came back with `share_id_row_1`, `balance_row_1`, and `share_id_row_2`
+  all silently equal to the page header — `'MERIDIAN CORE ... Cornerstone
+  Financial Systems™'` — served as if it were a share ID or a dollar
+  balance. Only member `100234`, the one this capability was recorded
+  against, came back correct. Same root cause was also a latency cost:
+  each of the six `read` steps burned ~12s on every non-`100234` member
+  (two higher rungs — `role_name`, `text` — each exhausting their own 6s
+  visibility-wait timeout before falling through) versus sub-500ms for
+  every click/type/navigate step.
+
+  **Fixed both ends of the lifecycle.** Resolve time
+  (`cua/surface/web.py`, `WebSurface._locator_for`): a `css` rung now
+  counts its matches before taking `.first`; anything other than exactly
+  one match is treated as a miss, not a match. Not "a small number" —
+  exactly 1, because a locator rung's whole job is to identify *one*
+  specific element, and every legitimate `css` strategy already recorded
+  in this repo (ID selectors, scoped compound selectors like `#id
+  tr:nth-child(3)`) already resolves to exactly one; only the over-broad
+  bare-tag selectors (`td`: 12–87 matches per page measured; `select`: 2
+  matches on the funds-transfer form, where the two matches are the *From*
+  and *To* fields — genuinely different elements, not safely
+  interchangeable) ever needed `.first` to break a tie. Record time
+  (`cua/locate.py`, `build_ladder()`): a bare single-tag selector with no
+  id/class/attribute/combinator qualifier is now rejected the same way CSS
+  is already refused as *primary* — stops a future recording from writing
+  the same landmine, which the resolve-time fix alone wouldn't. Did both,
+  not one: resolve-time is the only thing that protects the ~90 `css:td`/
+  `css:input`/`css:a` strategies already sitting in artifacts tonight;
+  record-time is what stops a new one from being written.
+
+  Verified: all 148 tests still pass. `mc_lookup_balance` against
+  `100987`/`101555`/`102777`/`103001` now returns a clean, loud
+  `LocatorNotFoundError` naming the step and the rungs that were tried,
+  never header text again. `mc_transfer` and `mc_place_hold` regression-
+  checked post-fix — unchanged (`hold_share_debit_blocked` and
+  `supervisor_override_required` business outcomes fire exactly as
+  before). Read latency is unchanged — confirmed the ~12s was always
+  `role_name`+`text` each timing out (6s × 2) *before* the css rung is
+  ever reached, not the css rung itself, so tightening it couldn't have
+  changed that cost either way.
+
+  **One thing this fix did not paper over, and I'm not claiming it did**:
+  the same verification pass found `100234` itself now fails too — a
+  *separate*, previously-undetected bug in three of the six recorded
+  `read` steps (not the `outputs` extraction phase, which already anchors
+  `balance_row_2`/`balance_row_3` on the stable share ID). Those three
+  steps are anchored to the exact dollar figure seen at the original
+  discovery session (`$1,499.00`, `$226.55`, `$2,025.00`) — and on a
+  target whose balances drift live, that anchor rots. One of the three
+  (`$1,499.00`, the HOLD share) happened to still match tonight only
+  because that specific share hasn't moved all night; the other two no
+  longer match anything on the live page (confirmed live: `100234-S0070`
+  is `$26.04` now, nowhere near `$226.55`). This was *already* silently
+  returning header text on `100234` itself whenever that balance drifted
+  — the new resolve-time check just refuses to keep hiding it. Left
+  unresolved, flagged, not silently patched — re-anchoring those three
+  steps is a real edit beyond tonight's authorized scope.
 - **`select()` matches by DOM `value`, not visible label**, precisely
   because visible labels here embed live data. I didn't verify whether any
   *other* target's dropdowns would regress under this change — I don't
@@ -442,14 +495,23 @@ correctly in the dashboard before I reported it done.
 
 ## Cuts and next steps
 
-**What was actually left out, and why**: the over-broad CSS fallback rung
-was found and diagnosed but not fixed; the policy gate's fail-open default
+**What was actually left out, and why**: the policy gate's fail-open default
 on unrecognized actions was found and diagnosed but not fixed; the
 HOLD-share/same-share inconsistency between members was found but not
 investigated further; the chatbot's conversation-poisoning fragility was
-found but not fixed. All four are named findings above, each with a
+found but not fixed. All three are named findings above, each with a
 concrete proposed fix I didn't have time to build and verify properly under
-the session's time budget — not things I judged unimportant.
+the session's time budget — not things I judged unimportant. (The over-broad
+CSS fallback rung was in this list too; it's now built and verified instead
+— see "Driving this legacy UI reliably" above.)
+
+**New, found while verifying the CSS fix, not yet fixed**: three of
+`mc_lookup_balance`'s six recorded `read` steps are anchored to the exact
+dollar figure seen at the original discovery session rather than a stable
+identifier, so they rot as `100234`'s own balances drift — the CSS fix
+correctly stopped hiding this, which means `mc_lookup_balance` currently
+hard-fails even on `100234` until these three steps are re-anchored.
+Flagged, not silently patched — see `ADAPTATION_LOG.md`.
 
 **Not a cut**: Open New Share and Update Member Information were briefly
 descoped, then explicitly brought back in before any of the above work
@@ -458,11 +520,17 @@ other three capabilities. Noting this only because the earlier scope
 decision is still visible in `ADAPTATION_LOG.md` and I don't want it read as
 something left undone.
 
-**What I'd build next, in the order I'd do it**: invert the policy gate's
-default for confirmation-shaped actions (the highest-leverage fix, since it
-closes a whole *class* of "found it twice, there could be a third" gaps
-rather than one instance); reject over-broad CSS fallback rungs at record
-time; give the chatbot per-request (or recoverable) conversation state
-instead of one shared, unrecoverable one; and actually chase down why
-HOLD-share rejection reproduced for one member and not another, since right
-now I only have two data points and an honest "didn't investigate further."
+**What I'd build next, in the order I'd do it**: re-anchor `mc_lookup_balance`'s
+three dollar-figure-anchored `read` steps onto the stable share ID (same
+technique already used for `balance_row_2`/`balance_row_3`'s output
+locators), since that's what's blocking `100234` itself right now; invert
+the policy gate's default for confirmation-shaped actions (closes a whole
+*class* of "found it twice, there could be a third" gaps rather than one
+instance); parameterize `mc_lookup_balance`'s and `mc_transfer`'s output
+locators so they work against any member, not just the one they were
+recorded against (a real schema change — a locator's `label_text`
+accepting a `ValueRef` — not attempted tonight); give the chatbot
+per-request (or recoverable) conversation state instead of one shared,
+unrecoverable one; and actually chase down why HOLD-share rejection
+reproduced for one member and not another, since right now I only have two
+data points and an honest "didn't investigate further."

@@ -1,0 +1,842 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "mc_lookup_balance",
+  "version_major": 1,
+  "version_minor": 1,
+  "title": "Read Member Share IDs and Balances (3 rows)",
+  "description": "Signs on to the Meridian Core console as operator teller1, searches for the specified member, and opens their record. Reads the Share ID and Balance for each of the three rows in the SHARES / BALANCES table as six discrete reads. Do not read Type or Status. Finish only after all three rows\u2019 Share ID and Balance have been captured.",
+  "target": {
+    "app_id": "meridian_core",
+    "base_url": "https://web-sample.interface-hiring.com",
+    "tenant_id": "meridian_core",
+    "target_version": "4.2.1",
+    "surface_kind": "legacy_web"
+  },
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "required": true,
+      "description": "The member number to search (e.g., 100234) before opening the member record.",
+      "example": "<MEMBER_ID>",
+      "sensitivity": "internal"
+    },
+    {
+      "name": "operator_password",
+      "type": "string",
+      "required": true,
+      "description": "Password used to sign on as operator teller1 to the Meridian Core console.",
+      "example": "<OPERATOR_PASSWORD>",
+      "sensitivity": "secret"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "share_id_row_1",
+      "type": "string",
+      "description": "Share ID for the first row in SHARES / BALANCES.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "role_name",
+              "spec": {
+                "role": "cell",
+                "name": "100234-S0001"
+              },
+              "durability": 95
+            },
+            {
+              "kind": "text",
+              "spec": {
+                "text": "100234-S0001"
+              },
+              "durability": 75
+            },
+            {
+              "kind": "css",
+              "spec": {
+                "selector": "td"
+              },
+              "durability": 40
+            },
+            {
+              "kind": "coordinates",
+              "spec": {
+                "x": 370,
+                "y": 210
+              },
+              "durability": 20
+            }
+          ],
+          "recorded_match": "role_name"
+        },
+        "regex": null,
+        "transform": null
+      }
+    },
+    {
+      "name": "balance_row_1",
+      "type": "currency",
+      "description": "Balance for the first row in SHARES / BALANCES.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "role_name",
+              "spec": {
+                "role": "cell",
+                "name": "$1,499.00"
+              },
+              "durability": 95
+            },
+            {
+              "kind": "text",
+              "spec": {
+                "text": "$1,499.00"
+              },
+              "durability": 75
+            },
+            {
+              "kind": "css",
+              "spec": {
+                "selector": "td"
+              },
+              "durability": 40
+            },
+            {
+              "kind": "coordinates",
+              "spec": {
+                "x": 776,
+                "y": 210
+              },
+              "durability": 20
+            }
+          ],
+          "recorded_match": "role_name"
+        },
+        "regex": null,
+        "transform": null
+      }
+    },
+    {
+      "name": "share_id_row_2",
+      "type": "string",
+      "description": "Share ID for the second row in SHARES / BALANCES.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "role_name",
+              "spec": {
+                "role": "cell",
+                "name": "100234-S0070"
+              },
+              "durability": 95
+            },
+            {
+              "kind": "text",
+              "spec": {
+                "text": "100234-S0070"
+              },
+              "durability": 75
+            },
+            {
+              "kind": "css",
+              "spec": {
+                "selector": "td"
+              },
+              "durability": 40
+            },
+            {
+              "kind": "coordinates",
+              "spec": {
+                "x": 370,
+                "y": 233
+              },
+              "durability": 20
+            }
+          ],
+          "recorded_match": "role_name"
+        },
+        "regex": null,
+        "transform": null
+      }
+    },
+    {
+      "name": "balance_row_2",
+      "type": "currency",
+      "description": "Balance for the second row in SHARES / BALANCES.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "label_cell",
+              "spec": {
+                "label_text": "100234-S0070",
+                "column_offset": 2
+              },
+              "durability": 65
+            }
+          ],
+          "recorded_match": "label_cell"
+        },
+        "regex": null,
+        "transform": null
+      }
+    },
+    {
+      "name": "share_id_row_3",
+      "type": "string",
+      "description": "Share ID for the third row in SHARES / BALANCES.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "role_name",
+              "spec": {
+                "role": "cell",
+                "name": "100234-S0001-3"
+              },
+              "durability": 95
+            },
+            {
+              "kind": "text",
+              "spec": {
+                "text": "100234-S0001-3"
+              },
+              "durability": 75
+            },
+            {
+              "kind": "css",
+              "spec": {
+                "selector": "td"
+              },
+              "durability": 40
+            },
+            {
+              "kind": "coordinates",
+              "spec": {
+                "x": 370,
+                "y": 256
+              },
+              "durability": 20
+            }
+          ],
+          "recorded_match": "role_name"
+        },
+        "regex": null,
+        "transform": null
+      }
+    },
+    {
+      "name": "balance_row_3",
+      "type": "currency",
+      "description": "Balance for the third row in SHARES / BALANCES.",
+      "extract": {
+        "locator": {
+          "strategies": [
+            {
+              "kind": "label_cell",
+              "spec": {
+                "label_text": "100234-S0001-3",
+                "column_offset": 2
+              },
+              "durability": 65
+            }
+          ],
+          "recorded_match": "label_cell"
+        },
+        "regex": null,
+        "transform": null
+      }
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "action": "navigate",
+      "target": null,
+      "value": "https://web-sample.interface-hiring.com/signon",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Open the Meridian Core sign-on page to begin the operator login flow."
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Operator ID:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 104
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": "teller1",
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator user ID to sign on."
+    },
+    {
+      "index": 2,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Password:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 449,
+              "y": 127
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "operator_password"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the operator password to authenticate."
+    },
+    {
+      "index": 3,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Sign On"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 406,
+              "y": 189
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/menu",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/menu"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the sign-on form to log in as teller1."
+    },
+    {
+      "index": 4,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Member Inquiry / Selection"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Member Inquiry / Selection"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 400,
+              "y": 131
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the member search page to look up member 100234."
+    },
+    {
+      "index": 5,
+      "action": "type",
+      "target": {
+        "strategies": [
+          {
+            "kind": "label_cell",
+            "spec": {
+              "label_text": "Value:"
+            },
+            "durability": 65
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 464,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "label_cell"
+      },
+      "value": {
+        "param": "member_id"
+      },
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Enter the member number to search for member 100234."
+    },
+    {
+      "index": 6,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "button",
+              "name": "Search"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "input"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 607,
+              "y": 147
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to https://web-sample.interface-hiring.com/members?by=number&q=100234",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members"
+        }
+      },
+      "on_error": [],
+      "notes": "Submit the query to find member 100234."
+    },
+    {
+      "index": 7,
+      "action": "click",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "link",
+              "name": "Select"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "Select"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "a"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 906,
+              "y": 220
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": {
+        "description": "URL advanced to a member detail page (https://web-sample.interface-hiring.com/members/<id>)",
+        "detect": {
+          "kind": "url_pattern",
+          "pattern": "/members/\\d+"
+        }
+      },
+      "on_error": [],
+      "notes": "Open the member record for member 100234."
+    },
+    {
+      "index": 8,
+      "action": "read",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "cell",
+              "name": "100234-S0001"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "100234-S0001"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "td"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 370,
+              "y": 210
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Capture the Share ID for the first row in the SHARES / BALANCES table."
+    },
+    {
+      "index": 9,
+      "action": "read",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "cell",
+              "name": "$1,499.00"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "$1,499.00"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "td"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 776,
+              "y": 210
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Capture the Balance for the first row in the SHARES / BALANCES table."
+    },
+    {
+      "index": 10,
+      "action": "read",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "cell",
+              "name": "100234-S0070"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "100234-S0070"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "td"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 370,
+              "y": 233
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Capture the Share ID for the second row in the SHARES / BALANCES table."
+    },
+    {
+      "index": 11,
+      "action": "read",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "cell",
+              "name": "$226.55"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "$226.55"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "td"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 776,
+              "y": 233
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Capture the Balance for the second row in the SHARES / BALANCES table."
+    },
+    {
+      "index": 12,
+      "action": "read",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "cell",
+              "name": "100234-S0001-3"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "100234-S0001-3"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "td"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 370,
+              "y": 256
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Capture the Share ID for the third row in the SHARES / BALANCES table."
+    },
+    {
+      "index": 13,
+      "action": "read",
+      "target": {
+        "strategies": [
+          {
+            "kind": "role_name",
+            "spec": {
+              "role": "cell",
+              "name": "$2,025.00"
+            },
+            "durability": 95
+          },
+          {
+            "kind": "text",
+            "spec": {
+              "text": "$2,025.00"
+            },
+            "durability": 75
+          },
+          {
+            "kind": "css",
+            "spec": {
+              "selector": "td"
+            },
+            "durability": 40
+          },
+          {
+            "kind": "coordinates",
+            "spec": {
+              "x": 776,
+              "y": 256
+            },
+            "durability": 20
+          }
+        ],
+        "recorded_match": "role_name"
+      },
+      "value": null,
+      "checkpoint": null,
+      "on_error": [],
+      "notes": "Capture the Balance for the third row in the SHARES / BALANCES table."
+    }
+  ],
+  "outcomes": [
+    {
+      "name": "member_not_found",
+      "detect": {
+        "kind": "text_match",
+        "contains": "No member records matched your search.",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "The specified member could not be found during search."
+    },
+    {
+      "name": "member_record_not_found",
+      "detect": {
+        "kind": "text_match",
+        "contains": "RECORD NOT FOUND",
+        "case_sensitive": false
+      },
+      "classification": "business_outcome",
+      "terminal": true,
+      "message": "The member record could not be located (e.g. via ?inject=notfound on the member-detail page) \u2014 distinct from a genuinely empty search result, which uses different page wording."
+    }
+  ],
+  "approval": "approved",
+  "recorded_at": "2026-08-21T02:37:59.667318Z",
+  "recorded_by": "human_edit"
+}

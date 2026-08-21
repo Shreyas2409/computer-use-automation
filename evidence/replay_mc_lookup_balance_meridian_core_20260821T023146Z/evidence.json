@@ -1,0 +1,163 @@
+[
+  {
+    "timestamp": "2026-08-21T02:31:46.776721",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_start",
+    "error": null,
+    "metadata": {
+      "capability_id": "mc_lookup_balance",
+      "version": "1.0",
+      "tenant_id": "meridian_core",
+      "base_url": "https://web-sample.interface-hiring.com",
+      "params": [
+        "member_id",
+        "operator_password"
+      ],
+      "inject_mode": null
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:46.971405",
+    "phase": "replay",
+    "step_index": 0,
+    "action": "navigate",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": null,
+      "recorded_rung": null,
+      "checkpoint": "skipped",
+      "duration_ms": 194,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.006001",
+    "phase": "replay",
+    "step_index": 1,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 34,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.056580",
+    "phase": "replay",
+    "step_index": 2,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 50,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.211770",
+    "phase": "replay",
+    "step_index": 3,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 155,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.310708",
+    "phase": "replay",
+    "step_index": 4,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 98,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.331485",
+    "phase": "replay",
+    "step_index": 5,
+    "action": "type",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "label_cell",
+      "recorded_rung": "label_cell",
+      "checkpoint": "skipped",
+      "duration_ms": 20,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.451624",
+    "phase": "replay",
+    "step_index": 6,
+    "action": "click",
+    "message": "step_ok",
+    "error": null,
+    "metadata": {
+      "matched_rung": "role_name",
+      "recorded_rung": "role_name",
+      "checkpoint": "ok",
+      "duration_ms": 120,
+      "recovered": false
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.609008",
+    "phase": "replay",
+    "step_index": 7,
+    "action": "click",
+    "message": "replay_hard_failure",
+    "error": "checkpoint_failed",
+    "metadata": {
+      "expected": "URL advanced to https://web-sample.interface-hiring.com/members/100234",
+      "observed": "url~'/members/100234' did not fire",
+      "outcome_name": null,
+      "screenshot": "/Users/shreyashosagurgachndrashekhar/Desktop/interface-test/computer-use-automation/evidence/replay_mc_lookup_balance_meridian_core_20260821T023146Z/step_07_failed.png"
+    }
+  },
+  {
+    "timestamp": "2026-08-21T02:31:47.609050",
+    "phase": "replay",
+    "step_index": null,
+    "action": null,
+    "message": "replay_end",
+    "error": null,
+    "metadata": {
+      "status": "ReplayHardFailure",
+      "result": {
+        "kind": "ReplayHardFailure",
+        "exit_code": 2,
+        "capability_id": "mc_lookup_balance",
+        "version": "1.0",
+        "tenant_id": "meridian_core",
+        "duration_ms": 832,
+        "step_count": 8,
+        "recovery_count": 0,
+        "outcome_name": null,
+        "error": "checkpoint_failed"
+      }
+    }
+  }
+]
